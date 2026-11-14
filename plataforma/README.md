@@ -4,6 +4,7 @@
 
 ## Cambios
 
+- v9 · Laboratorio con 61 experimentos: una ficha de supuestos e hiperparámetros por modelo, experimentos para Ridge, Lasso, Naive Bayes, Random Forest, Gradient Boosting, SVM con kernel, DBSCAN, clustering jerárquico, mezcla de gaussianas y calibración; preprocesamiento a fondo; Probabilidad y Estadística completas.
 - v8 · Laboratorio con 27 experimentos en los 14 ámbitos, con explicación guiada en cada uno; refuerzo en Ciencia de Datos, Aprendizaje Automático y Aprendizaje Profundo.
 - v7 · Laboratorio interactivo (vectores, regresión lineal con R², regresión logística), interruptor de modo claro u oscuro, curiosidades por tema y dos lecciones escritas.
 - v6 · Vista Inicio con la ruta de estudio y las tarjetas de los 14 ámbitos; corrección de desborde en móvil.
