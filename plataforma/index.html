@@ -40,7 +40,7 @@ code{font:.92em var(--f-mono);background:var(--sunken);padding:1px 5px;border-ra
 .nav a[aria-current="page"]{background:var(--surface);box-shadow:0 1px 3px rgba(0,0,0,.12)}
 .sync{font-size:12px;color:var(--muted);width:100%}
 @media(min-width:760px){.sync{width:auto}}
-.shell{display:grid;gap:20px;padding:24px 16px 48px;max-width:1380px;margin:0 auto}
+.shell{display:grid;grid-template-columns:minmax(0,1fr);gap:20px;padding:24px 16px 48px;max-width:1380px;margin:0 auto}
 @media(min-width:960px){.shell.two{grid-template-columns:320px minmax(0,1fr);align-items:start}
   .side{position:sticky;top:76px;max-height:calc(100vh - 96px);overflow:auto}}
 .card{background:var(--surface);border-radius:20px;box-shadow:var(--shadow)}
@@ -205,13 +205,25 @@ body{background-image:radial-gradient(60% 420px at 8% 0,color-mix(in srgb,#0a84f
 .reader strong{font-weight:600}
 .srcs{margin:10px 0 0;padding-left:18px;font-size:13px;color:var(--muted);max-height:340px;overflow:auto}
 .srcs li{margin:3px 0;overflow-wrap:anywhere}
-details>summary{cursor:pointer;color:var(--accent);font-size:14px;font-weight:500}
+.box details>summary{cursor:pointer;color:var(--accent);font-size:14px;font-weight:500}
+.home{padding:32px;display:grid;gap:18px;background:linear-gradient(120deg,color-mix(in srgb,var(--amb) 26%,var(--surface)),var(--surface) 75%)}
+.flow{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:16px}
+.fstep{padding:20px;display:grid;gap:4px;align-content:start}
+.fstep b{width:30px;height:30px;border-radius:50%;background:var(--ink);color:var(--surface);display:grid;place-items:center;font-size:14px;margin-bottom:6px}
+.sect{margin:8px 4px -4px;font-size:26px;letter-spacing:-.025em}
+.acards{display:grid;grid-template-columns:repeat(auto-fill,minmax(270px,1fr));gap:16px}
+.acard{padding:20px;display:grid;gap:12px;align-content:start;border-top:4px solid var(--amb)}
+.acard h3{font-size:18px;letter-spacing:-.02em;line-height:1.25;min-height:2.5em}
+.acard .c{font-size:12.5px;color:var(--muted);font-variant-numeric:tabular-nums}
+.abadge{font:600 13px var(--f-mono);background:color-mix(in srgb,var(--amb) 24%,transparent);border-radius:8px;padding:3px 9px}
+@media (prefers-reduced-motion:no-preference){.acard{transition:transform .2s}.acard:hover{transform:translateY(-3px)}}
 </style>
 </head>
 <body>
 <header class="top">
   <div class="brand">Data Science Experto<small>Fabrishio · Ciencia de Datos</small></div>
   <nav class="nav" aria-label="Secciones">
+    <a href="#inicio" data-nav="inicio">Inicio</a>
     <a href="#estudio" data-nav="estudio">Estudio</a>
     <a href="#panel" data-nav="panel">Panel</a>
     <a href="#ajustes" data-nav="ajustes">Ajustes y repositorio</a>
@@ -493,12 +505,22 @@ function viewAjustes(){
     '<h2>Modelos de Claude</h2><p class="hint">Las lecciones y los resúmenes se escriben una vez y se guardan, así que conviene el modelo más capaz. El chat, la práctica, los gráficos y los posts son interactivos y conviene el más rápido.</p><label class="l" for="c-mLong">Lecciones y resúmenes'+'<select class="in" id="c-mLong" data-c="mLong">'+MODELS.map(m=>'<option value="'+m[0]+'"'+((S.cfg.mLong||"claude-opus-5-5")===m[0]?" selected":"")+'>'+m[1]+'</option>').join("")+'</select>'+'</label><label class="l" for="c-mFast">Chat, práctica, gráficos y posts'+'<select class="in" id="c-mFast" data-c="mFast">'+MODELS.map(m=>'<option value="'+m[0]+'"'+((S.cfg.mFast||"claude-sonnet-5-5")===m[0]?" selected":"")+'>'+m[1]+'</option>').join("")+'</select>'+'</label><h2>Respaldo</h2><p class="hint">Descarga todo tu avance (notas, resúmenes, posts y gráficos) en un archivo.</p><div class="row"><button class="btn" data-act="backup">Descargar respaldo</button></div><div class="msg" id="msg" role="status"></div></section></div></div>';
 }
 
+/* ---------- inicio: ruta de estudio ---------- */
+function viewInicio(){
+  const t=current(),p=peek(t.id),nd=TABS.filter(x=>isDone(x[0],p)).length,all=allTopics(),est=all.filter(x=>stage(x.id)>=2).length;
+  return '<div class="shell"><section class="card home" style="--amb:'+t.col+'"><div class="hero"><div><span class="eyebrow">Continúa donde quedaste</span><h1>'+esc(t.name)+'</h1><p class="hint">Ámbito '+pad(t.an)+" · "+esc(t.aName)+" · tema "+t.an+"."+t.k+'</p></div>'+
+    '<div class="ring" title="'+nd+" de "+TABS.length+' pasos completados"><svg viewBox="0 0 48 48" aria-hidden="true"><circle class="rb" cx="24" cy="24" r="20"/><circle class="rf" cx="24" cy="24" r="20" stroke-dasharray="'+(125.66*nd/TABS.length)+' 125.66"/></svg><b>'+nd+"/"+TABS.length+'</b></div></div>'+
+    '<div class="row"><button class="btn p" data-act="go2" data-id="'+t.id+'">Seguir estudiando</button><span class="pill">'+est+" de "+all.length+' temas estudiados</span><span class="pill">'+streak()+' días de racha</span></div></section>'+
+    '<section class="flow">'+[["1","Leer","La lección o tu informe de NotebookLM, dentro de la plataforma."],["2","Preguntar","Chat con Claude sobre el tema y gráficos interactivos."],["3","Practicar","Tarjetas, quiz y el notebook de práctica en GitHub."],["4","Publicar","Resumen de 4 a 5 páginas y post para LinkedIn."]].map(x=>'<div class="card fstep"><b>'+x[0]+'</b><h3>'+x[1]+'</h3><p class="hint">'+x[2]+'</p></div>').join("")+'</section>'+
+    '<h2 class="sect">Los 14 ámbitos</h2><section class="acards">'+AMB.map(a=>{const ts=topicsOf(a),d=ts.filter(x=>stage(x.id)>=2).length;
+      return '<article class="card acard" style="--amb:'+a.col+'"><div class="row"><span class="abadge">'+pad(a.n)+'</span><span class="c">'+d+" de "+ts.length+" temas · "+a.src.length+' fuentes</span></div><h3>'+esc(a.name)+'</h3><div class="bar"><i style="width:'+(ts.length?d/ts.length*100:0)+'%;background:var(--amb)"></i></div><div class="row"><button class="btn s p" data-act="goamb" data-a="'+a.id+'">Estudiar</button><a class="btn s" href="'+esc(a.nb)+'" target="_blank" rel="noopener">Abrir cuaderno</a></div></article>'}).join("")+'</section></div>';
+}
 /* ---------- render ---------- */
-function route(){const h=location.hash.slice(1);return ["estudio","panel","ajustes"].includes(h)?h:"estudio"}
+function route(){const h=location.hash.slice(1);return ["inicio","estudio","panel","ajustes"].includes(h)?h:"inicio"}
 function render(){
   const r=route();
   document.querySelectorAll("[data-nav]").forEach(a=>a.setAttribute("aria-current",a.dataset.nav===r?"page":"false"));
-  $("#app").innerHTML=r==="panel"?viewPanel():r==="ajustes"?viewAjustes():viewEstudio();
+  $("#app").innerHTML=r==="panel"?viewPanel():r==="ajustes"?viewAjustes():r==="inicio"?viewInicio():viewEstudio();
   if(r==="estudio"){
     if(S.cfg.tab==="graficos")drawAll();
     const ch=$("#chat");if(ch)ch.scrollTop=ch.scrollHeight;
@@ -669,6 +691,8 @@ document.addEventListener("click",async e=>{
   if(act==="copyopen"){copyText(peek(t.id).post);return}
   e.preventDefault();
   if(act==="sel"||act==="go"){UI={ci:0,flip:false,ans:{}};S.cfg.sel=b.dataset.id;if(act==="go"){S.cfg.tab="linkedin";location.hash="estudio"}touch("cfg");render();window.scrollTo(0,0)}
+  else if(act==="go2"){location.hash="estudio"}
+  else if(act==="goamb"){const ts=topicsOf(AMB.find(a=>a.id===b.dataset.a)),n=ts.find(x=>stage(x.id)<2)||ts[0];UI={ci:0,flip:false,ans:{}};S.cfg.sel=n.id;S.cfg.tab="leer";S.cfg.open[b.dataset.a]=true;touch("cfg");location.hash="estudio";window.scrollTo(0,0)}
   else if(act==="tab"){S.cfg.tab=b.dataset.v;touch("cfg");render()}
   else if(act==="st"){T(t.id).st=+b.dataset.v;touch(t.id);render();if(b.dataset.v==="2")confetti()}
   else if(act==="copy"){const el=document.getElementById(b.dataset.from);copyText(el.value!==undefined?el.value:el.textContent)}
