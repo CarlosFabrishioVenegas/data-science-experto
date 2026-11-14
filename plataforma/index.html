@@ -465,8 +465,10 @@ function nbPrompts(t){
 function sidebar(){
   const q=(S.q||"").toLowerCase();
   const cur=S.cfg.sel;
-  return '<aside class="card side"><label class="l" for="q">Malla de 14 ámbitos</label><input id="q" type="search" placeholder="Buscar tema" value="'+esc(S.q||"")+'">'+
-  AMB.map(a=>{
+  if(S.fa&&current().an!==S.fa)S.fa=current().an;
+  const fb=S.fa?'<div class="row" style="padding:0 6px 4px"><button class="btn s" data-act="fall">Ver los 14 ámbitos</button></div>':"";
+  return '<aside class="card side"><label class="l" for="q">'+(S.fa?"Ámbito "+pad(S.fa)+": solo sus temas":"Malla de 14 ámbitos")+'</label>'+fb+'<input id="q" type="search" placeholder="Buscar tema" value="'+esc(S.q||"")+'">'+
+  (S.fa?AMB.filter(a=>a.n===S.fa):AMB).map(a=>{
     const ts=topicsOf(a),show=q?ts.filter(t=>t.name.toLowerCase().includes(q)):ts;
     if(q&&!show.length)return "";
     const done=ts.filter(t=>stage(t.id)>=2).length;
@@ -1597,9 +1599,10 @@ function ctl(c,s){const k=c[0];
   if(c[2]==="chk")return '<label class="row" for="lab-'+k+'"><input type="checkbox" id="lab-'+k+'" data-lab="'+k+'"'+(s[k]?" checked":"")+'> '+c[1]+'</label>';
   if(c[2]==="sel")return '<label class="l" for="lab-'+k+'">'+c[1]+'<select class="in" id="lab-'+k+'" data-lab="'+k+'">'+c[3].map(o=>'<option value="'+o[0]+'"'+(s[k]===o[0]?" selected":"")+'>'+o[1]+'</option>').join("")+'</select></label>';
   return '<label class="l" for="lab-'+k+'"><span class="row" style="justify-content:space-between"><span>'+c[1]+'</span><output id="o-'+k+'">'+f2(s[k])+'</output></span><input type="range" id="lab-'+k+'" data-lab="'+k+'" min="'+c[2]+'" max="'+c[3]+'" step="'+c[4]+'" value="'+s[k]+'"></label>'}
-function viewLab(){const id=LAB[L.lab]?L.lab:"log",lb=LAB[id],s=LSt(id);
-  const list=AMB.map(a=>{const ks=labsOf(a.n);return ks.length?'<div class="lgroup" style="--amb:'+a.col+'"><div class="lgh"><span class="abadge">'+pad(a.n)+'</span>'+esc(a.name)+'</div>'+ks.map(k=>'<button class="lbtn" data-act="lab" data-v="'+k+'" aria-current="'+(k===id)+'">'+LAB[k].t+'</button>').join("")+'</div>':""}).join("");
-  return '<div class="shell lablay"><aside class="card side"><label class="l">Laboratorio</label><p class="hint" style="padding:4px 6px 10px">'+Object.keys(LAB).length+' experimentos en los 14 ámbitos. Funcionan al instante, sin Claude.</p>'+list+'</aside>'+
+function viewLab(){if(S.fa&&!(LAB[L.lab]&&LAB[L.lab].a.includes(S.fa))){const ks=labsOf(S.fa);if(ks.length)L.lab=ks[0];else S.fa=0}
+  const id=LAB[L.lab]?L.lab:"log",lb=LAB[id],s=LSt(id);
+  const list=(S.fa?AMB.filter(a=>a.n===S.fa):AMB).map(a=>{const ks=labsOf(a.n);return ks.length?'<div class="lgroup" style="--amb:'+a.col+'"><div class="lgh"><span class="abadge">'+pad(a.n)+'</span>'+esc(a.name)+'</div>'+ks.map(k=>'<button class="lbtn" data-act="lab" data-v="'+k+'" aria-current="'+(k===id)+'">'+LAB[k].t+'</button>').join("")+'</div>':""}).join("");
+  return '<div class="shell lablay"><aside class="card side"><label class="l">Laboratorio</label><p class="hint" style="padding:4px 6px 10px">'+(S.fa?labsOf(S.fa).length+" experimentos del ámbito "+pad(S.fa)+".":Object.keys(LAB).length+" experimentos en los 14 ámbitos.")+' Funcionan al instante, sin Claude.</p>'+(S.fa?'<div class="row" style="padding:0 6px 10px"><button class="btn s" data-act="fall">Ver los 14 ámbitos</button></div>':"")+list+'</aside>'+
   '<section class="card pane" style="--amb:'+AMB[lb.a[0]-1].col+'"><div><span class="eyebrow">Ámbito '+pad(lb.a[0])+" · "+esc(AMB[lb.a[0]-1].name)+'</span><h2 class="labt">'+lb.t+'</h2></div>'+
   '<div class="box see"><h3>Qué estás viendo</h3><p>'+lb.q+'</p></div>'+
   '<div class="labgrid"><div class="labfig"><svg id="lab-svg" viewBox="0 0 560 420" role="img" aria-label="Figura interactiva: '+lb.t+'"></svg></div><div class="box">'+lb.c.map(c=>ctl(c,s)).join("")+(lb.b?'<div class="row">'+lb.b.map((b,i)=>'<button class="btn p" data-act="labbtn" data-i="'+i+'">'+b[0]+'</button>').join("")+'</div>':"")+'<div id="lab-out"></div></div></div>'+
@@ -1796,7 +1799,7 @@ document.addEventListener("click",async e=>{
   e.preventDefault();
   if(act==="sel"||act==="go"){UI={ci:0,flip:false,ans:{}};S.cfg.sel=b.dataset.id;if(act==="go"){S.cfg.tab="linkedin";location.hash="estudio"}touch("cfg");render();window.scrollTo(0,0)}
   else if(act==="go2"){location.hash="estudio"}
-  else if(act==="goamb"){const ts=topicsOf(AMB.find(a=>a.id===b.dataset.a)),n=ts.find(x=>stage(x.id)<2)||ts[0];UI={ci:0,flip:false,ans:{}};S.cfg.sel=n.id;S.cfg.tab="leer";S.cfg.open[b.dataset.a]=true;touch("cfg");location.hash="estudio";window.scrollTo(0,0)}
+  else if(act==="goamb"){const ts=topicsOf(AMB.find(a=>a.id===b.dataset.a)),n=ts.find(x=>stage(x.id)<2)||ts[0];S.fa=n.an;UI={ci:0,flip:false,ans:{}};S.cfg.sel=n.id;S.cfg.tab="leer";S.cfg.open[b.dataset.a]=true;touch("cfg");location.hash="estudio";window.scrollTo(0,0)}
   else if(act==="tab"){S.cfg.tab=b.dataset.v;touch("cfg");render()}
   else if(act==="st"){T(t.id).st=+b.dataset.v;touch(t.id);render();if(b.dataset.v==="2")confetti()}
   else if(act==="copy"){const el=document.getElementById(b.dataset.from);copyText(el.value!==undefined?el.value:el.textContent)}
@@ -1813,10 +1816,11 @@ document.addEventListener("click",async e=>{
   else if(act==="theme"){setTheme(themeNow()==="dark"?"light":"dark");render()}
   else if(act==="lab"){L.lab=b.dataset.v;render()}
   else if(act==="labgo"){L.lab=b.dataset.v;location.hash="laboratorio";window.scrollTo(0,0)}
+  else if(act==="fall"){S.fa=0;render()}
   else if(act==="gch"){S.gc=+b.dataset.i;render();window.scrollTo(0,0)}
   else if(act==="gpr"){S.gp=b.dataset.v;render()}
   else if(act==="labbtn"){const id=LAB[L.lab]?L.lab:"log";LAB[id].b[+b.dataset.i][1](LSt(id),LC);drawLab()}
-  else if(act==="labamb"){const ks=labsOf(+b.dataset.n);if(ks.length){L.lab=ks[0];location.hash="laboratorio";window.scrollTo(0,0)}}
+  else if(act==="labamb"){const ks=labsOf(+b.dataset.n);if(ks.length){S.fa=+b.dataset.n;L.lab=ks[0];location.hash="laboratorio";window.scrollTo(0,0)}}
   else if(act==="gencur")stream("curios",REGLAS+"\n\n"+ctx(t)+"\nTAREA: escribe 6 curiosidades del tema que ayuden a recordarlo: origen del nombre o historia, un caso límite sorprendente, una conexión con otro método, un error famoso, un uso en minería o cemento y uno en banca. Cada una en una viñeta de 2 o 3 frases, en Markdown. Solo hechos de los que estés seguro; si dudas de un dato, no lo incluyas. Devuelve solo la lista.","default");
   else if(act==="genlec")genLeccion();
   else if(act==="batch")runBatch();
