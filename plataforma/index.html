@@ -142,6 +142,53 @@ label.l{font-weight:600;font-size:13px;display:grid;gap:5px}
 label.l .in{font-weight:400}
 ol.howto{margin:0;padding-left:20px;max-width:68ch}
 @media (prefers-reduced-motion:no-preference){.btn,.chip,.steps button,.tl button.t{transition:background-color .2s,filter .2s,border-color .2s}}
+/* v3: color por ámbito, práctica interactiva, racha */
+body{background-image:radial-gradient(60% 420px at 8% 0,color-mix(in srgb,#0a84ff 13%,transparent),transparent),radial-gradient(50% 380px at 92% 0,color-mix(in srgb,#ff375f 10%,transparent),transparent),radial-gradient(40% 300px at 50% 0,color-mix(in srgb,#ffd60a 8%,transparent),transparent);background-repeat:no-repeat}
+.amb>summary .n{background:color-mix(in srgb,var(--amb) 24%,transparent);color:var(--ink);border-radius:6px;padding:2px 0;text-align:center;font-weight:600}
+.amb>summary .mb{grid-column:1/-1;height:3px;border-radius:9px;background:var(--btn);overflow:hidden}
+.amb>summary .mb i{display:block;height:100%;background:var(--amb);border-radius:9px;transition:width .5s}
+.tl button.t[aria-current="true"]{background:color-mix(in srgb,var(--amb) 62%,#000)}
+.head{border-radius:20px 20px 0 0;background:linear-gradient(120deg,color-mix(in srgb,var(--amb) 24%,var(--surface)),var(--surface) 72%)}
+.hero{display:flex;gap:20px;justify-content:space-between;align-items:flex-start}
+.eyebrow{display:inline-block;background:color-mix(in srgb,var(--amb) 22%,transparent);color:var(--ink);padding:4px 12px;border-radius:980px;font-size:13px}
+.ring{position:relative;flex:0 0 auto;width:72px;height:72px;display:grid;place-items:center}
+.ring svg{position:absolute;inset:0;transform:rotate(-90deg)}
+.ring circle{fill:none;stroke-width:5;stroke-linecap:round}
+.ring .rb{stroke:color-mix(in srgb,var(--amb) 20%,var(--btn))}
+.ring .rf{stroke:var(--amb);transition:stroke-dasharray .6s}
+.ring b{font-size:15px;font-variant-numeric:tabular-nums}
+.grow{flex:1}
+.steps{padding-top:14px}
+.steps button[aria-selected="true"]{background:color-mix(in srgb,var(--amb) 60%,#000);color:#fff}
+.pips{display:flex;flex-wrap:wrap;gap:6px}
+.pip{width:22px;height:8px;border-radius:9px;border:0;background:var(--line);cursor:pointer;padding:0}
+.pip.k{background:var(--ok)}.pip.c{outline:2px solid var(--amb);outline-offset:2px}
+.flash{perspective:1200px;display:grid;border:0;background:none;padding:0;cursor:pointer;min-height:230px;text-align:left}
+.face{grid-area:1/1;-webkit-backface-visibility:hidden;backface-visibility:hidden;border-radius:20px;padding:26px;display:grid;align-content:center;gap:12px;font-size:19px;line-height:1.35;font-weight:500;letter-spacing:-.015em;overflow-wrap:anywhere}
+.face small{font-size:12px;font-weight:600;opacity:.8;letter-spacing:.02em}
+.face em{font-style:normal;font-size:13px;font-weight:400;opacity:.8}
+.fr{background:linear-gradient(135deg,color-mix(in srgb,var(--amb) 66%,#000),color-mix(in srgb,var(--amb) 40%,#000));color:#fff}
+.bk{background:var(--surface);box-shadow:inset 0 0 0 2px color-mix(in srgb,var(--amb) 55%,transparent);transform:rotateY(180deg);font-weight:400;font-size:17px}
+.flash.f .fr{transform:rotateY(180deg)}.flash.f .bk{transform:rotateY(360deg)}
+.q{border:0;margin:0;padding:0;display:grid;gap:6px;min-width:0}
+.q legend{font-weight:600;padding:0 0 6px;max-width:68ch}
+.opt{text-align:left;border:1.5px solid var(--line);background:var(--surface);border-radius:12px;padding:9px 13px;cursor:pointer;color:var(--ink)}
+.opt:not([disabled]):hover{border-color:var(--amb)}
+.opt.ok{border-color:var(--ok);background:color-mix(in srgb,var(--ok) 16%,var(--surface))}
+.opt.no{border-color:var(--bad);background:color-mix(in srgb,var(--bad) 14%,var(--surface))}
+.opt[disabled]{cursor:default;opacity:1}
+.tile{background:linear-gradient(140deg,color-mix(in srgb,var(--tc) 20%,var(--surface)),var(--surface) 75%);position:relative;overflow:hidden}
+.tile::after{content:"";position:absolute;left:22px;top:0;width:36px;height:4px;border-radius:0 0 4px 4px;background:var(--tc)}
+.heat{display:grid;grid-template-rows:repeat(7,1fr);grid-auto-flow:column;grid-auto-columns:1fr;gap:4px;max-width:520px}
+.heat i{aspect-ratio:1;border-radius:4px;background:var(--btn)}
+.heat .h1{background:color-mix(in srgb,var(--ok) 40%,var(--btn))}.heat .h2{background:color-mix(in srgb,var(--ok) 70%,var(--btn))}.heat .h3{background:var(--ok)}
+@media (prefers-reduced-motion:no-preference){
+  .face{transition:transform .55s cubic-bezier(.2,.7,.2,1)}
+  .pane{animation:rise .28s ease-out}
+  @keyframes rise{from{transform:translateY(6px);opacity:.55}to{transform:none;opacity:1}}
+  .tile,.file,.opt{transition:transform .2s,border-color .2s,background-color .2s}
+  .tile:hover{transform:translateY(-3px)}
+}
 </style>
 </head>
 <body>
@@ -177,7 +224,9 @@ const BASE=[
 ["IA Aplicada a Operaciones",["Fundamentos de operaciones y rol de la IA","Automatización inteligente: RPA, NLP y visión por computadora","IA para predicción de demanda","IA para mantenimiento y planificación","Decisiones en tiempo real en producción y logística","Indicadores, riesgos y estrategia de adopción","Agentes de IA y RAG en operaciones"]]
 ];
 const pad=n=>String(n).padStart(2,"0");
-const AMB=BASE.map((a,i)=>({id:"a"+pad(i+1),n:i+1,name:a[0],base:a[1]}));
+const COL=["#0a84ff","#5e5ce6","#bf5af2","#ff375f","#ff453a","#ff9f0a","#e6b800","#30d158","#2bb8a8","#40c8e0","#3aa0e8","#ac8e68","#7d7aff","#ff6482"];
+const AMB=BASE.map((a,i)=>({id:"a"+pad(i+1),n:i+1,name:a[0],base:a[1],col:COL[i]}));
+let UI={ci:0,flip:false,ans:{}};
 
 /* ---------- utilidades ---------- */
 const $=s=>document.querySelector(s);
@@ -204,14 +253,14 @@ function md(src){
 }
 
 /* ---------- estado ---------- */
-const DEF=Object.freeze({st:0,fuente:"",notas:"",nb:"",chat:[],charts:[],resumen:"",post:"",guion:"",pub:"",pubUrl:"",files:{},readyAt:0});
+const DEF=Object.freeze({st:0,fuente:"",notas:"",nb:"",chat:[],charts:[],resumen:"",post:"",guion:"",pub:"",pubUrl:"",files:{},readyAt:0,cards:[],quiz:[],known:[],best:null});
 let S={cfg:{repo:"https://github.com/CarlosFabrishioVenegas/data-science-experto",branch:"main",nb:"",sel:"a01-t01",tab:"estudiar",custom:{},hideBase:{},open:{a01:true}},t:{}};
 const peek=id=>S.t[id]||DEF;
 const T=id=>S.t[id]||(S.t[id]=clone(DEF));
 function topicsOf(a){
   const base=S.cfg.hideBase[a.id]?[]:a.base.map((name,i)=>({id:a.id+"-t"+pad(i+1),name}));
   const all=base.concat(S.cfg.custom[a.id]||[]);
-  return all.map((t,i)=>({...t,aId:a.id,an:a.n,aName:a.name,k:i+1,custom:!t.id.includes("-t")}));
+  return all.map((t,i)=>({...t,aId:a.id,an:a.n,aName:a.name,col:a.col,k:i+1,custom:!t.id.includes("-t")}));
 }
 const allTopics=()=>AMB.flatMap(topicsOf);
 const current=()=>{const all=allTopics();return all.find(t=>t.id===S.cfg.sel)||all[0]};
@@ -223,7 +272,7 @@ let db=null,root=null,cloud=false,flushing=false,timer=null,retries=0;const dirt
 const use=n=>(window.claude&&window.claude.use)?window.claude.use(n).catch(()=>null):Promise.resolve(null);
 function setSync(){const el=$("#sync");if(!el)return;el.textContent=dirty.size&&cloud?"Guardando…":cloud?"Avance guardado en tu cuenta":"Avance guardado solo en este navegador"}
 function local(k){try{localStorage.setItem("dse:"+k,JSON.stringify(k==="cfg"?S.cfg:S.t[k]))}catch(e){}}
-function touch(k){dirty.add(k);local(k);clearTimeout(timer);timer=setTimeout(flush,1200);setSync()}
+function touch(k){if(k!=="cfg")mark(k);dirty.add(k);local(k);clearTimeout(timer);timer=setTimeout(flush,1200);setSync()}
 const ref=k=>k==="cfg"?root:root.collection("temas").doc(k);
 async function flush(){
   if(!cloud){dirty.clear();setSync();return}
@@ -304,21 +353,23 @@ function sidebar(){
     if(q&&!show.length)return "";
     const done=ts.filter(t=>stage(t.id)>=2).length;
     const open=q||S.cfg.open[a.id]||ts.some(t=>t.id===cur);
-    return '<details class="amb" data-amb="'+a.id+'"'+(open?" open":"")+'><summary><span class="n">'+pad(a.n)+'</span><span>'+esc(a.name)+'</span><span class="c">'+done+"/"+ts.length+'</span></summary><ul class="tl">'+
+    return '<details class="amb" style="--amb:'+a.col+'" data-amb="'+a.id+'"'+(open?" open":"")+'><summary><span class="n">'+pad(a.n)+'</span><span>'+esc(a.name)+'</span><span class="c">'+done+"/"+ts.length+'</span><span class="mb"><i style="width:'+(ts.length?done/ts.length*100:0)+'%"></i></span></summary><ul class="tl">'+
       show.map(t=>'<li><button class="t" data-act="sel" data-id="'+t.id+'" aria-current="'+(t.id===cur)+'"><span class="dot s'+stage(t.id)+'"></span><span class="k">'+a.n+"."+t.k+'</span><span>'+esc(t.name)+'</span></button>'+(t.custom?'<button class="x" data-act="deltopic" data-a="'+a.id+'" data-id="'+t.id+'" aria-label="Quitar tema" title="Quitar tema">×</button>':"")+'</li>').join("")+
       '</ul><form class="addrow" data-add="'+a.id+'"><input id="add-'+a.id+'" placeholder="Agregar tema a este ámbito" aria-label="Agregar tema a '+esc(a.name)+'"><button class="btn s">Agregar</button></form></details>';
   }).join("")+
   '<div class="legend"><span><i class="dot"></i>Pendiente</span><span><i class="dot s1"></i>En estudio</span><span><i class="dot s2"></i>Estudiado</span><span><i class="dot s3"></i>Publicado</span></div></aside>';
 }
-const TABS=[["estudiar","Estudiar"],["consultar","Consultar"],["graficos","Gráficos"],["resumen","Resumen"],["linkedin","LinkedIn"],["repo","Repositorio"]];
-function isDone(tab,p){return tab==="estudiar"?p.st===2:tab==="consultar"?p.chat.length>0:tab==="graficos"?p.charts.length>0:tab==="resumen"?!!p.resumen.trim():tab==="linkedin"?!!p.pub:FILES.every(f=>p.files[f[0]])}
+const TABS=[["estudiar","Estudiar"],["consultar","Consultar"],["practicar","Practicar"],["graficos","Gráficos"],["resumen","Resumen"],["linkedin","LinkedIn"],["repo","Repositorio"]];
+function isDone(tab,p){return tab==="estudiar"?p.st===2:tab==="consultar"?p.chat.length>0:tab==="practicar"?p.best!=null:tab==="graficos"?p.charts.length>0:tab==="resumen"?!!p.resumen.trim():tab==="linkedin"?!!p.pub:FILES.every(f=>p.files[f[0]])}
 function viewEstudio(){
   const t=current(),p=peek(t.id),tab=S.cfg.tab;
-  const pane={estudiar:paneEstudiar,consultar:paneConsultar,graficos:paneGraficos,resumen:paneResumen,linkedin:paneLinkedin,repo:paneRepo}[tab]||paneEstudiar;
-  return '<div class="shell two">'+sidebar()+'<div class="main"><section class="card">'+
-    '<div class="head"><div class="eyebrow">Ámbito '+pad(t.an)+" · "+esc(t.aName)+" · tema "+t.an+"."+t.k+'</div><h1>'+esc(t.name)+'</h1>'+
+  const all=allTopics(),ix=all.findIndex(x=>x.id===t.id),nd=TABS.filter(x=>isDone(x[0],p)).length,prev=all[ix-1],next=all[ix+1];
+  const pane={estudiar:paneEstudiar,consultar:paneConsultar,practicar:panePracticar,graficos:paneGraficos,resumen:paneResumen,linkedin:paneLinkedin,repo:paneRepo}[tab]||paneEstudiar;
+  return '<div class="shell two">'+sidebar()+'<div class="main"><section class="card" style="--amb:'+t.col+'">'+
+    '<div class="head"><div class="hero"><div><span class="eyebrow">Ámbito '+pad(t.an)+" · "+esc(t.aName)+" · tema "+t.an+"."+t.k+'</span><h1>'+esc(t.name)+'</h1></div>'+
+    '<div class="ring" title="'+nd+" de "+TABS.length+' pasos completados"><svg viewBox="0 0 48 48" aria-hidden="true"><circle class="rb" cx="24" cy="24" r="20"/><circle class="rf" cx="24" cy="24" r="20" stroke-dasharray="'+(125.66*nd/TABS.length)+' 125.66"/></svg><b>'+nd+"/"+TABS.length+'</b></div></div>'+
     '<div class="row"><div class="seg" role="group" aria-label="Estado del tema">'+["Pendiente","En estudio","Estudiado"].map((l,i)=>'<button data-act="st" data-v="'+i+'" aria-pressed="'+(p.st===i)+'">'+l+'</button>').join("")+'</div>'+
-    (p.pub?'<span class="pill">Publicado el '+esc(p.pub)+'</span>':"")+'</div></div>'+
+    (p.pub?'<span class="pill">Publicado el '+esc(p.pub)+'</span>':"")+'<span class="grow"></span>'+(prev?'<button class="btn s" data-act="sel" data-id="'+prev.id+'">Tema anterior</button>':"")+(next?'<button class="btn s" data-act="sel" data-id="'+next.id+'">Tema siguiente</button>':"")+'</div></div>'+
     '<div class="steps" role="tablist">'+TABS.map((x,i)=>'<button role="tab" data-act="tab" data-v="'+x[0]+'" aria-selected="'+(tab===x[0])+'" class="'+(isDone(x[0],p)?"done":"")+'"><span class="i">'+(isDone(x[0],p)?"✓":i+1)+'</span>'+x[1]+'</button>').join("")+'</div>'+
     '<div class="pane">'+pane(t,p)+'<div class="msg" id="msg" role="status"></div></div></section></div></div>';
 }
@@ -393,7 +444,8 @@ function viewPanel(){
   const q=queue(),sl=slots(Math.max(q.length,6));
   const pubs=all.filter(t=>peek(t.id).pub).sort((a,b)=>peek(b.id).pub.localeCompare(peek(a.id).pub));
   return '<div class="shell"><section class="tiles">'+
-    [[all.length,"temas en la malla"],[c[1],"en estudio"],[c[2]+c[3],"estudiados"],[c[3],"publicados en LinkedIn"],[q.length,"listos para publicar"]].map(x=>'<div class="card tile"><b>'+x[0]+'</b><span>'+x[1]+'</span></div>').join("")+'</section>'+
+    [[streak(),"días de racha","#ff9f0a"],[all.length,"temas en la malla","#0a84ff"],[c[1],"en estudio","#bf5af2"],[c[2]+c[3],"estudiados","#30d158"],[c[3],"publicados en LinkedIn","#ff375f"],[q.length,"listos para publicar","#40c8e0"]].map(x=>'<div class="card tile" style="--tc:'+x[2]+'"><b>'+x[0]+'</b><span>'+x[1]+'</span></div>').join("")+'</section>'+
+    '<section class="card pane"><h2>Tu actividad en las últimas 12 semanas</h2>'+heat()+'<p class="hint">Cada cuadro es un día. El color sube con la cantidad de temas en los que trabajaste.</p></section>'+
     '<div class="grid2"><section class="card pane"><h2>Calendario de publicación: martes y viernes</h2><div class="scroll"><table><thead><tr><th>Fecha</th><th>Tema en cola</th></tr></thead><tbody>'+
     sl.slice(0,Math.max(6,q.length)).map((d,i)=>'<tr><td class="num">'+fdate(d)+'</td><td>'+(q[i]?'<button class="btn s" data-act="go" data-id="'+q[i].id+'">'+esc(q[i].an+"."+q[i].k+" "+q[i].name)+'</button>':'<span class="hint">Sin tema asignado</span>')+'</td></tr>').join("")+'</tbody></table></div>'+
     '<p class="hint">Un tema entra a la cola cuando tiene texto de post y todavía no está publicado. El orden es el de preparación.</p>'+
@@ -408,6 +460,7 @@ function viewAjustes(){
     '<label class="l" for="c-repo">Dirección del repositorio<input class="in" id="c-repo" data-c="repo" type="url" value="'+esc(S.cfg.repo)+'"></label>'+
     '<label class="l" for="c-branch">Rama<input class="in" id="c-branch" data-c="branch" value="'+esc(S.cfg.branch)+'"></label>'+
     '<h3>Crear el repositorio la primera vez</h3><ol class="howto"><li>Entra a <a href="https://github.com/new" target="_blank" rel="noopener">github.com/new</a> y crea <code>data-science-experto</code>, público y vacío.</li><li>Descomprime el archivo <code>data-science-experto-repo.zip</code> que Claude te entregó en el chat.</li><li>En la página del repositorio elige «uploading an existing file», arrastra el contenido de la carpeta y confirma.</li><li>Si usas otro nombre o cuenta, cambia la dirección de arriba.</li></ol>'+
+    '<h3>Historial de cambios de la plataforma</h3><p class="hint">El código de esta plataforma vive en la carpeta <code>plataforma</code> del repositorio, con una confirmación por versión.</p><div class="row"><a class="btn" href="'+esc(S.cfg.repo.replace(/\/+$/,"")+"/commits/"+(S.cfg.branch||"main")+"/plataforma")+'" target="_blank" rel="noopener">Ver historial en GitHub</a></div>'+
     '<h2>NotebookLM</h2><label class="l" for="c-nb">Enlace a tu cuaderno principal<input class="in" id="c-nb" data-c="nb" type="url" placeholder="https://notebooklm.google.com/notebook/…" value="'+esc(S.cfg.nb)+'"></label><p class="hint">Se usa cuando un tema no tiene su propio enlace.</p></section>'+
     '<section class="card pane"><h2>Cargar tu malla</h2><p class="hint">La plataforma arranca con un temario base por ámbito. Para usar los temas de tu plan maestro, pega la lista de un ámbito, un tema por línea.</p>'+
     '<label class="l" for="imp-a">Ámbito<select class="in" id="imp-a">'+AMB.map(a=>'<option value="'+a.id+'">'+pad(a.n)+" "+esc(a.name)+'</option>').join("")+'</select></label>'+
@@ -491,6 +544,54 @@ function genPost(){const t=current(),p=peek(t.id);
 function genGuion(){const t=current(),p=peek(t.id);
   stream("guion",REGLAS+"\n\n"+ctx(t)+(p.resumen.trim()?"\nRESUMEN YA REDACTADO:\n"+p.resumen.slice(0,16000)+"\n":"")+"\nTAREA: escribe el guion de una infografía de 13 láminas en formato 16:9 para la serie «Fabrishio · Ciencia de Datos». Láminas: 1 Portada; 2 Introducción; 3 a 9 desarrollo del tema (concepto, cómo funciona, pasos, comparaciones, riesgos técnicos); 10 Aplicaciones por industria con minería y banca destacadas; 11 Síntesis; 12 Conclusión; 13 Cierre. Por lámina: título de máximo 8 palabras y hasta 3 puntos de máximo 14 palabras. En la lámina 10 no inventes casos: escribe [caso real por verificar] donde haga falta buscar uno. Texto plano, una lámina por bloque.","default")}
 
+/* ---------- práctica: tarjetas y quiz ---------- */
+function panePracticar(t,p){
+  const gen='<div class="row"><button class="btn p" data-act="genprac">'+(p.cards.length?"Generar una práctica nueva":"Generar tarjetas y quiz con Claude")+'</button></div>';
+  if(!p.cards.length||!p.quiz.length)return '<div><h2>Practica el tema</h2><p class="hint">Claude prepara 12 tarjetas de repaso y un quiz de 8 preguntas con corrección inmediata, a partir de '+(p.fuente.trim()?"tu informe de NotebookLM.":"conocimiento general, porque aún no pegaste el informe de NotebookLM.")+'</p></div>'+gen;
+  const n=p.cards.length,i=Math.min(UI.ci,n-1),c=p.cards[i],known=p.known||[];
+  const nq=p.quiz.length,done=Object.keys(UI.ans).length,good=p.quiz.filter((q,k)=>UI.ans[k]===q.c).length;
+  return '<div class="grid2"><div class="box"><div class="row" style="justify-content:space-between"><h2>Tarjetas</h2><span class="pill">'+known.length+" de "+n+' dominadas</span></div>'+
+    '<div class="pips">'+p.cards.map((_,k)=>'<button class="pip'+(known.includes(k)?" k":"")+(k===i?" c":"")+'" data-act="cardgo" data-i="'+k+'" aria-label="Ir a la tarjeta '+(k+1)+'"></button>').join("")+'</div>'+
+    '<button class="flash'+(UI.flip?" f":"")+'" id="flash" data-act="flip" aria-label="Voltear tarjeta"><span class="face fr"><small>Tarjeta '+(i+1)+" de "+n+'</small>'+esc(c.p)+'<em>Toca para ver la respuesta</em></span><span class="face bk"><small>Respuesta</small>'+esc(c.r)+'</span></button>'+
+    '<div class="row"><button class="btn" data-act="cardno">Aún no la sé</button><button class="btn p" data-act="cardyes">La sabía</button></div></div>'+
+    '<div class="box"><div class="row" style="justify-content:space-between"><h2>Quiz</h2><span class="pill">'+(done===nq?good+" de "+nq+" correctas":done+" de "+nq+" respondidas")+(p.best!=null?" · mejor "+p.best+"/"+nq:"")+'</span></div>'+
+    p.quiz.map((q,k)=>{const a=UI.ans[k];return '<fieldset class="q"><legend>'+(k+1)+". "+esc(q.p)+'</legend>'+q.o.map((o,j)=>'<button class="opt'+(a!==undefined?(j===q.c?" ok":j===a?" no":""):"")+'" data-act="ans" data-k="'+k+'" data-j="'+j+'"'+(a!==undefined?" disabled":"")+'>'+esc(o)+'</button>').join("")+(a!==undefined?'<p class="hint">'+esc(q.e)+'</p>':"")+'</fieldset>'}).join("")+
+    '<div class="row"><button class="btn" data-act="quizreset">Reintentar quiz</button></div></div></div>'+gen;
+}
+async function genPrac(){
+  const t=current(),p=T(t.id);
+  await guarded(async()=>{
+    const r=await ask(REGLAS+"\n\n"+ctx(t)+"\nTAREA: prepara material de práctica del tema. Devuelve SOLO un objeto JSON válido, sin texto adicional ni bloques de código, con esta forma exacta:\n{\"tarjetas\":[{\"p\":\"pregunta\",\"r\":\"respuesta\"}],\"quiz\":[{\"p\":\"pregunta\",\"o\":[\"opción\",\"opción\",\"opción\",\"opción\"],\"c\":0,\"e\":\"explicación\"}]}\nReglas: 12 tarjetas, una idea por tarjeta, pregunta de máximo 25 palabras y respuesta de máximo 45. 8 preguntas de quiz ordenadas de básica a experta, con 4 opciones plausibles; \"c\" es el índice (0 a 3) de la correcta y debe variar entre preguntas; \"e\" explica en máximo 40 palabras por qué es correcta. Incluye al menos una pregunta aplicada a minería o cemento y una a banca. Fórmulas en texto plano.",{tier:"complex"});
+    let d;try{d=JSON.parse(r.text.slice(r.text.indexOf("{"),r.text.lastIndexOf("}")+1))}catch(e){throw {message:"Claude devolvió la práctica con formato inválido. Intenta de nuevo"}}
+    const cards=(d.tarjetas||[]).filter(x=>x&&x.p&&x.r).slice(0,20).map(x=>({p:String(x.p),r:String(x.r)}));
+    const quiz=(d.quiz||[]).filter(x=>x&&x.p&&Array.isArray(x.o)&&x.o.length>=2&&Number.isInteger(x.c)&&x.c>=0&&x.c<x.o.length).slice(0,12).map(x=>({p:String(x.p),o:x.o.map(String),c:x.c,e:String(x.e||"")}));
+    if(!cards.length||!quiz.length)throw {message:"la práctica llegó incompleta. Intenta de nuevo"};
+    p.cards=cards;p.quiz=quiz;p.known=[];p.best=null;UI={ci:0,flip:false,ans:{}};
+    if(p.st===0)p.st=1;touch(t.id);render();
+  });
+}
+/* ---------- racha y celebración ---------- */
+function mark(id){
+  const d=iso(new Date()),m=S.cfg.days||(S.cfg.days={}),o=m[d]||(m[d]={});
+  if(o[id])return;o[id]=1;
+  const ks=Object.keys(m).sort();while(ks.length>150)delete m[ks.shift()];
+  dirty.add("cfg");local("cfg");
+}
+function dayCount(d){const o=(S.cfg.days||{})[iso(d)];return o?Object.keys(o).length:0}
+function streak(){const d=new Date();if(!dayCount(d))d.setDate(d.getDate()-1);let n=0;while(dayCount(d)){n++;d.setDate(d.getDate()-1)}return n}
+function heat(){const out=[],d=new Date();d.setDate(d.getDate()-83);
+  for(let i=0;i<84;i++){const n=dayCount(d);out.push('<i class="h'+Math.min(n,3)+'" title="'+fdate(d)+": "+n+(n===1?" tema":" temas")+'"></i>');d.setDate(d.getDate()+1)}
+  return '<div class="heat" role="img" aria-label="Actividad de estudio de las últimas 12 semanas">'+out.join("")+'</div>'}
+function confetti(){
+  if(matchMedia("(prefers-reduced-motion:reduce)").matches)return;
+  const c=document.createElement("canvas");c.style.cssText="position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z-index:99";
+  c.width=innerWidth;c.height=innerHeight;document.body.appendChild(c);const x=c.getContext("2d");
+  const P=Array.from({length:110},()=>({x:c.width/2,y:c.height*.38,vx:(Math.random()-.5)*16,vy:-Math.random()*13-3,c:COL[Math.random()*COL.length|0],s:5+Math.random()*6,r:Math.random()*6}));
+  let n=0;(function f(){x.clearRect(0,0,c.width,c.height);
+    P.forEach(p=>{p.x+=p.vx;p.y+=p.vy;p.vy+=.38;p.r+=.2;x.save();x.translate(p.x,p.y);x.rotate(p.r);x.fillStyle=p.c;x.fillRect(-p.s/2,-p.s/2,p.s,p.s*.6);x.restore()});
+    if(++n<100)requestAnimationFrame(f);else c.remove()})();
+}
+
 /* ---------- copiar y descargar ---------- */
 async function copyText(text){
   try{await navigator.clipboard.writeText(text);note("Copiado.");return true}
@@ -512,9 +613,9 @@ document.addEventListener("click",async e=>{
   const act=b.dataset.act,t=current();
   if(act==="copyopen"){copyText(peek(t.id).post);return}
   e.preventDefault();
-  if(act==="sel"||act==="go"){S.cfg.sel=b.dataset.id;if(act==="go"){S.cfg.tab="linkedin";location.hash="estudio"}touch("cfg");render();window.scrollTo(0,0)}
+  if(act==="sel"||act==="go"){UI={ci:0,flip:false,ans:{}};S.cfg.sel=b.dataset.id;if(act==="go"){S.cfg.tab="linkedin";location.hash="estudio"}touch("cfg");render();window.scrollTo(0,0)}
   else if(act==="tab"){S.cfg.tab=b.dataset.v;touch("cfg");render()}
-  else if(act==="st"){T(t.id).st=+b.dataset.v;touch(t.id);render()}
+  else if(act==="st"){T(t.id).st=+b.dataset.v;touch(t.id);render();if(b.dataset.v==="2")confetti()}
   else if(act==="copy"){const el=document.getElementById(b.dataset.from);copyText(el.value!==undefined?el.value:el.textContent)}
   else if(act==="chatq")sendChat(b.dataset.q);
   else if(act==="figq")makeFig(b.dataset.q+" para el tema "+t.name);
@@ -526,13 +627,22 @@ document.addEventListener("click",async e=>{
       save(slug(peek(t.id).charts[+b.dataset.i].titulo||"grafico")+".png",new Blob([u]))}
     catch(_){note("No se pudo exportar el gráfico.",true)}
   }
+  else if(act==="genprac")genPrac();
+  else if(act==="flip"){UI.flip=!UI.flip;$("#flash").classList.toggle("f",UI.flip)}
+  else if(act==="cardgo"){UI.ci=+b.dataset.i;UI.flip=false;render()}
+  else if(act==="cardyes"||act==="cardno"){const p=T(t.id),i=Math.min(UI.ci,p.cards.length-1);p.known=(p.known||[]).filter(k=>k!==i);if(act==="cardyes")p.known.push(i);
+    UI.ci=(i+1)%p.cards.length;UI.flip=false;touch(t.id);render();if(p.known.length===p.cards.length&&act==="cardyes")confetti()}
+  else if(act==="ans"){const p=T(t.id);UI.ans[+b.dataset.k]=+b.dataset.j;
+    if(Object.keys(UI.ans).length===p.quiz.length){const g=p.quiz.filter((q,k)=>UI.ans[k]===q.c).length;p.best=Math.max(p.best??0,g);touch(t.id);if(g===p.quiz.length)confetti()}
+    render()}
+  else if(act==="quizreset"){UI.ans={};render()}
   else if(act==="genres")genResumen();
   else if(act==="genpost")genPost();
   else if(act==="genguion")genGuion();
   else if(act==="dlmd"){const p=peek(t.id);p.resumen.trim()?save("resumen-claude.md",p.resumen):note("Todavía no hay resumen. Genéralo en el paso Resumen.",true)}
   else if(act==="dlinf"){const p=peek(t.id);p.fuente.trim()?save("informe-notebooklm.md","# "+t.name+"\n\n"+p.fuente):note("Todavía no pegaste el informe de NotebookLM en el paso Estudiar.",true)}
   else if(act==="dlhtml"){const p=peek(t.id);p.resumen.trim()?save(slug(t.name)+"-resumen.html",printable(t,p)):note("Todavía no hay resumen que descargar.",true)}
-  else if(act==="pubtoday"){const p=T(t.id);p.pub=iso(new Date());p.st=2;touch(t.id);render()}
+  else if(act==="pubtoday"){const p=T(t.id);p.pub=iso(new Date());p.st=2;touch(t.id);render();confetti()}
   else if(act==="deltopic"){const a=b.dataset.a;S.cfg.custom[a]=(S.cfg.custom[a]||[]).filter(x=>x.id!==b.dataset.id);touch("cfg");render()}
   else if(act==="import"){
     const a=$("#imp-a").value,lines=$("#imp-t").value.split("\n").map(s=>s.replace(/^\s*[-*•\d.)]+\s*/,"").trim()).filter(Boolean);
