@@ -1,6 +1,6 @@
 # Ámbito 02 · Probabilidad
 
-Cada tema tiene su carpeta con el notebook de práctica. La plataforma de estudio enlaza a ella.
+Cuaderno de NotebookLM: `02_Probabilidad` · 16 fuentes ([lista](fuentes.md)).
 
 | Tema | Carpeta | Notebook |
 |---|---|---|

@@ -1,0 +1,12 @@
+# 12.6 Geometalurgia y modelo de bloques
+
+Ámbito 12 · Aplicaciones Especializadas
+
+| Archivo | Estado |
+|---|---|
+| [`practica.ipynb`](practica.ipynb) | Plantilla lista para resolver |
+| `informe-notebooklm.md` | Por subir |
+| `resumen-claude.md` | Por subir |
+| `infografia-notebooklm.png` | Por subir |
+| `infografia-claude.png` | Por subir |
+| `graficos/` | Gráficos exportados desde la plataforma |
