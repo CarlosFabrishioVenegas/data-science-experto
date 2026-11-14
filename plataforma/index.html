@@ -1,0 +1,581 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Data Science Experto</title>
+<style>
+/* Plan: lenguaje visual tipo Apple. Lienzo gris muy claro, tarjetas blancas de esquinas amplias sin bordes,
+   tipografía del sistema con titulares grandes y apretados, un solo azul, controles en píldora, barra superior translúcida. */
+:root{
+  --bg:#f5f5f7; --surface:#ffffff; --sunken:#f5f5f7; --ink:#1d1d1f; --muted:#6e6e73; --line:#d2d2d7;
+  --accent:#0066cc; --fill:#0071e3; --accent-ink:#ffffff; --accent-soft:#e8f2fd; --btn:#e8e8ed;
+  --ok:#248a3d; --warn:#b25000; --bad:#d70015; --shadow:0 1px 3px rgba(0,0,0,.05),0 8px 24px rgba(0,0,0,.04);
+  --f:-apple-system,BlinkMacSystemFont,"SF Pro Text","SF Pro Display","Helvetica Neue",Helvetica,Arial,sans-serif;
+  --f-mono:ui-monospace,"SF Mono",SFMono-Regular,Menlo,Consolas,monospace;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#000000; --surface:#1c1c1e; --sunken:#2c2c2e; --ink:#f5f5f7; --muted:#a1a1a6; --line:#3a3a3c;
+  --accent:#2997ff; --fill:#0071e3; --accent-ink:#ffffff; --accent-soft:#12305a; --btn:#3a3a3c;
+  --ok:#30d158; --warn:#ff9f0a; --bad:#ff6961; --shadow:none; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#000000; --surface:#1c1c1e; --sunken:#2c2c2e; --ink:#f5f5f7; --muted:#a1a1a6; --line:#3a3a3c;
+  --accent:#2997ff; --fill:#0071e3; --accent-ink:#ffffff; --accent-soft:#12305a; --btn:#3a3a3c;
+  --ok:#30d158; --warn:#ff9f0a; --bad:#ff6961; --shadow:none; color-scheme:dark}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{background:var(--bg);color:var(--ink);font:400 15px/1.5 var(--f);letter-spacing:-.01em;-webkit-font-smoothing:antialiased}
+a{color:var(--accent);text-decoration:none}
+a:hover{text-decoration:underline}
+button,input,select,textarea{font:inherit;color:inherit;letter-spacing:inherit}
+:focus-visible{outline:3px solid color-mix(in srgb,var(--fill) 55%,transparent);outline-offset:2px}
+code{font:.92em var(--f-mono);background:var(--sunken);padding:1px 5px;border-radius:5px}
+.top{position:sticky;top:0;z-index:10;display:flex;flex-wrap:wrap;align-items:center;gap:8px 20px;padding:10px max(16px,calc((100vw - 1380px)/2 + 16px));
+  background:color-mix(in srgb,var(--bg) 76%,transparent);-webkit-backdrop-filter:saturate(180%) blur(20px);backdrop-filter:saturate(180%) blur(20px);border-bottom:1px solid color-mix(in srgb,var(--line) 60%,transparent)}
+.brand{font:600 17px/1.2 var(--f);letter-spacing:-.02em}
+.brand small{display:block;font:400 12px/1.3 var(--f);color:var(--muted);letter-spacing:0}
+.nav{display:flex;gap:2px;margin-left:auto;background:var(--btn);padding:2px;border-radius:10px;flex-wrap:wrap}
+.nav a{padding:5px 14px;border-radius:8px;color:var(--ink);font-weight:500;font-size:13px}
+.nav a:hover{text-decoration:none}
+.nav a[aria-current="page"]{background:var(--surface);box-shadow:0 1px 3px rgba(0,0,0,.12)}
+.sync{font-size:12px;color:var(--muted);width:100%}
+@media(min-width:760px){.sync{width:auto}}
+.shell{display:grid;gap:20px;padding:24px 16px 48px;max-width:1380px;margin:0 auto}
+@media(min-width:960px){.shell.two{grid-template-columns:320px minmax(0,1fr);align-items:start}
+  .side{position:sticky;top:76px;max-height:calc(100vh - 96px);overflow:auto}}
+.card{background:var(--surface);border-radius:20px;box-shadow:var(--shadow)}
+.side{padding:18px 14px}
+.side>label{font:600 19px/1.2 var(--f);letter-spacing:-.02em;padding:0 6px}
+.side summary{cursor:pointer;list-style:none}
+.side summary::-webkit-details-marker{display:none}
+#q{width:100%;padding:8px 12px;border:0;border-radius:10px;background:var(--btn);margin:10px 0 6px}
+.amb{border-top:1px solid color-mix(in srgb,var(--line) 55%,transparent)}
+.amb>summary{display:grid;grid-template-columns:26px 1fr auto;gap:6px;align-items:baseline;padding:11px 6px;font-weight:600;font-size:14px}
+.amb>summary .n{font:500 12px var(--f-mono);color:var(--muted)}
+.amb>summary .c{font-size:12px;font-weight:400;color:var(--muted);font-variant-numeric:tabular-nums}
+.tl{list-style:none;margin:0 0 8px;padding:0}
+.tl li{display:flex}
+.tl button.t{flex:1;display:grid;grid-template-columns:10px 34px 1fr;gap:6px;align-items:baseline;text-align:left;background:none;border:0;padding:7px 8px;border-radius:10px;cursor:pointer;font-size:13.5px;line-height:1.35}
+.tl button.t:hover{background:var(--sunken)}
+.tl button.t[aria-current="true"]{background:var(--fill);color:#fff}
+.tl button.t[aria-current="true"] .k{color:rgba(255,255,255,.75)}
+.tl button.t[aria-current="true"] .dot{border-color:#fff}
+.tl .k{font-size:12px;color:var(--muted);font-variant-numeric:tabular-nums}
+.dot{width:8px;height:8px;border-radius:50%;border:1.5px solid var(--muted);align-self:center}
+.dot.s1{border-color:var(--warn);background:linear-gradient(90deg,var(--warn) 50%,transparent 50%)}
+.dot.s2{border-color:var(--ok);background:var(--ok)}
+.dot.s3{border-color:var(--accent);background:var(--accent);border-radius:2px}
+.x{background:none;border:0;color:var(--muted);cursor:pointer;padding:0 6px}
+.addrow{display:flex;gap:6px;padding:0 4px 12px}
+.addrow input{flex:1;min-width:0;padding:6px 10px;border:1px solid var(--line);border-radius:10px;background:transparent;font-size:13px}
+.legend{display:flex;flex-wrap:wrap;gap:4px 12px;font-size:12px;color:var(--muted);padding:12px 6px 0;border-top:1px solid color-mix(in srgb,var(--line) 55%,transparent)}
+.legend span{display:inline-flex;gap:5px;align-items:center}
+.main{min-width:0;display:grid;gap:20px}
+.head{padding:32px 32px 22px}
+.eyebrow{font:600 14px/1.3 var(--f);color:var(--muted)}
+h1{font:700 clamp(28px,4.2vw,46px)/1.07 var(--f);letter-spacing:-.03em;margin:6px 0 18px;text-wrap:balance}
+h2{font:600 21px/1.2 var(--f);letter-spacing:-.02em;margin:0 0 6px;text-wrap:balance}
+h3{font:600 15px/1.3 var(--f);margin:0 0 4px}
+.row{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.seg{display:inline-flex;background:var(--btn);padding:2px;border-radius:10px}
+.seg button{border:0;background:none;padding:5px 14px;cursor:pointer;font-size:13px;font-weight:500;border-radius:8px}
+.seg button[aria-pressed="true"]{background:var(--surface);box-shadow:0 1px 3px rgba(0,0,0,.12)}
+.pill{font-size:12px;font-weight:600;padding:4px 10px;border-radius:980px;background:var(--accent-soft);color:var(--accent)}
+.steps{display:flex;gap:6px;overflow-x:auto;padding:0 32px 14px;border-bottom:1px solid color-mix(in srgb,var(--line) 55%,transparent)}
+.steps button{flex:0 0 auto;display:flex;gap:8px;align-items:center;padding:8px 16px 8px 9px;border:0;border-radius:980px;background:var(--sunken);cursor:pointer;font-weight:500;font-size:14px;white-space:nowrap}
+.steps button[aria-selected="true"]{background:var(--ink);color:var(--surface)}
+.steps .i{font-size:11px;font-weight:600;width:22px;height:22px;border-radius:50%;background:var(--surface);color:var(--ink);display:grid;place-items:center}
+.steps .done .i{background:var(--ok);color:#fff}
+.pane{padding:28px 32px 32px;display:grid;gap:22px}
+@media(max-width:640px){.head{padding:24px 18px 18px}.steps{padding:0 18px 14px}.pane{padding:20px 18px 24px}}
+.grid2{display:grid;gap:20px}
+@media(min-width:1100px){.grid2{grid-template-columns:1fr 1fr}}
+.box{border-radius:18px;padding:20px;background:var(--sunken);display:grid;gap:10px;align-content:start;min-width:0}
+.hint{color:var(--muted);font-size:14px;margin:0;max-width:68ch}
+textarea,.in{width:100%;border:1px solid var(--line);border-radius:12px;background:var(--surface);padding:10px 13px}
+textarea:focus,.in:focus,.addrow input:focus,#q:focus{outline:0;border-color:var(--fill);box-shadow:0 0 0 4px color-mix(in srgb,var(--fill) 25%,transparent)}
+textarea{resize:vertical;line-height:1.5}
+pre{font:12.5px/1.55 var(--f-mono);letter-spacing:0;margin:0;white-space:pre-wrap;word-break:break-word;background:var(--surface);border-radius:12px;padding:12px 14px;max-height:210px;overflow:auto}
+.btn{border:0;background:var(--btn);border-radius:980px;padding:8px 17px;cursor:pointer;font-weight:500;color:var(--ink);display:inline-block;font-size:14px;line-height:1.3}
+.btn:hover{text-decoration:none;filter:brightness(.96)}
+.btn.p{background:var(--fill);color:var(--accent-ink)}
+.btn.p:hover{filter:brightness(1.08)}
+.btn.s{padding:5px 13px;font-size:12.5px}
+.box .btn:not(.p),.file .btn{background:color-mix(in srgb,var(--btn) 70%,var(--line))}
+.busy .btn.p{opacity:.5;pointer-events:none}
+.msg{font-size:13px;color:var(--muted);min-height:1.2em}
+.msg.err{color:var(--bad)}
+.chat{display:grid;gap:8px;max-height:540px;overflow:auto;padding:4px}
+.bub{padding:10px 15px;border-radius:20px;max-width:min(78ch,92%);background:var(--btn);overflow-wrap:anywhere}
+.bub.a{border-bottom-left-radius:6px}
+.bub.u{justify-self:end;background:var(--fill);color:#fff;border-bottom-right-radius:6px}
+.bub p{margin:0 0 8px}.bub p:last-child{margin:0}
+.bub pre,.doc pre{max-height:none}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chip{border:1px solid var(--line);background:none;border-radius:980px;padding:6px 14px;font-size:13px;cursor:pointer;color:var(--accent)}
+.chip:hover{border-color:var(--accent)}
+.send{display:flex;gap:10px;align-items:flex-end}
+.send textarea{flex:1;border-radius:20px;padding:10px 16px}
+.fig{border-radius:18px;background:var(--sunken);padding:18px;display:grid;gap:8px;min-width:0}
+.plot{width:100%;height:420px;min-width:0}
+.doc{background:var(--sunken);border-radius:18px;padding:26px 30px;max-height:580px;overflow:auto;font-size:16px;line-height:1.6}
+.doc>*{max-width:66ch}
+.doc h2{font-size:28px;letter-spacing:-.025em}.doc h3{font-size:20px;letter-spacing:-.02em;margin-top:22px}.doc h4,.doc h5{font-size:16px;margin:16px 0 4px}
+.files{display:grid;gap:10px}
+.file{display:grid;gap:8px 12px;grid-template-columns:auto 1fr;align-items:center;border-radius:16px;padding:14px 16px;background:var(--sunken)}
+.file .path{font:12px var(--f-mono);letter-spacing:0;color:var(--muted);overflow-wrap:anywhere}
+.file .acts{grid-column:1/-1;display:flex;flex-wrap:wrap;gap:6px}
+.file input,label.row input{width:18px;height:18px;accent-color:var(--fill)}
+.tiles{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:16px}
+.tile{padding:22px}
+.tile b{display:block;font:700 40px/1.05 var(--f);letter-spacing:-.03em;font-variant-numeric:tabular-nums}
+.tile span{color:var(--muted);font-size:14px}
+.bar{height:6px;background:var(--btn);border-radius:99px;overflow:hidden;display:flex}
+.bar i{display:block;height:100%}
+.bar .b2{background:var(--ok)}.bar .b3{background:var(--fill)}.bar .b1{background:var(--warn)}
+table{width:100%;border-collapse:collapse;font-size:14px}
+th,td{text-align:left;padding:10px 10px;border-bottom:1px solid color-mix(in srgb,var(--line) 55%,transparent);vertical-align:middle}
+th{font-size:12px;font-weight:600;color:var(--muted)}
+td.num{font-variant-numeric:tabular-nums;white-space:nowrap}
+.scroll{overflow-x:auto}
+label.l{font-weight:600;font-size:13px;display:grid;gap:5px}
+label.l .in{font-weight:400}
+ol.howto{margin:0;padding-left:20px;max-width:68ch}
+@media (prefers-reduced-motion:no-preference){.btn,.chip,.steps button,.tl button.t{transition:background-color .2s,filter .2s,border-color .2s}}
+</style>
+</head>
+<body>
+<header class="top">
+  <div class="brand">Data Science Experto<small>Fabrishio · Ciencia de Datos</small></div>
+  <nav class="nav" aria-label="Secciones">
+    <a href="#estudio" data-nav="estudio">Estudio</a>
+    <a href="#panel" data-nav="panel">Panel</a>
+    <a href="#ajustes" data-nav="ajustes">Ajustes y repositorio</a>
+  </nav>
+  <div class="sync" id="sync" role="status">Cargando tu avance…</div>
+</header>
+<div id="app"></div>
+
+<script src="https://cdn.plot.ly/plotly-2.35.2.min.js"></script>
+<script>
+"use strict";
+/* ---------- Malla base: 14 ámbitos. Los temas son un temario de partida, editable desde la plataforma. ---------- */
+const BASE=[
+["Matemáticas y Análisis",["Vectores, matrices y espacios vectoriales","Autovalores, autovectores y diagonalización","Descomposición SVD y PCA","Cálculo multivariable: gradiente, jacobiano y hessiano","Optimización convexa y condiciones KKT","Descenso de gradiente y variantes","Multiplicadores y relajación lagrangiana","Normas, distancias y productos internos"]],
+["Probabilidad",["Espacios de probabilidad y variables aleatorias","Distribuciones discretas y continuas","Esperanza, varianza y momentos","Probabilidad condicional y teorema de Bayes","Distribuciones conjuntas, covarianza y correlación","Ley de grandes números y teorema central del límite","Cadenas de Markov","Simulación Monte Carlo"]],
+["Estadística e Inferencia",["Estimación puntual y máxima verosimilitud","Intervalos de confianza","Pruebas de hipótesis y p-valor","Regresión lineal y sus supuestos","Modelos lineales generalizados","ANOVA y diseño de experimentos","Bootstrap y remuestreo","Pruebas no paramétricas"]],
+["Ciencia de Datos y Preprocesamiento",["Análisis exploratorio de datos","Calidad de datos y valores faltantes","Detección y tratamiento de atípicos","Codificación de variables categóricas","Escalamiento y transformaciones","Ingeniería de variables","Selección de variables","Desbalance de clases","Fuga de datos y partición train/valid/test"]],
+["Aprendizaje Automático",["Sesgo-varianza y validación cruzada","Regresión regularizada: Ridge, Lasso y Elastic Net","Regresión logística","Árboles de decisión","Random Forest","Gradient Boosting: XGBoost, LightGBM y CatBoost","Máquinas de soporte vectorial y kernels","Clustering: k-means, DBSCAN y jerárquico","Métricas de clasificación y regresión","Calibración de probabilidades","Ajuste de hiperparámetros","Interpretabilidad con SHAP"]],
+["Aprendizaje Profundo",["Perceptrón multicapa y retropropagación","Funciones de activación e inicialización de pesos","Optimizadores: SGD, momentum y Adam","Regularización: dropout y batch normalization","Redes convolucionales","Redes recurrentes: LSTM y GRU","Atención y Transformers","Autoencoders","Transfer learning y fine-tuning"]],
+["Series de Tiempo y Forecasting",["Componentes, estacionariedad y raíz unitaria","Autocorrelación: ACF y PACF","ARIMA y SARIMA","Suavizamiento exponencial (ETS)","Modelos con variables exógenas","Validación temporal y backtesting","Forecasting con ML: rezagos y ventanas","Deep learning para series de tiempo","Pronóstico jerárquico y probabilístico","Detección de anomalías en series"]],
+["Cálculo Estocástico y Procesos",["Procesos estocásticos y filtraciones","Movimiento browniano","Martingalas","Integral y lema de Itô","Ecuaciones diferenciales estocásticas","Procesos de Poisson y de saltos","Reversión a la media: Ornstein-Uhlenbeck","Medidas de riesgo: VaR y CVaR"]],
+["Visualización de Datos y Storytelling",["Principios de percepción visual","Elección del gráfico correcto","Diseño de dashboards","Storytelling con datos","Visualización de incertidumbre","Visualización de series de tiempo","Comunicación para audiencias ejecutivas","Gráficos interactivos con Plotly"]],
+["Aplicaciones Especializadas: Industria, Minería y Cemento",["Mantenimiento predictivo","Soft sensors y calidad en línea","Control estadístico de procesos","Optimización de molienda y consumo energético","Predicción de calidad de clínker y cemento","Geometalurgia y modelo de bloques","Optimización de despacho y flota","Pronóstico de demanda eléctrica y despacho hidrotérmico"]],
+["Ingeniería de Software, MLOps y Buenas Prácticas",["Git y control de versiones","Código limpio, pruebas y empaquetado","Pipelines reproducibles","Seguimiento de experimentos","Despliegue de modelos: API y batch","Contenedores con Docker","CI/CD para ML","Monitoreo, drift y reentrenamiento","Gobierno y riesgo de modelos"]],
+["Inferencia Causal",["Resultados potenciales y efecto promedio del tratamiento","Grafos causales y criterio backdoor","Experimentos aleatorizados y pruebas A/B","Propensity score y matching","Diferencias en diferencias","Variables instrumentales","Regresión discontinua","Uplift modeling","Double machine learning"]],
+["Métodos Bayesianos",["Prior, verosimilitud y posterior","Priors conjugados","MCMC: Metropolis-Hastings y Gibbs","Monte Carlo hamiltoniano y NUTS","Inferencia variacional","Modelos jerárquicos","Regresión bayesiana","Procesos gaussianos","Optimización bayesiana"]],
+["IA Aplicada a Operaciones",["Fundamentos de operaciones y rol de la IA","Automatización inteligente: RPA, NLP y visión por computadora","IA para predicción de demanda","IA para mantenimiento y planificación","Decisiones en tiempo real en producción y logística","Indicadores, riesgos y estrategia de adopción","Agentes de IA y RAG en operaciones"]]
+];
+const pad=n=>String(n).padStart(2,"0");
+const AMB=BASE.map((a,i)=>({id:"a"+pad(i+1),n:i+1,name:a[0],base:a[1]}));
+
+/* ---------- utilidades ---------- */
+const $=s=>document.querySelector(s);
+const esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const slug=s=>s.normalize("NFD").replace(/[̀-ͯ]/g,"").toLowerCase().replace(/[^a-z0-9]+/g,"-").replace(/^-|-$/g,"").slice(0,56);
+const clone=o=>JSON.parse(JSON.stringify(o));
+const words=s=>(s.trim().match(/\S+/g)||[]).length;
+function md(src){
+  const inl=s=>s.replace(/`([^`]+)`/g,"<code>$1</code>").replace(/\*\*([^*]+)\*\*/g,"<strong>$1</strong>").replace(/(^|[\s(])\*([^*\s][^*]*)\*/g,"$1<em>$2</em>");
+  let out="",list=null,code=false,para=[];
+  const fp=()=>{if(para.length){out+="<p>"+inl(para.join(" "))+"</p>";para=[]}};
+  const cl=()=>{if(list){out+="</"+list+">";list=null}};
+  for(const l of esc(src).split("\n")){
+    if(l.trim().startsWith("```")){fp();cl();out+=code?"</code></pre>":"<pre><code>";code=!code;continue}
+    if(code){out+=l+"\n";continue}
+    let m;
+    if((m=l.match(/^(#{1,4})\s+(.*)/))){fp();cl();const h=Math.min(m[1].length+1,5);out+="<h"+h+">"+inl(m[2])+"</h"+h+">"}
+    else if((m=l.match(/^\s*[-*•]\s+(.*)/))){fp();if(list!=="ul"){cl();out+="<ul>";list="ul"}out+="<li>"+inl(m[1])+"</li>"}
+    else if((m=l.match(/^\s*\d+[.)]\s+(.*)/))){fp();if(list!=="ol"){cl();out+="<ol>";list="ol"}out+="<li>"+inl(m[1])+"</li>"}
+    else if(!l.trim()){fp();cl()}
+    else{cl();para.push(l)}
+  }
+  fp();cl();if(code)out+="</code></pre>";return out;
+}
+
+/* ---------- estado ---------- */
+const DEF=Object.freeze({st:0,fuente:"",notas:"",nb:"",chat:[],charts:[],resumen:"",post:"",guion:"",pub:"",pubUrl:"",files:{},readyAt:0});
+let S={cfg:{repo:"https://github.com/CarlosFabrishioVenegas/data-science-experto",branch:"main",nb:"",sel:"a01-t01",tab:"estudiar",custom:{},hideBase:{},open:{a01:true}},t:{}};
+const peek=id=>S.t[id]||DEF;
+const T=id=>S.t[id]||(S.t[id]=clone(DEF));
+function topicsOf(a){
+  const base=S.cfg.hideBase[a.id]?[]:a.base.map((name,i)=>({id:a.id+"-t"+pad(i+1),name}));
+  const all=base.concat(S.cfg.custom[a.id]||[]);
+  return all.map((t,i)=>({...t,aId:a.id,an:a.n,aName:a.name,k:i+1,custom:!t.id.includes("-t")}));
+}
+const allTopics=()=>AMB.flatMap(topicsOf);
+const current=()=>{const all=allTopics();return all.find(t=>t.id===S.cfg.sel)||all[0]};
+const stage=id=>{const p=peek(id);return p.pub?3:p.st};
+const folder=t=>pad(t.an)+"-"+slug(t.aName)+"/"+pad(t.an)+"-"+pad(t.k)+"-"+slug(t.name);
+
+/* ---------- guardado: cuenta de Claude si está disponible, navegador como respaldo ---------- */
+let db=null,root=null,cloud=false,flushing=false,timer=null,retries=0;const dirty=new Set();
+const use=n=>(window.claude&&window.claude.use)?window.claude.use(n).catch(()=>null):Promise.resolve(null);
+function setSync(){const el=$("#sync");if(!el)return;el.textContent=dirty.size&&cloud?"Guardando…":cloud?"Avance guardado en tu cuenta":"Avance guardado solo en este navegador"}
+function local(k){try{localStorage.setItem("dse:"+k,JSON.stringify(k==="cfg"?S.cfg:S.t[k]))}catch(e){}}
+function touch(k){dirty.add(k);local(k);clearTimeout(timer);timer=setTimeout(flush,1200);setSync()}
+const ref=k=>k==="cfg"?root:root.collection("temas").doc(k);
+async function flush(){
+  if(!cloud){dirty.clear();setSync();return}
+  if(flushing)return;flushing=true;
+  while(dirty.size){
+    const k=dirty.values().next().value;dirty.delete(k);
+    try{await ref(k).set(clone(k==="cfg"?S.cfg:S.t[k]));retries=0}
+    catch(e){
+      if(e&&e.code==="unavailable"&&retries<2){retries++;dirty.add(k);timer=setTimeout(flush,4000);break}
+      if(e&&e.code==="quota_exceeded"){note("El almacenamiento de la plataforma está lleno. Borra gráficos o conversaciones antiguas.",true)}
+      cloud=false;dirty.clear();break
+    }
+  }
+  flushing=false;setSync();
+}
+function loadLocal(){
+  try{for(let i=0;i<localStorage.length;i++){const key=localStorage.key(i);if(!key||!key.startsWith("dse:"))continue;
+    const v=JSON.parse(localStorage.getItem(key));const k=key.slice(4);
+    if(k==="cfg")S.cfg={...S.cfg,...v};else S.t[k]={...clone(DEF),...v}}}catch(e){}
+}
+async function loadCloud(){
+  const [d,user]=await Promise.all([use("db"),use("user")]);
+  const uid=user&&user.id?await user.id():null;
+  if(!d||!uid){setSync();return}
+  db=d;root=db.doc("data/users/"+uid+"/espacio");
+  try{
+    const wait=new Promise((_,r)=>setTimeout(()=>r({code:"timeout"}),10000));
+    const [c,q]=await Promise.race([Promise.all([root.get(),root.collection("temas").limit(1000).get()]),wait]);
+    if(c.exists&&!dirty.has("cfg"))S.cfg={...S.cfg,...clone(c.data())};
+    q.docs.forEach(x=>{if(!dirty.has(x.id))S.t[x.id]={...clone(DEF),...clone(x.data())}});
+    cloud=true;
+    if(!c.exists){Object.keys(S.t).forEach(k=>dirty.add(k));dirty.add("cfg");flush()}
+    if(!document.activeElement||!/TEXTAREA|INPUT/.test(document.activeElement.tagName))render();
+  }catch(e){cloud=false}
+  setSync();
+}
+
+/* ---------- Claude ---------- */
+let ai=null,dl=null,busy=false;
+const REGLAS="Eres el tutor de posgrado en ciencia de datos de Fabrishio, ingeniero industrial y científico de datos en banca, con experiencia previa en cemento y minería en Perú. Responde en español, directo y conciso. Cuando aporte, aterriza el concepto en dos contextos: industria (minería y cemento) y banca. Si hay material de NotebookLM, es la fuente principal: distingue lo que sale del material de lo que agregas tú. No inventes cifras, casos, anécdotas ni citas; si un dato necesita comprobarse, márcalo con [verificar]. Escribe las fórmulas en texto plano con símbolos Unicode, sin LaTeX.";
+function ctx(t){const p=peek(t.id);
+  return "TEMA: "+t.name+"\nÁMBITO "+t.an+": "+t.aName+"\n"+
+    (p.fuente.trim()?"\nMATERIAL DE NOTEBOOKLM (fuente principal):\n\"\"\"\n"+p.fuente.slice(0,60000)+"\n\"\"\"\n":"\n(Todavía no hay informe de NotebookLM pegado para este tema.)\n")+
+    (p.notas.trim()?"\nNOTAS DE FABRISHIO:\n"+p.notas.slice(0,8000)+"\n":"");}
+function why(e){const c=e&&e.code;
+  if(c==="none")return "Claude no está disponible en esta vista. Abre la plataforma desde claude.ai con tu sesión iniciada.";
+  if(c==="not_granted")return "No se dio permiso para consultar a Claude desde esta página.";
+  if(c==="rate_limited")return "Se alcanzó el límite de consultas. Espera un momento y vuelve a intentar.";
+  return "No se pudo completar la consulta"+(e&&e.message?": "+e.message:".");}
+async function ask(input,opt={}){
+  if(!ai)throw {code:"none"};
+  return ai(input,{onText:opt.onText,modelTier:opt.tier||"default",cache:false});
+}
+function note(text,err){const el=$("#msg");if(el){el.textContent=text||"";el.classList.toggle("err",!!err)}}
+async function guarded(fn){
+  if(busy)return;busy=true;document.body.classList.add("busy");note("Claude está trabajando…");
+  try{await fn();note("")}catch(e){note(why(e),true)}
+  busy=false;document.body.classList.remove("busy");
+}
+
+/* ---------- prompts de NotebookLM (tres, separados) ---------- */
+function nbPrompts(t){
+  const base="Tema: «"+t.name+"» (ámbito "+t.an+": "+t.aName+"). Usa solo las fuentes de este cuaderno. Si las fuentes no cubren un punto, dilo de forma explícita en vez de completarlo. Nivel posgrado, en español.";
+  return [
+   ["Informe","nb-informe",base+"\n\nEscribe un informe extenso y pedagógico que permita entender el tema completo leyendo solo este documento: intuición, definiciones, derivaciones matemáticas paso a paso, algoritmo, hiperparámetros y su efecto, supuestos, errores comunes y código Python comentado. Cierra con dos aplicaciones desarrolladas: una en minería o cemento y otra en banca. Cita la fuente de cada afirmación importante."],
+   ["Tarjetas","nb-tarjetas",base+"\n\nGenera todas las tarjetas didácticas que las fuentes permitan, sin número fijo. Una idea por tarjeta: pregunta al frente, respuesta breve y exacta al reverso. Cubre definiciones, fórmulas, supuestos, hiperparámetros, errores comunes y casos de uso."],
+   ["Cuestionario","nb-cuestionario",base+"\n\nGenera el cuestionario más completo que las fuentes permitan, sin número fijo de preguntas. Mezcla opción múltiple, verdadero o falso con justificación y problemas de cálculo. Ordena de básico a experto e incluye la solución explicada de cada pregunta."]
+  ];
+}
+
+/* ---------- vistas ---------- */
+function sidebar(){
+  const q=(S.q||"").toLowerCase();
+  const cur=S.cfg.sel;
+  return '<aside class="card side"><label class="l" for="q">Malla de 14 ámbitos</label><input id="q" type="search" placeholder="Buscar tema" value="'+esc(S.q||"")+'">'+
+  AMB.map(a=>{
+    const ts=topicsOf(a),show=q?ts.filter(t=>t.name.toLowerCase().includes(q)):ts;
+    if(q&&!show.length)return "";
+    const done=ts.filter(t=>stage(t.id)>=2).length;
+    const open=q||S.cfg.open[a.id]||ts.some(t=>t.id===cur);
+    return '<details class="amb" data-amb="'+a.id+'"'+(open?" open":"")+'><summary><span class="n">'+pad(a.n)+'</span><span>'+esc(a.name)+'</span><span class="c">'+done+"/"+ts.length+'</span></summary><ul class="tl">'+
+      show.map(t=>'<li><button class="t" data-act="sel" data-id="'+t.id+'" aria-current="'+(t.id===cur)+'"><span class="dot s'+stage(t.id)+'"></span><span class="k">'+a.n+"."+t.k+'</span><span>'+esc(t.name)+'</span></button>'+(t.custom?'<button class="x" data-act="deltopic" data-a="'+a.id+'" data-id="'+t.id+'" aria-label="Quitar tema" title="Quitar tema">×</button>':"")+'</li>').join("")+
+      '</ul><form class="addrow" data-add="'+a.id+'"><input id="add-'+a.id+'" placeholder="Agregar tema a este ámbito" aria-label="Agregar tema a '+esc(a.name)+'"><button class="btn s">Agregar</button></form></details>';
+  }).join("")+
+  '<div class="legend"><span><i class="dot"></i>Pendiente</span><span><i class="dot s1"></i>En estudio</span><span><i class="dot s2"></i>Estudiado</span><span><i class="dot s3"></i>Publicado</span></div></aside>';
+}
+const TABS=[["estudiar","Estudiar"],["consultar","Consultar"],["graficos","Gráficos"],["resumen","Resumen"],["linkedin","LinkedIn"],["repo","Repositorio"]];
+function isDone(tab,p){return tab==="estudiar"?p.st===2:tab==="consultar"?p.chat.length>0:tab==="graficos"?p.charts.length>0:tab==="resumen"?!!p.resumen.trim():tab==="linkedin"?!!p.pub:FILES.every(f=>p.files[f[0]])}
+function viewEstudio(){
+  const t=current(),p=peek(t.id),tab=S.cfg.tab;
+  const pane={estudiar:paneEstudiar,consultar:paneConsultar,graficos:paneGraficos,resumen:paneResumen,linkedin:paneLinkedin,repo:paneRepo}[tab]||paneEstudiar;
+  return '<div class="shell two">'+sidebar()+'<div class="main"><section class="card">'+
+    '<div class="head"><div class="eyebrow">Ámbito '+pad(t.an)+" · "+esc(t.aName)+" · tema "+t.an+"."+t.k+'</div><h1>'+esc(t.name)+'</h1>'+
+    '<div class="row"><div class="seg" role="group" aria-label="Estado del tema">'+["Pendiente","En estudio","Estudiado"].map((l,i)=>'<button data-act="st" data-v="'+i+'" aria-pressed="'+(p.st===i)+'">'+l+'</button>').join("")+'</div>'+
+    (p.pub?'<span class="pill">Publicado el '+esc(p.pub)+'</span>':"")+'</div></div>'+
+    '<div class="steps" role="tablist">'+TABS.map((x,i)=>'<button role="tab" data-act="tab" data-v="'+x[0]+'" aria-selected="'+(tab===x[0])+'" class="'+(isDone(x[0],p)?"done":"")+'"><span class="i">'+(isDone(x[0],p)?"✓":i+1)+'</span>'+x[1]+'</button>').join("")+'</div>'+
+    '<div class="pane">'+pane(t,p)+'<div class="msg" id="msg" role="status"></div></div></section></div></div>';
+}
+function paneEstudiar(t,p){
+  const nb=p.nb||S.cfg.nb;
+  return '<div class="grid2"><div class="box"><h2>1. Pide el material a NotebookLM</h2><p class="hint">Tres prompts separados para este tema. Cópialos en tu cuaderno, que ya tiene los libros cargados.</p>'+
+    nbPrompts(t).map(x=>'<div><div class="row" style="justify-content:space-between"><h3>'+x[0]+'</h3><button class="btn s" data-act="copy" data-from="'+x[1]+'">Copiar</button></div><pre id="'+x[1]+'">'+esc(x[2])+'</pre></div>').join("")+
+    '<label class="l" for="f-nb">Enlace al cuaderno de NotebookLM de este tema<input class="in" id="f-nb" data-f="nb" type="url" placeholder="https://notebooklm.google.com/notebook/…" value="'+esc(p.nb)+'"></label>'+
+    '<div class="row"><a class="btn" href="'+esc(nb||"https://notebooklm.google.com/")+'" target="_blank" rel="noopener">Abrir NotebookLM</a></div></div>'+
+    '<div class="box"><h2>2. Pega aquí el informe de NotebookLM</h2><p class="hint">Este texto es la fuente con la que Claude responde, grafica y redacta en los pasos siguientes. Sin él, Claude trabaja solo con conocimiento general.</p>'+
+    '<textarea id="f-fuente" data-f="fuente" rows="14" placeholder="Pega el informe completo de NotebookLM">'+esc(p.fuente)+'</textarea><div class="msg" id="cnt-fuente">'+words(p.fuente)+' palabras</div>'+
+    '<h2>3. Tus notas</h2><textarea id="f-notas" data-f="notas" rows="6" placeholder="Dudas, ideas propias, observaciones de planta o de banca para el post">'+esc(p.notas)+'</textarea></div></div>';
+}
+const QCHAT=["Explícame la intuición antes de la fórmula","¿Qué errores comunes debo evitar?","Dame un ejemplo en minería o cemento y otro en banca","Hazme 5 preguntas de examen y corrígeme","¿Qué debería practicar en el notebook?"];
+function bubbles(p){return p.chat.map(m=>'<div class="bub '+(m.role==="user"?"u":"a")+'">'+(m.role==="user"?esc(m.content):md(m.content))+'</div>').join("")}
+function paneConsultar(t,p){
+  return '<div><h2>Consulta el tema con Claude</h2><p class="hint">Claude responde sobre «'+esc(t.name)+'» usando '+(p.fuente.trim()?"tu informe de NotebookLM ("+words(p.fuente)+" palabras) y tus notas.":"conocimiento general, porque aún no pegaste el informe de NotebookLM en el paso Estudiar.")+'</p></div>'+
+    '<div class="chat" id="chat">'+(bubbles(p)||'<p class="hint">Empieza con una pregunta propia o con una de estas:</p>')+'</div>'+
+    '<div class="chips">'+QCHAT.map(q=>'<button class="chip" data-act="chatq" data-q="'+esc(q)+'">'+esc(q)+'</button>').join("")+'</div>'+
+    '<form class="send" data-form="chat"><textarea id="chat-in" rows="2" placeholder="Escribe tu consulta" aria-label="Tu consulta"></textarea><button class="btn p">Preguntar</button></form>'+
+    (p.chat.length?'<div class="row"><button class="btn s" data-act="chatclear">Borrar conversación</button></div>':"");
+}
+const QFIG=["Intuición visual del concepto","Efecto de un hiperparámetro clave, con control deslizante","Ejemplo simulado en minería o cemento","Ejemplo simulado en banca","Comparación entre dos métodos"];
+function paneGraficos(t,p){
+  return '<div><h2>Gráficos interactivos generados por Claude</h2><p class="hint">Describe lo que quieres ver. El gráfico admite zoom, lectura de valores y, si lo pides, un control deslizante. Los datos son simulados salvo que pegues los tuyos en el pedido.</p></div>'+
+    '<div class="chips">'+QFIG.map(q=>'<button class="chip" data-act="figq" data-q="'+esc(q)+'">'+esc(q)+'</button>').join("")+'</div>'+
+    '<form class="send" data-form="fig"><textarea id="fig-in" rows="2" placeholder="Por ejemplo: frontera de decisión con distintos valores de regularización" aria-label="Gráfico que quieres"></textarea><button class="btn p">Generar gráfico</button></form>'+
+    (typeof Plotly==="undefined"?'<p class="msg err">No se pudo cargar la librería de gráficos. Revisa tu conexión y recarga.</p>':"")+
+    p.charts.map((c,i)=>'<figure class="fig" style="margin:0"><h3>'+esc(c.titulo||c.pedido)+'</h3><div class="plot" id="plot-'+i+'"></div><p class="hint">'+esc(c.lectura||"")+'</p><div class="row"><button class="btn s" data-act="figpng" data-i="'+i+'">Guardar PNG para el repositorio</button><button class="btn s" data-act="figdel" data-i="'+i+'">Quitar</button></div></figure>').join("");
+}
+function paneResumen(t,p){
+  return '<div><h2>Resumen de 4 a 5 páginas</h2><p class="hint">Claude redacta entre 2 000 y 2 400 palabras a partir de tu informe de NotebookLM. Sirve como artículo de LinkedIn y como PDF adjunto. Revísalo antes de publicar: los puntos marcados con [verificar] necesitan fuente.</p></div>'+
+    '<div class="row"><button class="btn p" data-act="genres">'+(p.resumen.trim()?"Volver a generar":"Generar resumen con Claude")+'</button>'+
+    '<button class="btn" data-act="copy" data-from="f-resumen">Copiar</button><button class="btn" data-act="dlmd">Descargar .md</button><button class="btn" data-act="dlhtml">Descargar versión imprimible</button>'+
+    '<a class="btn" href="https://www.linkedin.com/article/new/" target="_blank" rel="noopener">Abrir editor de artículos de LinkedIn</a></div>'+
+    '<div class="grid2"><div><textarea id="f-resumen" data-f="resumen" rows="24" placeholder="Aquí aparecerá el resumen. Puedes editarlo.">'+esc(p.resumen)+'</textarea><div class="msg" id="cnt-resumen">'+words(p.resumen)+' palabras · unas '+Math.max(0,Math.round(words(p.resumen)/480*10)/10)+' páginas</div></div>'+
+    '<div class="doc" id="doc">'+(p.resumen.trim()?md(p.resumen):'<p class="hint">Vista previa del documento.</p>')+'</div></div>';
+}
+function slots(n){const out=[],d=new Date();d.setHours(12,0,0,0);while(out.length<n){if(d.getDay()===2||d.getDay()===5)out.push(new Date(d));d.setDate(d.getDate()+1)}return out}
+const fdate=d=>d.toLocaleDateString("es-PE",{weekday:"long",day:"numeric",month:"long"});
+const iso=d=>d.getFullYear()+"-"+pad(d.getMonth()+1)+"-"+pad(d.getDate());
+function queue(){return allTopics().filter(t=>{const p=peek(t.id);return p.post.trim()&&!p.pub}).sort((a,b)=>peek(a.id).readyAt-peek(b.id).readyAt)}
+function paneLinkedin(t,p){
+  const qi=queue().findIndex(x=>x.id===t.id),sl=slots(Math.max(qi+1,1));
+  return '<div><h2>Publicación en LinkedIn</h2><p class="hint">Publicas martes y viernes. '+(p.pub?"Este tema ya está publicado.":qi>=0?"Según tu cola, a este tema le toca el "+fdate(sl[qi])+".":"Cuando el texto esté listo, este tema entra a la cola de publicación.")+'</p></div>'+
+    '<div class="grid2"><div class="box"><h3>Texto del post</h3><div class="row"><button class="btn p" data-act="genpost">'+(p.post.trim()?"Volver a generar":"Redactar post con Claude")+'</button><button class="btn" data-act="copy" data-from="f-post">Copiar</button></div>'+
+    '<textarea id="f-post" data-f="post" rows="14" placeholder="Relato para LinkedIn">'+esc(p.post)+'</textarea><div class="msg" id="cnt-post">'+p.post.length+' de 3 000 caracteres</div>'+
+    '<p class="hint">LinkedIn no permite publicar desde otra página. El botón copia el texto y abre el editor de LinkedIn para que pegues y adjuntes el PDF y la infografía.</p>'+
+    '<div class="row"><a class="btn p" data-act="copyopen" href="https://www.linkedin.com/feed/?shareActive=true" target="_blank" rel="noopener">Copiar y abrir LinkedIn</a></div></div>'+
+    '<div class="box"><h3>Guion de infografía para tu plantilla de 13 láminas</h3><div class="row"><button class="btn" data-act="genguion">'+(p.guion.trim()?"Volver a generar":"Generar guion con Claude")+'</button><button class="btn" data-act="copy" data-from="f-guion">Copiar</button></div>'+
+    '<textarea id="f-guion" data-f="guion" rows="9" placeholder="Título y puntos de cada lámina">'+esc(p.guion)+'</textarea>'+
+    '<h3>Registro de publicación</h3><label class="l" for="f-pub">Fecha de publicación<input class="in" id="f-pub" data-f="pub" type="date" value="'+esc(p.pub)+'"></label>'+
+    '<label class="l" for="f-pubUrl">Enlace al post publicado<input class="in" id="f-pubUrl" data-f="pubUrl" type="url" placeholder="https://www.linkedin.com/posts/…" value="'+esc(p.pubUrl)+'"></label>'+
+    '<div class="row"><button class="btn" data-act="pubtoday">Marcar como publicado hoy</button>'+(p.pubUrl?'<a class="btn" href="'+esc(p.pubUrl)+'" target="_blank" rel="noopener">Ver post</a>':"")+'</div></div></div>';
+}
+const FILES=[["nb","Notebook de práctica","practica.ipynb"],["inf","Informe de NotebookLM","informe-notebooklm.md"],["res","Resumen de Claude","resumen-claude.md"],["ig1","Infografía de NotebookLM","infografia-notebooklm.png"],["ig2","Infografía de Claude","infografia-claude.png"]];
+function paneRepo(t,p){
+  const repo=S.cfg.repo.replace(/\/+$/,""),br=S.cfg.branch||"main",f=folder(t);
+  const gh=repo.match(/github\.com\/([^/]+\/[^/]+)/);
+  return '<div><h2>Archivos de este tema en GitHub</h2><p class="hint">Carpeta del tema: <code>'+esc(f)+'</code>. Sube cada archivo con su nombre y marca la casilla. Los gráficos del paso 3 van en la subcarpeta <code>graficos</code>.</p></div>'+
+    '<div class="files">'+FILES.map(x=>'<div class="file"><input type="checkbox" id="fl-'+x[0]+'" data-file="'+x[0]+'"'+(p.files[x[0]]?" checked":"")+'><label for="fl-'+x[0]+'"><strong>'+x[1]+'</strong><div class="path">'+esc(f+"/"+x[2])+'</div></label><div class="acts">'+
+      '<a class="btn s" href="'+esc(repo+"/upload/"+br+"/"+f)+'" target="_blank" rel="noopener">Subir a GitHub</a>'+
+      '<a class="btn s" href="'+esc(repo+"/blob/"+br+"/"+f+"/"+x[2])+'" target="_blank" rel="noopener">Ver archivo</a>'+
+      (x[0]==="nb"&&gh?'<a class="btn s" href="'+esc("https://colab.research.google.com/github/"+gh[1]+"/blob/"+br+"/"+f+"/"+x[2])+'" target="_blank" rel="noopener">Abrir en Colab</a>':"")+
+      (x[0]==="inf"?'<button class="btn s" data-act="dlinf">Descargar desde lo pegado</button>':"")+
+      (x[0]==="res"?'<button class="btn s" data-act="dlmd">Descargar resumen</button>':"")+
+      '</div></div>').join("")+'</div>'+
+    '<div class="row"><a class="btn" href="'+esc(repo+"/tree/"+br+"/"+f)+'" target="_blank" rel="noopener">Ver carpeta del tema</a><a class="btn" href="'+esc(repo)+'" target="_blank" rel="noopener">Abrir repositorio</a><a class="btn" href="#ajustes">Cambiar repositorio</a></div>';
+}
+function viewPanel(){
+  const all=allTopics(),c=[0,0,0,0];all.forEach(t=>c[stage(t.id)]++);
+  const q=queue(),sl=slots(Math.max(q.length,6));
+  const pubs=all.filter(t=>peek(t.id).pub).sort((a,b)=>peek(b.id).pub.localeCompare(peek(a.id).pub));
+  return '<div class="shell"><section class="tiles">'+
+    [[all.length,"temas en la malla"],[c[1],"en estudio"],[c[2]+c[3],"estudiados"],[c[3],"publicados en LinkedIn"],[q.length,"listos para publicar"]].map(x=>'<div class="card tile"><b>'+x[0]+'</b><span>'+x[1]+'</span></div>').join("")+'</section>'+
+    '<div class="grid2"><section class="card pane"><h2>Calendario de publicación: martes y viernes</h2><div class="scroll"><table><thead><tr><th>Fecha</th><th>Tema en cola</th></tr></thead><tbody>'+
+    sl.slice(0,Math.max(6,q.length)).map((d,i)=>'<tr><td class="num">'+fdate(d)+'</td><td>'+(q[i]?'<button class="btn s" data-act="go" data-id="'+q[i].id+'">'+esc(q[i].an+"."+q[i].k+" "+q[i].name)+'</button>':'<span class="hint">Sin tema asignado</span>')+'</td></tr>').join("")+'</tbody></table></div>'+
+    '<p class="hint">Un tema entra a la cola cuando tiene texto de post y todavía no está publicado. El orden es el de preparación.</p>'+
+    (pubs.length?'<h3>Publicados</h3><div class="scroll"><table><tbody>'+pubs.map(t=>'<tr><td class="num">'+esc(peek(t.id).pub)+'</td><td>'+esc(t.name)+'</td><td>'+(peek(t.id).pubUrl?'<a href="'+esc(peek(t.id).pubUrl)+'" target="_blank" rel="noopener">Ver post</a>':"")+'</td></tr>').join("")+'</tbody></table></div>':"")+'</section>'+
+    '<section class="card pane"><h2>Avance por ámbito</h2><div class="scroll"><table><thead><tr><th>Ámbito</th><th>Avance</th><th>Estudiados</th></tr></thead><tbody>'+
+    AMB.map(a=>{const ts=topicsOf(a),n=ts.length||1,k=[0,0,0,0];ts.forEach(t=>k[stage(t.id)]++);
+      return '<tr><td>'+pad(a.n)+" "+esc(a.name)+'</td><td style="min-width:120px"><div class="bar" title="'+k[3]+' publicados, '+k[2]+' estudiados, '+k[1]+' en estudio"><i class="b3" style="width:'+k[3]/n*100+'%"></i><i class="b2" style="width:'+k[2]/n*100+'%"></i><i class="b1" style="width:'+k[1]/n*100+'%"></i></div></td><td class="num">'+(k[2]+k[3])+" / "+ts.length+'</td></tr>'}).join("")+
+    '</tbody></table></div></section></div></div>';
+}
+function viewAjustes(){
+  return '<div class="shell"><div class="grid2"><section class="card pane"><h2>Repositorio de GitHub</h2><p class="hint">Aquí viven los notebooks de práctica, los informes de NotebookLM, los resúmenes y las infografías. Cada tema tiene su carpeta y la plataforma enlaza directo a ella.</p>'+
+    '<label class="l" for="c-repo">Dirección del repositorio<input class="in" id="c-repo" data-c="repo" type="url" value="'+esc(S.cfg.repo)+'"></label>'+
+    '<label class="l" for="c-branch">Rama<input class="in" id="c-branch" data-c="branch" value="'+esc(S.cfg.branch)+'"></label>'+
+    '<h3>Crear el repositorio la primera vez</h3><ol class="howto"><li>Entra a <a href="https://github.com/new" target="_blank" rel="noopener">github.com/new</a> y crea <code>data-science-experto</code>, público y vacío.</li><li>Descomprime el archivo <code>data-science-experto-repo.zip</code> que Claude te entregó en el chat.</li><li>En la página del repositorio elige «uploading an existing file», arrastra el contenido de la carpeta y confirma.</li><li>Si usas otro nombre o cuenta, cambia la dirección de arriba.</li></ol>'+
+    '<h2>NotebookLM</h2><label class="l" for="c-nb">Enlace a tu cuaderno principal<input class="in" id="c-nb" data-c="nb" type="url" placeholder="https://notebooklm.google.com/notebook/…" value="'+esc(S.cfg.nb)+'"></label><p class="hint">Se usa cuando un tema no tiene su propio enlace.</p></section>'+
+    '<section class="card pane"><h2>Cargar tu malla</h2><p class="hint">La plataforma arranca con un temario base por ámbito. Para usar los temas de tu plan maestro, pega la lista de un ámbito, un tema por línea.</p>'+
+    '<label class="l" for="imp-a">Ámbito<select class="in" id="imp-a">'+AMB.map(a=>'<option value="'+a.id+'">'+pad(a.n)+" "+esc(a.name)+'</option>').join("")+'</select></label>'+
+    '<textarea id="imp-t" rows="9" placeholder="Un tema por línea" aria-label="Temas a cargar"></textarea>'+
+    '<label class="row" for="imp-r"><input type="checkbox" id="imp-r"> Reemplazar el temario base de este ámbito</label>'+
+    '<div class="row"><button class="btn p" data-act="import">Cargar temas</button><button class="btn" data-act="restore">Restaurar temario base del ámbito</button></div>'+
+    '<h2>Respaldo</h2><p class="hint">Descarga todo tu avance (notas, resúmenes, posts y gráficos) en un archivo.</p><div class="row"><button class="btn" data-act="backup">Descargar respaldo</button></div><div class="msg" id="msg" role="status"></div></section></div></div>';
+}
+
+/* ---------- render ---------- */
+function route(){const h=location.hash.slice(1);return ["estudio","panel","ajustes"].includes(h)?h:"estudio"}
+function render(){
+  const r=route();
+  document.querySelectorAll("[data-nav]").forEach(a=>a.setAttribute("aria-current",a.dataset.nav===r?"page":"false"));
+  $("#app").innerHTML=r==="panel"?viewPanel():r==="ajustes"?viewAjustes():viewEstudio();
+  if(r==="estudio"){
+    if(S.cfg.tab==="graficos")drawAll();
+    const ch=$("#chat");if(ch)ch.scrollTop=ch.scrollHeight;
+  }
+}
+function css(v){return getComputedStyle(document.documentElement).getPropertyValue(v).trim()}
+function drawAll(){
+  if(typeof Plotly==="undefined")return;
+  const ink=css("--ink"),line=css("--line"),ax={gridcolor:line,linecolor:line,zerolinecolor:line};
+  peek(current().id).charts.forEach((c,i)=>{
+    const el=$("#plot-"+i);if(!el)return;
+    const lay={...clone(c.fig.layout||{}),paper_bgcolor:"rgba(0,0,0,0)",plot_bgcolor:"rgba(0,0,0,0)",autosize:true,
+      font:{family:"-apple-system, BlinkMacSystemFont, Helvetica Neue, Arial, sans-serif",color:ink,size:13},colorway:[css("--fill"),"#ff9500","#34c759","#af52de","#ff2d55","#5ac8fa"],
+      template:{layout:{xaxis:ax,yaxis:ax,scene:{xaxis:ax,yaxis:ax,zaxis:ax}}}};
+    delete lay.title;delete lay.width;delete lay.height;
+    lay.margin={l:56,r:20,t:lay.sliders||lay.updatemenus?40:16,b:lay.sliders?90:50};
+    try{Plotly.newPlot(el,{data:clone(c.fig.data||[]),layout:lay,frames:clone(c.fig.frames||[]),config:{responsive:true,displaylogo:false}})}
+    catch(e){el.textContent="Este gráfico no se pudo dibujar. Quítalo y vuelve a generarlo."}
+  });
+}
+
+/* ---------- acciones con Claude ---------- */
+async function sendChat(text){
+  const t=current(),p=T(t.id);text=text.trim();if(!text)return;
+  await guarded(async()=>{
+    p.chat.push({role:"user",content:text});render();
+    const el=document.createElement("div");el.className="bub a";el.textContent="Pensando…";$("#chat").appendChild(el);$("#chat").scrollTop=1e9;
+    let hist=p.chat.slice(-16);if(hist[0].role!=="user")hist=hist.slice(1);
+    const msgs=hist.map((m,i)=>i===0?{role:"user",content:REGLAS+"\n\n"+ctx(t)+"\nCONSULTA: "+m.content}:{role:m.role,content:m.content});
+    try{
+      const r=await ask(msgs,{onText:({text})=>{el.innerHTML=md(text);$("#chat").scrollTop=1e9}});
+      p.chat.push({role:"assistant",content:r.text});if(p.chat.length>40)p.chat=p.chat.slice(-40);
+      if(p.st===0)p.st=1;touch(t.id);render();
+    }catch(e){p.chat.pop();render();const i=$("#chat-in");if(i)i.value=text;throw e}
+  });
+}
+async function makeFig(text){
+  const t=current(),p=T(t.id);text=text.trim();if(!text)return;
+  await guarded(async()=>{
+    const prompt=REGLAS+"\n\n"+ctx(t)+"\nTAREA: diseña un gráfico didáctico para este pedido: «"+text+"».\nDevuelve SOLO un objeto JSON válido, sin texto antes ni después y sin bloques de código, con esta forma exacta:\n{\"titulo\": string, \"lectura\": string, \"data\": [trazas de Plotly.js], \"layout\": {layout de Plotly.js}, \"frames\": []}\nReglas: tipos de Plotly.js 2 (scatter, bar, histogram, box, violin, heatmap, contour, surface). Máximo 300 puntos por traza y 6 trazas. Todos los valores son números o textos literales, nunca expresiones. Títulos de ejes y leyendas en español. No definas colores de fondo, fuentes ni tamaño. Si el pedido incluye un control deslizante, usa layout.sliders con \"frames\" (máximo 8 cuadros, cada uno con name y data). \"lectura\" son 2 o 3 frases que digan qué mirar en el gráfico y, si los datos son simulados, que lo son.";
+    const r=await ask(prompt,{tier:"complex"});
+    const a=r.text.indexOf("{"),b=r.text.lastIndexOf("}");
+    let fig;try{fig=JSON.parse(r.text.slice(a,b+1))}catch(e){throw {message:"Claude devolvió un gráfico con formato inválido. Intenta de nuevo con un pedido más simple"}}
+    if(!Array.isArray(fig.data)||!fig.data.length)throw {message:"el gráfico llegó sin datos"};
+    p.charts.unshift({pedido:text,titulo:String(fig.titulo||text),lectura:String(fig.lectura||""),fig:{data:fig.data,layout:fig.layout||{},frames:Array.isArray(fig.frames)?fig.frames:[]}});
+    while(p.charts.length>6||(p.charts.length>1&&JSON.stringify(p.charts).length>170000))p.charts.pop();
+    if(p.st===0)p.st=1;touch(t.id);render();
+  });
+}
+async function stream(field,prompt,tier){
+  const t=current(),p=T(t.id);
+  await guarded(async()=>{
+    const ta=$("#f-"+field);
+    const r=await ask(prompt,{tier,onText:({text})=>{if(ta)ta.value=text}});
+    p[field]=r.text.trim();
+    if(field==="post"&&!p.readyAt)p.readyAt=Date.now();
+    touch(t.id);render();
+    if(r.truncated)note("El texto se cortó antes de terminar. Genera de nuevo o complétalo a mano.",true);
+  });
+}
+function genResumen(){const t=current(),p=peek(t.id);
+  const repo=S.cfg.repo.replace(/\/+$/,"")+"/tree/"+(S.cfg.branch||"main")+"/"+folder(t);
+  stream("resumen",REGLAS+"\n\n"+ctx(t)+"\nTAREA: escribe el resumen del tema para publicarlo como artículo de LinkedIn y como PDF de 4 a 5 páginas. Extensión: entre 2 000 y 2 400 palabras. Formato Markdown.\nEstructura: # título claro; una entradilla de tres líneas; ## Por qué importa; ## La idea central (intuición antes que fórmula); ## Cómo funciona (pasos y fórmulas en texto plano); ## En minería y cemento; ## En banca; ## Errores comunes; ## Cómo practicarlo (remite al notebook de práctica en "+repo+"); ## Cierre con una pregunta abierta al lector.\nEstilo: primera persona, frases cortas, lenguaje llano de ingeniero, sin emojis, sin frases hechas ni vocabulario grandilocuente. No inventes vivencias de Fabrishio: donde convenga una experiencia propia deja la marca [tu observación aquí]. Devuelve solo el documento.","complex")}
+function genPost(){const t=current(),p=peek(t.id);
+  stream("post",REGLAS+"\n\n"+ctx(t)+(p.resumen.trim()?"\nRESUMEN YA REDACTADO:\n"+p.resumen.slice(0,16000)+"\n":"")+"\nTAREA: escribe el post de LinkedIn que acompaña al resumen y a la infografía. Entre 180 y 260 palabras, texto plano sin Markdown. Abre con un gancho de una o dos líneas basado en una observación concreta del trabajo con datos; si necesitas una vivencia personal deja la marca [tu observación aquí] en vez de inventarla. Luego tres o cuatro ideas del tema en frases cortas, con una mención a industria (minería o cemento) y otra a banca. Indica que el PDF y el notebook están adjuntos o enlazados. Cierra con una pregunta abierta. Termina con 3 a 5 hashtags. Sin emojis y sin vocabulario típico de texto generado. Devuelve solo el post.","default")}
+function genGuion(){const t=current(),p=peek(t.id);
+  stream("guion",REGLAS+"\n\n"+ctx(t)+(p.resumen.trim()?"\nRESUMEN YA REDACTADO:\n"+p.resumen.slice(0,16000)+"\n":"")+"\nTAREA: escribe el guion de una infografía de 13 láminas en formato 16:9 para la serie «Fabrishio · Ciencia de Datos». Láminas: 1 Portada; 2 Introducción; 3 a 9 desarrollo del tema (concepto, cómo funciona, pasos, comparaciones, riesgos técnicos); 10 Aplicaciones por industria con minería y banca destacadas; 11 Síntesis; 12 Conclusión; 13 Cierre. Por lámina: título de máximo 8 palabras y hasta 3 puntos de máximo 14 palabras. En la lámina 10 no inventes casos: escribe [caso real por verificar] donde haga falta buscar uno. Texto plano, una lámina por bloque.","default")}
+
+/* ---------- copiar y descargar ---------- */
+async function copyText(text){
+  try{await navigator.clipboard.writeText(text);note("Copiado.");return true}
+  catch(e){const ta=document.createElement("textarea");ta.value=text;document.body.appendChild(ta);ta.select();let ok=false;try{ok=document.execCommand("copy")}catch(_){}
+    ta.remove();note(ok?"Copiado.":"No se pudo copiar. Selecciona el texto y cópialo a mano.",!ok);return ok}
+}
+async function save(filename,data){
+  if(!dl){note("La descarga no está disponible en esta vista. Usa el botón Copiar.",true);return}
+  try{await dl.save({filename,data});note("Archivo guardado: "+filename)}
+  catch(e){note(e&&e.code==="declined"?"Descarga cancelada.":"No se pudo descargar el archivo.",e&&e.code!=="declined")}
+}
+function printable(t,p){
+  return '<!DOCTYPE html><html lang="es"><head><meta charset="utf-8"><title>'+esc(t.name)+'</title><style>@page{size:A4;margin:22mm 20mm}body{font:11.5pt/1.6 -apple-system,BlinkMacSystemFont,"Helvetica Neue",Helvetica,Arial,sans-serif;color:#1d1d1f;max-width:170mm;margin:auto;padding:12mm 0}header{font-weight:600;font-size:9.5pt;color:#6e6e73;border-bottom:1px solid #d2d2d7;padding-bottom:8px;margin-bottom:22px}h2{font-size:26pt;line-height:1.1;letter-spacing:-.03em}h3{font-size:15pt;letter-spacing:-.02em;margin-top:22px}h4,h5{font-size:12pt}pre{font:9.5pt Menlo,Consolas,monospace;background:#f5f5f7;padding:10px;border-radius:8px;white-space:pre-wrap}footer{margin-top:26px;font-size:9pt;color:#6e6e73;border-top:1px solid #d2d2d7;padding-top:8px}</style></head><body><header>Fabrishio · Ciencia de Datos · Ámbito '+pad(t.an)+" "+esc(t.aName)+'</header>'+md(p.resumen)+'<footer>'+esc(S.cfg.repo)+'</footer></body></html>';
+}
+
+/* ---------- eventos ---------- */
+document.addEventListener("click",async e=>{
+  const b=e.target.closest("[data-act]");if(!b)return;
+  const act=b.dataset.act,t=current();
+  if(act==="copyopen"){copyText(peek(t.id).post);return}
+  e.preventDefault();
+  if(act==="sel"||act==="go"){S.cfg.sel=b.dataset.id;if(act==="go"){S.cfg.tab="linkedin";location.hash="estudio"}touch("cfg");render();window.scrollTo(0,0)}
+  else if(act==="tab"){S.cfg.tab=b.dataset.v;touch("cfg");render()}
+  else if(act==="st"){T(t.id).st=+b.dataset.v;touch(t.id);render()}
+  else if(act==="copy"){const el=document.getElementById(b.dataset.from);copyText(el.value!==undefined?el.value:el.textContent)}
+  else if(act==="chatq")sendChat(b.dataset.q);
+  else if(act==="figq")makeFig(b.dataset.q+" para el tema "+t.name);
+  else if(act==="chatclear"){T(t.id).chat=[];touch(t.id);render()}
+  else if(act==="figdel"){T(t.id).charts.splice(+b.dataset.i,1);touch(t.id);render()}
+  else if(act==="figpng"){
+    try{const url=await Plotly.toImage($("#plot-"+b.dataset.i),{format:"png",width:1600,height:900});
+      const bin=atob(url.split(",")[1]),u=new Uint8Array(bin.length);for(let i=0;i<bin.length;i++)u[i]=bin.charCodeAt(i);
+      save(slug(peek(t.id).charts[+b.dataset.i].titulo||"grafico")+".png",new Blob([u]))}
+    catch(_){note("No se pudo exportar el gráfico.",true)}
+  }
+  else if(act==="genres")genResumen();
+  else if(act==="genpost")genPost();
+  else if(act==="genguion")genGuion();
+  else if(act==="dlmd"){const p=peek(t.id);p.resumen.trim()?save("resumen-claude.md",p.resumen):note("Todavía no hay resumen. Genéralo en el paso Resumen.",true)}
+  else if(act==="dlinf"){const p=peek(t.id);p.fuente.trim()?save("informe-notebooklm.md","# "+t.name+"\n\n"+p.fuente):note("Todavía no pegaste el informe de NotebookLM en el paso Estudiar.",true)}
+  else if(act==="dlhtml"){const p=peek(t.id);p.resumen.trim()?save(slug(t.name)+"-resumen.html",printable(t,p)):note("Todavía no hay resumen que descargar.",true)}
+  else if(act==="pubtoday"){const p=T(t.id);p.pub=iso(new Date());p.st=2;touch(t.id);render()}
+  else if(act==="deltopic"){const a=b.dataset.a;S.cfg.custom[a]=(S.cfg.custom[a]||[]).filter(x=>x.id!==b.dataset.id);touch("cfg");render()}
+  else if(act==="import"){
+    const a=$("#imp-a").value,lines=$("#imp-t").value.split("\n").map(s=>s.replace(/^\s*[-*•\d.)]+\s*/,"").trim()).filter(Boolean);
+    if(!lines.length){note("Pega al menos un tema.",true);return}
+    if($("#imp-r").checked){S.cfg.hideBase[a]=true;S.cfg.custom[a]=[]}
+    const now=Date.now().toString(36);S.cfg.custom[a]=(S.cfg.custom[a]||[]).concat(lines.map((name,i)=>({id:a+"-c"+now+i.toString(36),name:name.slice(0,140)})));
+    touch("cfg");render();note(lines.length+" temas cargados.")
+  }
+  else if(act==="restore"){const a=$("#imp-a").value;delete S.cfg.hideBase[a];touch("cfg");render();note("Temario base restaurado.")}
+  else if(act==="backup")save("data-science-experto-respaldo.json",JSON.stringify(S,null,1));
+});
+document.addEventListener("submit",e=>{
+  e.preventDefault();const f=e.target;
+  if(f.dataset.form==="chat"){const i=$("#chat-in"),v=i.value;i.value="";sendChat(v)}
+  else if(f.dataset.form==="fig"){makeFig($("#fig-in").value)}
+  else if(f.dataset.add){const a=f.dataset.add,i=f.querySelector("input"),name=i.value.trim();if(!name)return;
+    const id=a+"-c"+Date.now().toString(36);(S.cfg.custom[a]=S.cfg.custom[a]||[]).push({id,name:name.slice(0,140)});S.cfg.sel=id;S.cfg.open[a]=true;touch("cfg");render()}
+});
+document.addEventListener("input",e=>{
+  const el=e.target;
+  if(el.id==="q"){S.q=el.value;const pos=el.selectionStart;render();const n=$("#q");n.focus();n.setSelectionRange(pos,pos);return}
+  if(el.dataset.f){const t=current(),p=T(t.id),f=el.dataset.f;p[f]=el.value;
+    if(f==="post"&&el.value.trim()&&!p.readyAt)p.readyAt=Date.now();
+    if(f==="fuente"&&p.st===0&&el.value.trim())p.st=1;
+    touch(t.id);
+    const c=$("#cnt-"+f);if(c)c.textContent=f==="post"?el.value.length+" de 3 000 caracteres":f==="resumen"?words(el.value)+" palabras · unas "+Math.round(words(el.value)/480*10)/10+" páginas":words(el.value)+" palabras";
+    if(f==="resumen"){const d=$("#doc");if(d)d.innerHTML=md(el.value)}}
+  else if(el.dataset.c){S.cfg[el.dataset.c]=el.value.trim();touch("cfg")}
+});
+document.addEventListener("change",e=>{
+  const el=e.target;
+  if(el.dataset.file){const t=current();T(t.id).files[el.dataset.file]=el.checked;touch(t.id);render()}
+  else if(el.dataset.f==="pub"){render()}
+});
+document.addEventListener("toggle",e=>{const d=e.target;if(d.dataset&&d.dataset.amb&&!S.q){S.cfg.open[d.dataset.amb]=d.open;local("cfg")}},true);
+document.addEventListener("keydown",e=>{if(e.key==="Enter"&&(e.ctrlKey||e.metaKey)&&/^(chat-in|fig-in)$/.test(e.target.id)){e.target.form.requestSubmit()}});
+window.addEventListener("hashchange",render);
+
+/* ---------- inicio ---------- */
+loadLocal();render();setSync();
+use("sample").then(s=>{ai=s});
+use("downloads").then(d=>{dl=d});
+loadCloud();
+</script>
+</body>
+</html>
