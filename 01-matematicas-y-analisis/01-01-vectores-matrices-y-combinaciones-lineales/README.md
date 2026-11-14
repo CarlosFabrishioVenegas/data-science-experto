@@ -5,7 +5,7 @@
 | Archivo | Estado |
 |---|---|
 | [`practica.ipynb`](practica.ipynb) | Plantilla lista para resolver |
-| `informe-notebooklm.md` | Por subir |
+| [`informe-notebooklm.md`](informe-notebooklm.md) | Importado del Studio de NotebookLM |
 | `resumen-claude.md` | Por subir |
 | `infografia-notebooklm.png` | Por subir |
 | `infografia-claude.png` | Por subir |

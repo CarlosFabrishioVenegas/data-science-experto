@@ -4,6 +4,7 @@
 
 ## Cambios
 
+- v5 · Informe de NotebookLM del tema 1.1 importado y legible en la plataforma, modelos Opus 5.5 y Sonnet 5.5 por tipo de tarea, y escritura en lote de las lecciones de un ámbito.
 - v4 · Pestaña Leer con la lección dentro de la plataforma, ámbitos reordenados según los 14 cuadernos de NotebookLM, enlace a cada cuaderno y lista de sus 278 fuentes.
 - v3 · Práctica con tarjetas y quiz, color por ámbito, racha de estudio, anillo de avance y navegación entre temas.
 - v2 · Diseño estilo Apple.
