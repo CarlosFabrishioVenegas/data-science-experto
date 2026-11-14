@@ -4,6 +4,7 @@
 
 ## Cambios
 
+- v8 · Laboratorio con 27 experimentos en los 14 ámbitos, con explicación guiada en cada uno; refuerzo en Ciencia de Datos, Aprendizaje Automático y Aprendizaje Profundo.
 - v7 · Laboratorio interactivo (vectores, regresión lineal con R², regresión logística), interruptor de modo claro u oscuro, curiosidades por tema y dos lecciones escritas.
 - v6 · Vista Inicio con la ruta de estudio y las tarjetas de los 14 ámbitos; corrección de desborde en móvil.
 - v5 · Informe de NotebookLM del tema 1.1 importado y legible en la plataforma, modelos Opus 5.5 y Sonnet 5.5 por tipo de tarea, y escritura en lote de las lecciones de un ámbito.

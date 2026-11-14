@@ -247,6 +247,35 @@ output{font-variant-numeric:tabular-nums;font-weight:600}
 .cm{margin-top:8px}.cm td,.cm th{text-align:center}
 .tips{margin:0;padding-left:18px;display:grid;gap:6px;font-size:14.5px;max-width:64ch}
 #theme{margin-left:0}
+.lablay{align-items:start}
+@media(min-width:960px){.lablay{grid-template-columns:300px minmax(0,1fr)}}
+.lgroup{border-top:1px solid color-mix(in srgb,var(--line) 55%,transparent);padding:10px 0 6px}
+.lgh{display:flex;gap:8px;align-items:baseline;font-weight:600;font-size:13.5px;padding:0 6px 6px}
+.lbtn{display:block;width:100%;text-align:left;background:none;border:0;padding:7px 10px;border-radius:10px;cursor:pointer;font-size:13.5px;line-height:1.3}
+.lbtn:hover{background:var(--sunken)}
+.lbtn[aria-current="true"]{background:color-mix(in srgb,var(--amb) 62%,#000);color:#fff}
+.labt{font-size:30px;letter-spacing:-.03em;margin-top:10px}
+.see p,.key p{margin:0;font-size:15.5px;line-height:1.6;max-width:72ch}
+.key{background:color-mix(in srgb,var(--amb) 14%,var(--sunken))}
+ol.tips{padding-left:20px}
+#lab-svg .ln{stroke-width:3;stroke-linecap:round;stroke-linejoin:round}
+#lab-svg .kk{stroke:var(--ink)}#lab-svg .ln.k1{stroke:#0a84ff}#lab-svg .ln.k2{stroke:#ff9f0a}#lab-svg .ln.k3{stroke:#30b050}
+#lab-svg .dsh{stroke-dasharray:7 6}
+#lab-svg .thinp{stroke:#0a84ff;stroke-width:1.2;opacity:.45}
+#lab-svg .thin{stroke-width:2}
+#lab-svg .ctr{fill:none;stroke:var(--muted);opacity:.45;stroke-width:1.2}
+#lab-svg .pt.sm{fill:#0a84ff;stroke:none}
+#lab-svg .pt.cA{fill:#0a84ff}#lab-svg .pt.cB{fill:#ff9f0a}#lab-svg .pt.cC{fill:#30b050}#lab-svg .pt.cD{fill:#bf5af2}#lab-svg .pt.cE{fill:#ff375f}#lab-svg .pt.cF{fill:#40c8e0}
+#lab-svg .pt.ghost{fill:var(--muted);fill-opacity:.25;stroke:none}
+#lab-svg .cell{stroke:none;fill-opacity:.2}
+#lab-svg .cell.kA{fill:#0a84ff}#lab-svg .cell.kB{fill:#ff9f0a}
+#lab-svg .bar{fill-opacity:.75;stroke:none}
+#lab-svg .cen{stroke-width:5;stroke-linecap:round;fill:none}
+#lab-svg .cen.cA{stroke:#0a84ff}#lab-svg .cen.cB{stroke:#ff9f0a}#lab-svg .cen.cC{stroke:#30b050}#lab-svg .cen.cD{stroke:#bf5af2}#lab-svg .cen.cE{stroke:#ff375f}#lab-svg .cen.cF{stroke:#40c8e0}
+#lab-svg .kg{stroke:var(--muted);opacity:.5}
+#lab-svg .inset{fill:var(--surface);fill-opacity:.9;stroke:var(--line)}
+#lab-svg .px{fill:var(--ink)}
+#lab-svg .bar.k1{fill:#0a84ff}#lab-svg .bar.k2{fill:#ff9f0a}
 </style>
 </head>
 <body>
@@ -543,84 +572,405 @@ function viewInicio(){
   return '<div class="shell"><section class="card home" style="--amb:'+t.col+'"><div class="hero"><div><span class="eyebrow">Continúa donde quedaste</span><h1>'+esc(t.name)+'</h1><p class="hint">Ámbito '+pad(t.an)+" · "+esc(t.aName)+" · tema "+t.an+"."+t.k+'</p></div>'+
     '<div class="ring" title="'+nd+" de "+TABS.length+' pasos completados"><svg viewBox="0 0 48 48" aria-hidden="true"><circle class="rb" cx="24" cy="24" r="20"/><circle class="rf" cx="24" cy="24" r="20" stroke-dasharray="'+(125.66*nd/TABS.length)+' 125.66"/></svg><b>'+nd+"/"+TABS.length+'</b></div></div>'+
     '<div class="row"><button class="btn p" data-act="go2" data-id="'+t.id+'">Seguir estudiando</button><span class="pill">'+est+" de "+all.length+' temas estudiados</span><span class="pill">'+streak()+' días de racha</span></div></section>'+
-    '<section class="flow">'+[["1","Leer","La lección o tu informe de NotebookLM, dentro de la plataforma."],["2","Preguntar","Chat con Claude sobre el tema y gráficos interactivos."],["3","Practicar","Tarjetas, quiz y el notebook de práctica en GitHub."],["4","Publicar","Resumen de 4 a 5 páginas y post para LinkedIn."]].map(x=>'<div class="card fstep"><b>'+x[0]+'</b><h3>'+x[1]+'</h3><p class="hint">'+x[2]+'</p></div>').join("")+'</section>'+
+    '<section class="flow">'+[["1","Leer","La lección o tu informe de NotebookLM, dentro de la plataforma."],["2","Preguntar","Chat con Claude y experimentos del Laboratorio."],["3","Practicar","Tarjetas, quiz y el notebook de práctica en GitHub."],["4","Publicar","Resumen de 4 a 5 páginas y post para LinkedIn."]].map(x=>'<div class="card fstep"><b>'+x[0]+'</b><h3>'+x[1]+'</h3><p class="hint">'+x[2]+'</p></div>').join("")+'</section>'+
     '<h2 class="sect">Los 14 ámbitos</h2><section class="acards">'+AMB.map(a=>{const ts=topicsOf(a),d=ts.filter(x=>stage(x.id)>=2).length;
-      return '<article class="card acard" style="--amb:'+a.col+'"><div class="row"><span class="abadge">'+pad(a.n)+'</span><span class="c">'+d+" de "+ts.length+" temas · "+a.src.length+' fuentes</span></div><h3>'+esc(a.name)+'</h3><div class="bar"><i style="width:'+(ts.length?d/ts.length*100:0)+'%;background:var(--amb)"></i></div><div class="row"><button class="btn s p" data-act="goamb" data-a="'+a.id+'">Estudiar</button><a class="btn s" href="'+esc(a.nb)+'" target="_blank" rel="noopener">Abrir cuaderno</a></div></article>'}).join("")+'</section></div>';
+      return '<article class="card acard" style="--amb:'+a.col+'"><div class="row"><span class="abadge">'+pad(a.n)+'</span><span class="c">'+d+" de "+ts.length+" temas · "+a.src.length+' fuentes</span></div><h3>'+esc(a.name)+'</h3><div class="bar"><i style="width:'+(ts.length?d/ts.length*100:0)+'%;background:var(--amb)"></i></div><div class="row"><button class="btn s p" data-act="goamb" data-a="'+a.id+'">Estudiar</button><button class="btn s" data-act="labamb" data-n="'+a.n+'">Laboratorio ('+labsOf(a.n).length+')</button><a class="btn s" href="'+esc(a.nb)+'" target="_blank" rel="noopener">Cuaderno</a></div></article>'}).join("")+'</section></div>';
 }
-/* ---------- laboratorio interactivo (sin Claude) ---------- */
-const LABS=[["vec","Vectores"],["lin","Regresión lineal y R²"],["log","Regresión logística"]];
-const LABMAP={"m01-t01":"vec","m01-t03":"vec","m01-t04":"vec","m01-t05":"vec","m03-t04":"lin","m07-t02":"lin","m07-t03":"log","m07-t09":"log","m07-t10":"log"};
+/* ---------- laboratorio interactivo (sin Claude): un catálogo de experimentos por ámbito ---------- */
 function rng(s){return()=>{s|=0;s=s+0x6D2B79F5|0;let t=Math.imul(s^s>>>15,1|s);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296}}
-const R0=rng(11),DX=Array.from({length:60},()=>R0()*10),DZ=Array.from({length:60},()=>Math.sqrt(-2*Math.log(1-R0()))*Math.cos(6.2832*R0())),DU=Array.from({length:60},()=>R0());
-let L={lab:"log",v:[3,1],w:[1,2.5],c:1,d:1,b0:8,b1:0.5,sg:2,out:0,g0:-2,g1:0.6,sep:1.2,thr:0.5},drag=null;
+const gauss=r=>Math.sqrt(-2*Math.log(1-r()))*Math.cos(6.2832*r());
+const PR=rng(11),PU=Array.from({length:900},()=>PR()),PZ=Array.from({length:900},()=>gauss(PR));
 const f2=x=>(Math.round(x*100)/100).toLocaleString("es-PE",{minimumFractionDigits:2,maximumFractionDigits:2});
-const linData=()=>{const d=DX.slice(0,40).map((x,i)=>[x,2+1.5*x+L.sg*DZ[i]]);if(L.out)d.push([9.6,-7]);return d};
-const logData=()=>DX.map((x,i)=>[x,DU[i]<1/(1+Math.exp(-L.sep*(x-5)))?1:0]);
-const sl=(k,label,min,max,step)=>'<label class="l" for="lab-'+k+'"><span class="row" style="justify-content:space-between"><span>'+label+'</span><output id="o-'+k+'">'+f2(L[k])+'</output></span><input type="range" id="lab-'+k+'" data-lab="'+k+'" min="'+min+'" max="'+max+'" step="'+step+'" value="'+L[k]+'"></label>';
-function labControls(k){
-  if(k==="vec")return '<h3>Combinación lineal c·v + d·w</h3><p class="hint">Arrastra las puntas de v y w en la figura.</p>'+sl("c","Escalar c",-3,3,0.1)+sl("d","Escalar d",-3,3,0.1);
-  if(k==="lin")return '<h3>Tu recta: y = b₀ + b₁·x</h3>'+sl("b0","Intercepto b₀",-10,20,0.1)+sl("b1","Pendiente b₁",-2,5,0.05)+sl("sg","Ruido de los datos",0,6,0.1)+'<label class="row" for="lab-out"><input type="checkbox" id="lab-out" data-lab="out"'+(L.out?" checked":"")+'> Agregar un valor atípico</label><div class="row"><button class="btn p" data-act="fitlin">Ajustar por mínimos cuadrados</button></div>';
-  return '<h3>Tu curva: p = 1 / (1 + e^−(β₀ + β₁·x))</h3>'+sl("g0","Intercepto β₀",-15,15,0.1)+sl("g1","Pendiente β₁",-1,4,0.05)+sl("thr","Umbral de decisión",0.05,0.95,0.01)+sl("sep","Separación entre clases",0.2,3,0.1)+'<div class="row"><button class="btn p" data-act="fitlog">Ajustar por máxima verosimilitud</button></div>';
-}
-const LABTXT={
- vec:'<div class="box"><h3>Qué observar</h3><ul class="tips"><li>Con c y d recorres todo el plano solo si v y w no están alineados. Alinéalos y el resultado queda atrapado en una recta.</li><li>El determinante es el área del paralelogramo. Cuando vale cero, los vectores son linealmente dependientes.</li><li>El producto punto es positivo si apuntan hacia el mismo lado, cero si son perpendiculares y negativo si se oponen.</li><li>La proyección de w sobre v es la sombra de w en la dirección de v: la base de mínimos cuadrados.</li></ul></div><div class="box"><h3>Curiosidades</h3><ul class="tips"><li>Una fila de tu tabla de datos es un vector: cada sensor o variable es una coordenada.</li><li>El coseno del ángulo entre dos vectores de datos centrados es su correlación.</li><li>Multiplicar una matriz por un vector es hacer una combinación lineal de las columnas de la matriz.</li><li>En espacios de muchas dimensiones, dos vectores al azar son casi siempre casi perpendiculares.</li></ul></div>',
- lin:'<div class="box"><h3>Qué observar</h3><ul class="tips"><li>Las líneas verticales son los residuos. El R² sube cuando su suma al cuadrado baja.</li><li>Aleja la recta de los puntos: el R² se vuelve negativo, porque tu recta es peor que predecir la media.</li><li>Sube el ruido: la mejor recta casi no cambia, pero el R² cae. Un R² bajo no siempre es un mal modelo.</li><li>Activa el valor atípico y vuelve a ajustar: un solo punto gira la recta.</li></ul></div><div class="box"><h3>Supuestos que estás viendo</h3><ul class="tips"><li>Linealidad: la nube sigue una recta.</li><li>Homocedasticidad: el ancho de la nube es parejo a lo largo de x.</li><li>Independencia: cada punto se generó sin mirar a los demás.</li><li>Errores normales: solo importan para los intervalos de confianza, no para la recta.</li></ul></div>',
- log:'<div class="box"><h3>Qué observar</h3><ul class="tips"><li>β₁ controla lo empinada que es la S; β₀ la desplaza. El punto donde p = 0,5 está en x = −β₀/β₁.</li><li>No hay R² clásico: mira la log-loss (menor es mejor) y el pseudo-R² de McFadden.</li><li>Mueve el umbral: la curva no cambia, pero sí la matriz de confusión. Sensibilidad y precisión se intercambian.</li><li>Sube la separación entre clases y vuelve a ajustar: β₁ crece. Con separación perfecta crecería sin límite.</li></ul></div><div class="box"><h3>Supuestos y curiosidades</h3><ul class="tips"><li>Supone respuesta binaria, observaciones independientes, linealidad en el logit y ausencia de multicolinealidad fuerte.</li><li>No supone normalidad ni varianza constante.</li><li>Una neurona con activación sigmoide es una regresión logística.</li><li>Los círculos con borde rojo son los casos mal clasificados con tu umbral actual.</li></ul></div>'
-};
-function viewLab(){const k=L.lab;
-  return '<div class="shell"><section class="card pane"><div><h2>Laboratorio interactivo</h2><p class="hint">Mueve los controles y mira cómo cambian la figura y las métricas al instante. Los datos son simulados y fijos, para que compares un intento con otro.</p></div><div class="seg" role="group" aria-label="Experimento">'+LABS.map(x=>'<button data-act="lab" data-v="'+x[0]+'" aria-pressed="'+(k===x[0])+'">'+x[1]+'</button>').join("")+'</div>'+
-  '<div class="labgrid"><div class="labfig"><svg id="lab-svg" viewBox="0 0 560 420" role="img" aria-label="Figura interactiva del experimento"></svg></div><div class="box">'+labControls(k)+'<div id="lab-out"></div></div></div><div class="grid2">'+LABTXT[k]+'</div></section></div>';
-}
+const pc=v=>f2(v*100)+" %";
+const erf=x=>{const s=x<0?-1:1;x=Math.abs(x);const t=1/(1+0.3275911*x);return s*(1-(((((1.061405429*t-1.453152027)*t)+1.421413741)*t-0.284496736)*t+0.254829592)*t*Math.exp(-x*x))};
+const Phi=x=>0.5*(1+erf(x/Math.SQRT2)),npdf=x=>Math.exp(-x*x/2)/2.5066283;
+const mean=a=>a.reduce((s,v)=>s+v,0)/a.length,sd=a=>{const m=mean(a);return Math.sqrt(a.reduce((s,v)=>s+(v-m)**2,0)/a.length)};
+const corr=(a,b)=>{const ma=mean(a),mb=mean(b);let n=0,da=0,db=0;a.forEach((v,i)=>{n+=(v-ma)*(b[i]-mb);da+=(v-ma)**2;db+=(b[i]-mb)**2});return n/Math.sqrt(da*db||1)};
+const ols=d=>{const mx=mean(d.map(p=>p[0])),my=mean(d.map(p=>p[1]));let a=0,b=0;d.forEach(p=>{a+=(p[0]-mx)*(p[1]-my);b+=(p[0]-mx)**2});const b1=b?a/b:0;return [my-b1*mx,b1]};
+function solve(A,b){const n=b.length;for(let i=0;i<n;i++){let m=i;for(let r=i+1;r<n;r++)if(Math.abs(A[r][i])>Math.abs(A[m][i]))m=r;[A[i],A[m]]=[A[m],A[i]];[b[i],b[m]]=[b[m],b[i]];const d=A[i][i]||1e-12;for(let r=i+1;r<n;r++){const f=A[r][i]/d;for(let c=i;c<n;c++)A[r][c]-=f*A[i][c];b[r]-=f*b[i]}}
+  const x=Array(n).fill(0);for(let i=n-1;i>=0;i--){let s=b[i];for(let c=i+1;c<n;c++)s-=A[i][c]*x[c];x[i]=s/(A[i][i]||1e-12)}return x}
+const fm=v=>{const a=Math.abs(v);return (a>=100?Math.round(v):a>=10?Math.round(v*10)/10:Math.round(v*100)/100).toLocaleString("es-PE")};
+function axes(x0,x1,y0,y1,o){o=o||{};const X=x=>50+(x-x0)/(x1-x0)*480,Y=y=>370-(y-y0)/(y1-y0)*340,nx=o.nx||5,ny=o.ny||5;let g="";
+  for(let i=0;i<=nx;i++){const v=x0+(x1-x0)*i/nx;g+='<line class="gx" x1="'+X(v)+'" y1="30" x2="'+X(v)+'" y2="370"/><text class="lb" text-anchor="middle" x="'+X(v)+'" y="388">'+fm(v)+'</text>'}
+  for(let i=0;i<=ny;i++){const v=y0+(y1-y0)*i/ny;g+='<line class="gx" x1="50" y1="'+Y(v)+'" x2="530" y2="'+Y(v)+'"/><text class="lb" text-anchor="end" x="44" y="'+(Y(v)+4)+'">'+fm(v)+'</text>'}
+  if(o.xl)g+='<text class="lb" text-anchor="middle" x="290" y="410">'+o.xl+'</text>';
+  if(o.yl)g+='<text class="lb" x="52" y="20">'+o.yl+'</text>';
+  return {X,Y,g}}
+const pth=(pts,cls)=>'<path class="ln '+cls+'" fill="none" clip-path="url(#cl)" d="'+pts.map((p,i)=>(i?"L":"M")+p[0].toFixed(1)+" "+p[1].toFixed(1)).join("")+'"/>';
+const dot=(x,y,cls,r)=>'<circle class="pt '+(cls||"")+'" cx="'+x.toFixed(1)+'" cy="'+y.toFixed(1)+'" r="'+(r||5)+'"/>';
+const seg=(x1,y1,x2,y2,cls)=>'<line class="'+cls+'" x1="'+x1.toFixed(1)+'" y1="'+y1.toFixed(1)+'" x2="'+x2.toFixed(1)+'" y2="'+y2.toFixed(1)+'"/>';
+const txt=(x,y,s,a)=>'<text class="lb" x="'+x+'" y="'+y+'"'+(a?' text-anchor="'+a+'"':"")+'>'+s+'</text>';
 const row=(a,b,cls)=>'<tr><td>'+a+'</td><td class="num '+(cls||"")+'">'+b+'</td></tr>';
-function drawLab(){
-  const svg=$("#lab-svg"),out=$("#lab-out");if(!svg)return;let g="",m="";
-  if(L.lab==="vec"){
-    const X=x=>280+x*34,Y=y=>210-y*34,{v,w,c,d}=L,r=[c*v[0]+d*w[0],c*v[1]+d*w[1]];
-    for(let i=-8;i<=8;i++)g+='<line class="gx" x1="'+X(i)+'" y1="0" x2="'+X(i)+'" y2="420"/>';
-    for(let i=-6;i<=6;i++)g+='<line class="gx" x1="0" y1="'+Y(i)+'" x2="560" y2="'+Y(i)+'"/>';
-    g+='<line class="ax" x1="0" y1="210" x2="560" y2="210"/><line class="ax" x1="280" y1="0" x2="280" y2="420"/>';
-    const P=p=>X(p[0])+","+Y(p[1]),cv=[c*v[0],c*v[1]],dw=[d*w[0],d*w[1]];
-    g+='<polygon class="par" points="'+X(0)+","+Y(0)+" "+P(cv)+" "+P(r)+" "+P(dw)+'"/>';
-    const arr=(p,cls,lab)=>'<line class="vv '+cls+'" x1="'+X(0)+'" y1="'+Y(0)+'" x2="'+X(p[0])+'" y2="'+Y(p[1])+'"/><circle class="tip '+cls+'" cx="'+X(p[0])+'" cy="'+Y(p[1])+'" r="4"/><text class="lb" x="'+(X(p[0])+8)+'" y="'+(Y(p[1])-8)+'">'+lab+'</text>';
-    g+=arr(cv,"k1 dash",c===1?"":"c·v")+arr(dw,"k2 dash",d===1?"":"d·w")+arr(v,"k1","v")+arr(w,"k2","w")+arr(r,"k3","c·v + d·w");
-    g+='<circle class="hd k1" data-h="v" cx="'+X(v[0])+'" cy="'+Y(v[1])+'" r="11"/><circle class="hd k2" data-h="w" cx="'+X(w[0])+'" cy="'+Y(w[1])+'" r="11"/>';
-    const nv=Math.hypot(v[0],v[1]),nw=Math.hypot(w[0],w[1]),dot=v[0]*w[0]+v[1]*w[1],det=v[0]*w[1]-v[1]*w[0],ang=nv&&nw?Math.acos(Math.max(-1,Math.min(1,dot/(nv*nw))))*180/Math.PI:0,dep=Math.abs(det)<0.15;
-    m='<table>'+row("v","("+f2(v[0])+"; "+f2(v[1])+")")+row("w","("+f2(w[0])+"; "+f2(w[1])+")")+row("c·v + d·w","("+f2(r[0])+"; "+f2(r[1])+")")+row("Norma de v y de w",f2(nv)+" y "+f2(nw))+row("Producto punto v·w",f2(dot))+row("Ángulo entre v y w",f2(ang)+"°")+row("Proyección de w sobre v",nv?f2(dot/nv):"0,00")+row("Determinante (área)",f2(det),dep?"bad":"ok")+'</table><p class="hint">'+(dep?"v y w están casi alineados: son linealmente dependientes y solo generan una recta.":"v y w son linealmente independientes: con c y d alcanzas cualquier punto del plano.")+'</p>';
-  }else if(L.lab==="lin"){
-    const X=x=>50+x*48,Y=y=>370-(y+10)*10,d=linData(),n=d.length,my=d.reduce((s,p)=>s+p[1],0)/n;
-    for(let i=0;i<=10;i+=2)g+='<line class="gx" x1="'+X(i)+'" y1="20" x2="'+X(i)+'" y2="370"/><text class="lb" x="'+(X(i)-4)+'" y="388">'+i+'</text>';
-    for(let y=-10;y<=25;y+=5)g+='<line class="gx" x1="50" y1="'+Y(y)+'" x2="530" y2="'+Y(y)+'"/><text class="lb" x="22" y="'+(Y(y)+4)+'">'+y+'</text>';
-    g+='<line class="mean" x1="50" y1="'+Y(my)+'" x2="530" y2="'+Y(my)+'"/><text class="lb" x="440" y="'+(Y(my)-6)+'">media de y</text>';
-    let sse=0,sst=0;d.forEach(p=>{const h=L.b0+L.b1*p[0];sse+=(p[1]-h)**2;sst+=(p[1]-my)**2;g+='<line class="res" x1="'+X(p[0])+'" y1="'+Y(p[1])+'" x2="'+X(p[0])+'" y2="'+Y(Math.max(-10,Math.min(25,h)))+'"/>'});
-    d.forEach((p,i)=>{g+='<circle class="pt'+(L.out&&i===n-1?" outl":"")+'" cx="'+X(p[0])+'" cy="'+Y(p[1])+'" r="5"/>'});
-    g+='<line class="fit" x1="'+X(0)+'" y1="'+Y(L.b0)+'" x2="'+X(10)+'" y2="'+Y(L.b0+10*L.b1)+'" clip-path="url(#cl)"/>';
-    const r2=1-sse/sst;
-    m='<div class="big '+(r2>0.7?"ok":r2<0?"bad":"")+'"><b>'+f2(r2)+'</b><span>R² de tu recta</span></div><table>'+row("Suma de residuos al cuadrado (SSE)",f2(sse))+row("Variabilidad total (SST)",f2(sst))+row("Error típico (RMSE)",f2(Math.sqrt(sse/n)))+row("Recta","y = "+f2(L.b0)+" + "+f2(L.b1)+"·x")+'</table><p class="hint">'+(r2<0?"R² negativo: tu recta predice peor que la media.":"R² = 1 − SSE / SST. Los datos se generaron con y = 2 + 1,5·x más ruido.")+'</p>';
-  }else{
-    const X=x=>50+x*48,Y=p=>350-p*300,d=logData(),n=d.length,P=x=>1/(1+Math.exp(-(L.g0+L.g1*x)));
-    for(let i=0;i<=10;i+=2)g+='<line class="gx" x1="'+X(i)+'" y1="50" x2="'+X(i)+'" y2="350"/><text class="lb" x="'+(X(i)-4)+'" y="372">'+i+'</text>';
-    [0,0.25,0.5,0.75,1].forEach(p=>{g+='<line class="gx" x1="50" y1="'+Y(p)+'" x2="530" y2="'+Y(p)+'"/><text class="lb" x="16" y="'+(Y(p)+4)+'">'+f2(p)+'</text>'});
-    g+='<line class="mean" x1="50" y1="'+Y(L.thr)+'" x2="530" y2="'+Y(L.thr)+'"/><text class="lb" x="452" y="'+(Y(L.thr)-6)+'">umbral</text>';
-    if(Math.abs(L.g1)>1e-6){const xb=(Math.log(L.thr/(1-L.thr))-L.g0)/L.g1;if(xb>0&&xb<10)g+='<line class="bnd" x1="'+X(xb)+'" y1="50" x2="'+X(xb)+'" y2="350"/><text class="lb" x="'+(X(xb)+6)+'" y="42">frontera</text>'}
-    let pa="";for(let i=0;i<=100;i++){const x=i/10;pa+=(i?"L":"M")+X(x)+" "+Y(P(x))}
-    g+='<path class="fit" fill="none" d="'+pa+'"/>';
-    let ll=0,tp=0,fp=0,fn=0,tn=0,s1=0;
-    d.forEach((q,i)=>{const p=Math.min(1-1e-9,Math.max(1e-9,P(q[0]))),y=q[1],pred=p>=L.thr?1:0;ll+=y?Math.log(p):Math.log(1-p);s1+=y;if(y&&pred)tp++;else if(!y&&pred)fp++;else if(y&&!pred)fn++;else tn++;
-      g+='<circle class="pt c'+y+(pred!==y?" wrong":"")+'" cx="'+X(q[0])+'" cy="'+(Y(y)+DZ[i]*5)+'" r="5"/>'});
-    const pb=s1/n,ll0=s1*Math.log(pb)+(n-s1)*Math.log(1-pb),mc=1-ll/ll0;
-    m='<div class="big '+(mc>0.3?"ok":mc<0?"bad":"")+'"><b>'+f2(mc)+'</b><span>Pseudo-R² de McFadden</span></div><table>'+row("Log-loss (menor es mejor)",f2(-ll/n))+row("Exactitud",f2((tp+tn)/n*100)+" %")+row("Sensibilidad (recall)",tp+fn?f2(tp/(tp+fn)*100)+" %":"sin casos")+row("Precisión",tp+fp?f2(tp/(tp+fp)*100)+" %":"sin casos")+'</table><table class="cm"><thead><tr><th></th><th>Predice 1</th><th>Predice 0</th></tr></thead><tbody><tr><th>Real 1</th><td class="num ok">'+tp+'</td><td class="num bad">'+fn+'</td></tr><tr><th>Real 0</th><td class="num bad">'+fp+'</td><td class="num ok">'+tn+'</td></tr></tbody></table>';
-  }
-  svg.innerHTML='<defs><clipPath id="cl"><rect x="50" y="20" width="480" height="350"/></clipPath></defs>'+g;out.innerHTML=m;
-  document.querySelectorAll("[data-lab]").forEach(e=>{const o=$("#o-"+e.dataset.lab);if(o)o.textContent=f2(L[e.dataset.lab]);if(e.type==="range"&&document.activeElement!==e)e.value=L[e.dataset.lab]});
-}
-function fitLin(){const d=linData(),n=d.length,mx=d.reduce((s,p)=>s+p[0],0)/n,my=d.reduce((s,p)=>s+p[1],0)/n;let a=0,b=0;d.forEach(p=>{a+=(p[0]-mx)*(p[1]-my);b+=(p[0]-mx)**2});L.b1=Math.round(a/b*100)/100;L.b0=Math.round((my-a/b*mx)*100)/100;drawLab()}
-function fitLog(){const d=logData();let b0=0,b1=0;
-  for(let it=0;it<40;it++){let g0=0,g1=0,h00=0,h01=0,h11=0;d.forEach(q=>{const p=1/(1+Math.exp(-(b0+b1*q[0]))),w=p*(1-p);g0+=q[1]-p;g1+=(q[1]-p)*q[0];h00+=w;h01+=w*q[0];h11+=w*q[0]*q[0]});
-    const det=h00*h11-h01*h01;if(det<1e-9)break;b0+=(h11*g0-h01*g1)/det;b1+=(h00*g1-h01*g0)/det}
-  L.g0=Math.max(-15,Math.min(15,Math.round(b0*100)/100));L.g1=Math.max(-1,Math.min(4,Math.round(b1*100)/100));drawLab()}
+const tbl=r=>'<table>'+r.map(x=>row(x[0],x[1],x[2])).join("")+'</table>';
+const big=(v,l,cls)=>'<div class="big '+(cls||"")+'"><b>'+v+'</b><span>'+l+'</span></div>';
+const hint=s=>'<p class="hint">'+s+'</p>';
+function cells(X,Y,x0,x1,y0,y1,f){let g="";const nx=30,ny=22,dx=(x1-x0)/nx,dy=(y1-y0)/ny;for(let i=0;i<nx;i++)for(let j=0;j<ny;j++){const c=f(x0+(i+.5)*dx,y0+(j+.5)*dy);g+='<rect class="cell k'+c+'" x="'+X(x0+i*dx).toFixed(1)+'" y="'+Y(y0+(j+1)*dy).toFixed(1)+'" width="16.2" height="15.7"/>'}return g}
+const PAL=["A","B","C","D","E","F"];
+const LAB={},LS={};let L={lab:"log"},drag=null;
+const LSt=id=>LS[id]||(LS[id]={...LAB[id].s});
+
+/* 01 Matemáticas */
+LAB.vec={a:[1],t:"Vectores y combinación lineal",s:{v:[3,1],w:[1,2.5],c:1,d:1},
+ q:"Dos vectores v y w que parten del origen y, en verde, su combinación lineal c·v + d·w. El área sombreada es el paralelogramo que forman.",
+ c:[["c","Escalar c",-3,3,0.1],["d","Escalar d",-3,3,0.1]],
+ p:["Arrastra la punta de w hasta ponerla sobre la línea de v. El determinante cae a cero: ya no puedes salir de esa recta.","Deja v y w perpendiculares. El producto punto vale cero y la proyección de w sobre v desaparece.","Con v y w fijos, mueve c y d para llevar el vector verde al punto (2; −3). Siempre se puede si son independientes."],
+ k:"Con dos vectores independientes se alcanza cualquier punto del plano. Eso es una base; en datos, cada variable que no es combinación de las otras aporta una dirección nueva.",
+ draw(s){const X=x=>280+x*34,Y=y=>210-y*34,{v,w,c,d}=s,r=[c*v[0]+d*w[0],c*v[1]+d*w[1]];let g="";
+  for(let i=-8;i<=8;i++)g+=seg(X(i),0,X(i),420,"gx");for(let i=-6;i<=6;i++)g+=seg(0,Y(i),560,Y(i),"gx");
+  g+=seg(0,210,560,210,"ax")+seg(280,0,280,420,"ax");
+  const P=p=>X(p[0])+","+Y(p[1]),cv=[c*v[0],c*v[1]],dw=[d*w[0],d*w[1]];
+  g+='<polygon class="par" points="'+X(0)+","+Y(0)+" "+P(cv)+" "+P(r)+" "+P(dw)+'"/>';
+  const arr=(p,cls,lab)=>'<line class="vv '+cls+'" x1="280" y1="210" x2="'+X(p[0])+'" y2="'+Y(p[1])+'"/><circle class="tip '+cls+'" cx="'+X(p[0])+'" cy="'+Y(p[1])+'" r="4"/>'+txt(X(p[0])+8,Y(p[1])-8,lab);
+  g+=arr(cv,"k1 dash",c===1?"":"c·v")+arr(dw,"k2 dash",d===1?"":"d·w")+arr(v,"k1","v")+arr(w,"k2","w")+arr(r,"k3","c·v + d·w");
+  g+='<circle class="hd k1" data-h="v" cx="'+X(v[0])+'" cy="'+Y(v[1])+'" r="11"/><circle class="hd k2" data-h="w" cx="'+X(w[0])+'" cy="'+Y(w[1])+'" r="11"/>';
+  const nv=Math.hypot(v[0],v[1]),nw=Math.hypot(w[0],w[1]),dt=v[0]*w[0]+v[1]*w[1],det=v[0]*w[1]-v[1]*w[0],ang=nv&&nw?Math.acos(Math.max(-1,Math.min(1,dt/(nv*nw))))*180/Math.PI:0,dep=Math.abs(det)<0.15;
+  return {g,m:tbl([["v","("+f2(v[0])+"; "+f2(v[1])+")"],["w","("+f2(w[0])+"; "+f2(w[1])+")"],["c·v + d·w","("+f2(r[0])+"; "+f2(r[1])+")"],["Producto punto v·w",f2(dt)],["Ángulo entre v y w",f2(ang)+"°"],["Proyección de w sobre v",nv?f2(dt/nv):"0,00"],["Determinante (área)",f2(det),dep?"bad":"ok"]])+hint(dep?"v y w están casi alineados: son linealmente dependientes.":"v y w son linealmente independientes.")}}};
+LAB.opt={a:[1,8],t:"Descenso de gradiente y optimizadores",s:{k:12,lr:0.1,n:40,m:"sgd"},
+ q:"Las elipses son curvas de nivel de una función de pérdida con forma de valle. La línea muestra el camino del optimizador desde el punto de partida hacia el mínimo, en el centro.",
+ c:[["m","Optimizador","sel",[["sgd","Descenso de gradiente"],["mom","Con momentum"],["adam","Adam"]]],["lr","Tasa de aprendizaje",0.01,0.3,0.005],["k","Alargamiento del valle",1,30,1],["n","Pasos",5,80,1]],
+ p:["Con descenso de gradiente y valle alargado en 12, sube la tasa de aprendizaje poco a poco. Cerca de 0,17 el camino zigzaguea y luego diverge: el límite es 2 dividido por la curvatura mayor.","Pon el alargamiento en 1. El valle es redondo y el camino va recto al mínimo con cualquier tasa razonable.","Con valle alargado en 12, baja la tasa a 0,03 y sube los pasos a 80. El descenso de gradiente no alcanza a llegar; cambia a momentum y luego a Adam: ambos llegan."],
+ k:"Lo que frena al descenso de gradiente no es la distancia al mínimo sino la diferencia de curvatura entre direcciones. Escalar las variables redondea el valle; momentum y Adam compensan lo que quede.",
+ draw(s){const {X,Y,g:g0}=axes(-5,5,-2.5,2.5,{nx:10,ny:5});let g=g0;const K=s.k,f=(x,y)=>0.5*(x*x+K*y*y);
+  [0.3,1,2.5,5,8,12].forEach(c=>{g+='<ellipse class="ctr" cx="'+X(0)+'" cy="'+Y(0)+'" rx="'+(Math.sqrt(2*c)*48)+'" ry="'+(Math.sqrt(2*c/K)*68)+'" clip-path="url(#cl)"/>'});
+  let x=-4.2,y=1.6,vx=0,vy=0,mx=0,my=0,ux=0,uy=0,pts=[[X(x),Y(y)]],hit=0,bad=false;
+  for(let i=1;i<=s.n;i++){const gx=x,gy=K*y;
+   if(s.m==="sgd"){x-=s.lr*gx;y-=s.lr*gy}
+   else if(s.m==="mom"){vx=0.9*vx+gx;vy=0.9*vy+gy;x-=s.lr*vx*0.3;y-=s.lr*vy*0.3}
+   else{mx=0.9*mx+0.1*gx;my=0.9*my+0.1*gy;ux=0.999*ux+0.001*gx*gx;uy=0.999*uy+0.001*gy*gy;const a=1-Math.pow(0.9,i),b=1-Math.pow(0.999,i);x-=s.lr*5*(mx/a)/(Math.sqrt(ux/b)+1e-8);y-=s.lr*5*(my/a)/(Math.sqrt(uy/b)+1e-8)}
+   if(!isFinite(x)||!isFinite(y)||Math.abs(x)>50||Math.abs(y)>50){bad=true;break}
+   pts.push([X(Math.max(-6,Math.min(6,x))),Y(Math.max(-3,Math.min(3,y)))]);if(!hit&&f(x,y)<0.01)hit=i}
+  g+=pth(pts,"k1")+pts.map(p=>dot(p[0],p[1],"sm",2.5)).join("")+dot(X(0),Y(0),"c1",6);
+  const fin=bad?Infinity:f(x,y);
+  return {g,m:big(bad?"Diverge":f2(fin),"Pérdida al final",bad||fin>1?"bad":fin<0.01?"ok":"")+tbl([["Pasos hasta llegar (pérdida menor que 0,01)",hit||"No llega"],["Límite de estabilidad del descenso de gradiente","tasa menor que "+f2(2/K)]])}}};
+/* 02 Probabilidad */
+LAB.clt={a:[2],t:"Teorema central del límite",s:{d:"exp",n:1},
+ q:"Histograma de 2 000 promedios, cada uno calculado con n observaciones de la distribución elegida. La curva es la normal que predice el teorema.",
+ c:[["d","Distribución de origen","sel",[["exp","Exponencial (asimétrica)"],["uni","Uniforme"],["bim","Bimodal"]]],["n","Tamaño de cada muestra n",1,60,1]],
+ p:["Con n = 1 ves la distribución original, que no se parece a una campana.","Sube n a 5 y luego a 30. El histograma se vuelve simétrico y se pega a la curva, sea cual sea el origen.","Mira la desviación: cada vez que cuadruplicas n, se reduce a la mitad."],
+ k:"El promedio de muchas observaciones independientes se distribuye de forma casi normal aunque los datos no lo sean, con dispersión σ/√n. Por eso funcionan los intervalos de confianza y las pruebas sobre medias.",
+ draw(s){const r=rng(5),draw1=s.d==="exp"?()=>-Math.log(1-r()):s.d==="uni"?()=>r()*2:()=>(r()<0.5?0.4:1.6)+0.18*gauss(r);
+  const mu=s.d==="exp"?1:1,sg=s.d==="exp"?1:s.d==="uni"?2/Math.sqrt(12):Math.sqrt(0.36+0.0324),M=[];
+  for(let i=0;i<2000;i++){let t=0;for(let j=0;j<s.n;j++)t+=draw1();M.push(t/s.n)}
+  const lo=s.d==="exp"?0:0,hi=s.d==="exp"?4:2,nb=40,h=Array(nb).fill(0);M.forEach(v=>{const b=Math.floor((v-lo)/(hi-lo)*nb);if(b>=0&&b<nb)h[b]++});
+  const w=(hi-lo)/nb,dens=h.map(c=>c/2000/w),se=sg/Math.sqrt(s.n),top=Math.max(Math.max(...dens),1/(se*2.5066))*1.08,{X,Y,g:g0}=axes(lo,hi,0,top,{nx:8,ny:4,xl:"Promedio de la muestra"});let g=g0;
+  dens.forEach((v,i)=>{g+='<rect class="bar k1" x="'+X(lo+i*w)+'" y="'+Y(v)+'" width="'+(480/nb-1)+'" height="'+(370-Y(v))+'"/>'});
+  const cu=[];for(let i=0;i<=120;i++){const x=lo+(hi-lo)*i/120;cu.push([X(x),Y(npdf((x-mu)/se)/se)])}g+=pth(cu,"kk");
+  const m=mean(M),d=sd(M),sk=mean(M.map(v=>((v-m)/d)**3));
+  return {g,m:big(f2(sk),"Asimetría del histograma (0 es simétrico)",Math.abs(sk)<0.2?"ok":"")+tbl([["Media de los promedios",f2(m)],["Desviación observada",f2(d)],["Desviación teórica σ/√n",f2(se)]])}}};
+/* 03 Estadística */
+const linData=s=>{const d=PU.slice(0,40).map((u,i)=>[u*10,2+1.5*u*10+s.sg*PZ[i]]);if(s.out)d.push([9.6,-7]);return d};
+LAB.lin={a:[3,7],t:"Regresión lineal y R²",s:{b0:8,b1:0.5,sg:2,out:0},
+ q:"Cada punto es una observación. La línea gruesa es tu recta; las líneas rojas verticales son los residuos, lo que la recta se equivoca en cada punto.",
+ c:[["b0","Intercepto b₀",-10,20,0.1],["b1","Pendiente b₁",-2,5,0.05],["sg","Ruido de los datos",0,6,0.1],["out","Agregar un valor atípico","chk"]],
+ b:[["Ajustar por mínimos cuadrados",s=>{const [a,b]=ols(linData(s));s.b0=Math.round(a*100)/100;s.b1=Math.round(b*100)/100}]],
+ p:["Mueve intercepto y pendiente hasta que los residuos se vean cortos. Luego pulsa el ajuste y compara tu R² con el óptimo.","Pon la pendiente en −1. El R² se vuelve negativo: tu recta predice peor que la media, que es la línea punteada.","Sube el ruido a 6 y vuelve a ajustar. La recta casi no cambia, pero el R² baja mucho. Activa el valor atípico y ajusta otra vez."],
+ k:"R² = 1 − SSE/SST compara tu recta con predecir siempre la media. Mide cuánta dispersión explica el modelo, no si el modelo es correcto.",
+ draw(s){const {X,Y,g:g0}=axes(0,10,-10,25,{ny:7,xl:"x",yl:"y"});let g=g0;const d=linData(s),n=d.length,my=mean(d.map(p=>p[1]));
+  g+=seg(50,Y(my),530,Y(my),"mean")+txt(440,Y(my)-6,"media de y");let sse=0,sst=0;
+  d.forEach(p=>{const h=s.b0+s.b1*p[0];sse+=(p[1]-h)**2;sst+=(p[1]-my)**2;g+=seg(X(p[0]),Y(p[1]),X(p[0]),Y(Math.max(-10,Math.min(25,h))),"res")});
+  d.forEach((p,i)=>{g+=dot(X(p[0]),Y(p[1]),s.out&&i===n-1?"outl":"")});
+  g+='<line class="fit" x1="'+X(0)+'" y1="'+Y(s.b0)+'" x2="'+X(10)+'" y2="'+Y(s.b0+10*s.b1)+'" clip-path="url(#cl)"/>';const r2=1-sse/sst;
+  return {g,m:big(f2(r2),"R² de tu recta",r2>0.7?"ok":r2<0?"bad":"")+tbl([["Suma de residuos al cuadrado (SSE)",f2(sse)],["Variabilidad total (SST)",f2(sst)],["Error típico (RMSE)",f2(Math.sqrt(sse/n))]])+hint(r2<0?"R² negativo: tu recta predice peor que la media.":"Los datos se generaron con y = 2 + 1,5·x más ruido.")}}};
+/* 04 Inferencia causal */
+LAB.conf={a:[4],t:"Variable de confusión y paradoja de Simpson",s:{b:-0.8,d:9},
+ q:"Dos grupos, azul y naranja. La recta negra ajusta todos los puntos juntos; las rectas de color ajustan cada grupo por separado.",
+ c:[["b","Efecto real de x sobre y (dentro de cada grupo)",-2,2,0.1],["d","Ventaja del grupo naranja (confusor)",-12,12,0.5]],
+ p:["Con efecto real −0,8 y ventaja 9, la recta negra sube aunque dentro de cada grupo la relación baja. Eso es la paradoja de Simpson.","Lleva la ventaja del grupo a 0. Las tres rectas coinciden: sin confusor, el análisis ingenuo acierta.","Pon el efecto real en 0 y la ventaja en 9. Aparece una relación que no existe."],
+ k:"Si una tercera variable influye a la vez en x y en y, la correlación global mezcla dos efectos. Ajustar por el confusor (aquí, mirar dentro de cada grupo) recupera el efecto real.",
+ draw(s){const {X,Y,g:g0}=axes(0,10,-12,22,{ny:6,xl:"x (tratamiento o exposición)",yl:"y (resultado)"});let g=g0;const A=[],B=[];
+  for(let i=0;i<30;i++){const xa=3+1.2*PZ[i],xb=7+1.2*PZ[i+40];A.push([xa,4+s.b*xa+1.5*PZ[i+100]]);B.push([xb,4+s.b*xb+s.d+1.5*PZ[i+140]])}
+  const all=A.concat(B),[a0,a1]=ols(all),[p0,p1]=ols(A),[q0,q1]=ols(B),ln=(c0,c1,x0,x1,cls)=>pth([[X(x0),Y(c0+c1*x0)],[X(x1),Y(c0+c1*x1)]],cls);
+  A.forEach(p=>g+=dot(X(p[0]),Y(p[1]),"cA"));B.forEach(p=>g+=dot(X(p[0]),Y(p[1]),"cB"));
+  g+=ln(p0,p1,0.5,5.5,"k1")+ln(q0,q1,4.5,9.5,"k2")+ln(a0,a1,0,10,"kk");const adj=(p1+q1)/2,flip=Math.sign(a1)!==Math.sign(adj)&&Math.abs(adj)>0.15;
+  return {g,m:big(f2(a1),"Pendiente ingenua (todos juntos)",flip?"bad":"")+tbl([["Pendiente ajustada por grupo",f2(adj),"ok"],["Efecto real usado para simular",f2(s.b)],["Sesgo del análisis ingenuo",f2(a1-s.b)]])+hint(flip?"El signo se invierte: paradoja de Simpson.":"")}}};
+/* 05 Bayes */
+LAB.beta={a:[5],t:"Actualización bayesiana de una proporción",s:{a:2,b:2,k:7,f:3},
+ q:"La curva punteada es lo que creías antes de ver datos sobre una proporción (por ejemplo, la tasa de falla). La curva sólida es lo que crees después de observar éxitos y fracasos.",
+ c:[["a","Prior: pseudoéxitos a",0.5,30,0.5],["b","Prior: pseudofracasos b",0.5,30,0.5],["k","Éxitos observados",0,60,1],["f","Fracasos observados",0,60,1]],
+ p:["Con prior 2 y 2, pon 7 éxitos y 3 fracasos. La media a posteriori queda entre el prior (0,50) y el dato (0,70).","Multiplica los datos por cinco: 35 y 15. La curva se estrecha y el prior casi deja de importar.","Vuelve a 7 y 3 y pon un prior fuerte, 30 y 30. Ahora los datos apenas mueven la creencia."],
+ k:"Posterior = prior × verosimilitud. Con un prior Beta(a, b) y datos binomiales, el resultado es Beta(a + éxitos, b + fracasos): el prior actúa como observaciones previas.",
+ draw(s){const N=300,xs=Array.from({length:N},(_,i)=>(i+0.5)/N),pdf=(a,b)=>{const v=xs.map(x=>Math.exp((a-1)*Math.log(x)+(b-1)*Math.log(1-x))),z=v.reduce((t,u)=>t+u,0)/N;return v.map(u=>u/z)};
+  const pr=pdf(s.a,s.b),po=pdf(s.a+s.k,s.b+s.f),top=Math.min(Math.max(...po,...pr)*1.08,60),{X,Y,g:g0}=axes(0,1,0,top,{nx:10,ny:4,xl:"Proporción"});let g=g0;
+  g+=pth(xs.map((x,i)=>[X(x),Y(Math.min(pr[i],top))]),"k2 dsh")+pth(xs.map((x,i)=>[X(x),Y(Math.min(po[i],top))]),"k1");
+  let c=0,lo=0,hi=1;po.forEach((v,i)=>{const p=c;c+=v/N;if(p<0.025&&c>=0.025)lo=xs[i];if(p<0.975&&c>=0.975)hi=xs[i]});
+  g+=seg(X(lo),Y(0),X(lo),40,"bnd")+seg(X(hi),Y(0),X(hi),40,"bnd");const n=s.k+s.f;
+  return {g,m:big(f2((s.a+s.k)/(s.a+s.b+n)),"Media a posteriori","ok")+tbl([["Media del prior",f2(s.a/(s.a+s.b))],["Proporción observada",n?f2(s.k/n):"sin datos"],["Intervalo creíble del 95 %",f2(lo)+" a "+f2(hi)],["Peso de los datos frente al prior",pc(n/(n+s.a+s.b))]])}}};
+/* 06 Ciencia de datos y preprocesamiento */
+LAB.esc={a:[6],t:"Atípicos y escalamiento",s:{o:180,r:0},
+ q:"Trece mediciones dibujadas cuatro veces: en su escala original y después de tres escalamientos. El punto rojo es un valor atípico que tú controlas.",
+ c:[["o","Valor del atípico",60,400,5],["r","Quitar el atípico","chk"]],
+ p:["Lleva el atípico a 400. En la fila min-max los doce puntos normales quedan aplastados en una esquina: perdieron casi toda su resolución.","Mira la fila robusta: los puntos normales conservan su separación, porque la mediana y el rango intercuartílico casi no se mueven.","Compara media y mediana mientras mueves el atípico. Luego márcalo como quitado."],
+ k:"Min-max y z-score usan mínimo, máximo, media y desviación, que un solo atípico arrastra. El escalamiento robusto usa mediana y rango intercuartílico. Elige el escalador después de mirar los atípicos, no antes.",
+ draw(s){const base=PZ.slice(200,212).map(z=>50+8*z),d=s.r?base:base.concat([s.o]),so=[...d].sort((a,b)=>a-b),q=p=>{const i=(so.length-1)*p,l=Math.floor(i);return so[l]+(so[Math.min(l+1,so.length-1)]-so[l])*(i-l)};
+  const m=mean(d),sg=sd(d),med=q(0.5),iqr=q(0.75)-q(0.25),mn=so[0],mx=so[so.length-1];
+  const rows=[["Original",v=>v],["Min-max (0 a 1)",v=>(v-mn)/(mx-mn)],["Z-score",v=>(v-m)/sg],["Robusto (mediana e IQR)",v=>(v-med)/iqr]];let g="";
+  rows.forEach((r,j)=>{const y=70+j*92,t=d.map(r[1]),lo=Math.min(...t),hi=Math.max(...t),X=v=>60+(v-lo)/(hi-lo||1)*450;
+   g+=txt(60,y-34,r[0])+seg(60,y,510,y,"ax")+txt(60,y+24,fm(lo))+txt(510,y+24,fm(hi),"end");
+   t.forEach((v,i)=>{g+=dot(X(v),y-10+(i%3)*5,!s.r&&i===12?"outl":"",5)});
+   if(j===0)g+=seg(X(m),y-22,X(m),y+8,"bnd")+txt(X(m)+4,y-24,"media")+seg(X(med),y-22,X(med),y+8,"mean")});
+  const sq=s.r?1:(Math.max(...base)-mn)/(mx-mn);
+  return {g,m:big(pc(sq),"Del rango min-max que ocupan los 12 puntos normales",sq<0.3?"bad":"ok")+tbl([["Media",f2(m)],["Mediana",f2(med)],["Desviación estándar",f2(sg)],["Rango intercuartílico (IQR)",f2(iqr)]])}}};
+LAB.imp={a:[6],t:"Valores faltantes e imputación",s:{pct:0.3,mec:"mar",met:"media"},
+ q:"Puntos azules: datos observados. Grises tenues: los valores de y que se perdieron. Naranjas: lo que el método de imputación puso en su lugar.",
+ c:[["pct","Proporción de y faltante",0,0.7,0.05],["mec","Por qué faltan","sel",[["mcar","Al azar (MCAR)"],["mar","Faltan más cuando x es alto (MAR)"]]],["met","Tratamiento","sel",[["media","Imputar con la media"],["reg","Imputar con regresión sobre x"],["del","Eliminar las filas"]]]],
+ p:["Con faltantes al azar e imputación por la media, sube la proporción. La media cambia poco, pero la desviación y la correlación se hunden: los puntos naranjas forman una línea plana.","Cambia a 'faltan más cuando x es alto'. Ahora la media también queda sesgada, tanto al imputar con la media como al eliminar filas.","Cambia a regresión. La media se recupera, pero la correlación queda inflada: los imputados caen exactos sobre la recta."],
+ k:"Ningún tratamiento es gratis. La media destruye varianza y relaciones; la regresión las exagera; eliminar filas sesga si la ausencia depende de otra variable. Antes de imputar hay que entender por qué falta el dato.",
+ draw(s){const {X,Y,g:g0}=axes(0,10,0,32,{ny:4,xl:"x",yl:"y"});let g=g0;const n=120,x=PU.slice(300,300+n).map(u=>u*10),y=x.map((v,i)=>5+2*v+3*PZ[300+i]);
+  const sc=x.map((v,i)=>s.mec==="mcar"?PU[520+i]:1-(v+2.5*PZ[520+i]+5)/20),th=[...sc].sort((a,b)=>a-b)[Math.min(n-1,Math.floor(s.pct*n))],mis=sc.map(v=>s.pct>0&&v<th);
+  const ob=[];x.forEach((v,i)=>{if(!mis[i])ob.push([v,y[i]])});const mo=mean(ob.map(p=>p[1])),[b0,b1]=ols(ob),fx=[],fy=[];
+  x.forEach((v,i)=>{if(!mis[i]){fx.push(v);fy.push(y[i]);g+=dot(X(v),Y(y[i]))}else{g+=dot(X(v),Y(y[i]),"ghost",4);if(s.met!=="del"){const im=s.met==="media"?mo:b0+b1*v;fx.push(v);fy.push(im);g+=dot(X(v),Y(im),"cB")}}});
+  const bias=mean(fy)-mean(y);
+  return {g,m:big(f2(bias),"Sesgo en la media de y",Math.abs(bias)>0.8?"bad":"ok")+'<table><thead><tr><th></th><th>Real</th><th>Tras tratar</th></tr></thead><tbody><tr><td>Media de y</td><td class="num">'+f2(mean(y))+'</td><td class="num">'+f2(mean(fy))+'</td></tr><tr><td>Desviación de y</td><td class="num">'+f2(sd(y))+'</td><td class="num">'+f2(sd(fy))+'</td></tr><tr><td>Correlación x, y</td><td class="num">'+f2(corr(x,y))+'</td><td class="num">'+f2(corr(fx,fy))+'</td></tr><tr><td>Filas disponibles</td><td class="num">'+n+'</td><td class="num">'+fx.length+'</td></tr></tbody></table>'}}};
+LAB.desb={a:[6,7],t:"Desbalance de clases y umbral",s:{pi:0.05,sep:2,t:1},
+ q:"Distribución del puntaje del modelo para la clase negativa (azul) y la positiva (naranja), cada una con el tamaño que le corresponde. La línea vertical es el umbral: a su derecha el modelo dice 'positivo'.",
+ c:[["pi","Proporción de positivos",0.01,0.5,0.01],["sep","Qué tan bien separa el modelo",0.5,3.5,0.1],["t","Umbral",-2,5,0.05]],
+ p:["Con 5 % de positivos, lleva el umbral a 5: el modelo no detecta nada y aun así la exactitud es 95 %. Por eso la exactitud engaña.","Baja el umbral hasta que la sensibilidad pase de 90 % y mira la precisión: muchos de los marcados son falsas alarmas.","Sube la proporción de positivos a 50 % sin tocar nada más. Sensibilidad y especificidad no cambian; la precisión sí."],
+ k:"Sensibilidad y especificidad son propiedades del modelo y del umbral. La precisión depende además de qué tan raro es el evento. Con clases desbalanceadas se evalúa con precisión, sensibilidad y F1, y el umbral se fija por costo.",
+ draw(s){const pd=x=>(1-s.pi)*npdf(x),pp=x=>s.pi*npdf(x-s.sep),{X,Y,g:g0}=axes(-3.5,6.5,0,0.42,{nx:10,ny:3,xl:"Puntaje del modelo"});let g=g0;const a=[],b=[];
+  for(let i=0;i<=200;i++){const x=-3.5+i/20;a.push([X(x),Y(pd(x))]);b.push([X(x),Y(pp(x))])}
+  g+=pth(a,"k1")+pth(b,"k2")+seg(X(s.t),30,X(s.t),370,"fit thin")+txt(X(s.t)+6,44,"umbral");
+  const tpr=1-Phi(s.t-s.sep),fpr=1-Phi(s.t),tp=s.pi*tpr,fp=(1-s.pi)*fpr,pr=tp+fp>1e-9?tp/(tp+fp):0,acc=tp+(1-s.pi)*(1-fpr),f1=pr+tpr>0?2*pr*tpr/(pr+tpr):0;
+  return {g,m:big(pc(pr),"Precisión: de los marcados, cuántos son positivos",pr<0.5?"bad":"ok")+tbl([["Sensibilidad (recall)",pc(tpr)],["Especificidad",pc(1-fpr)],["F1",f2(f1)],["Exactitud",pc(acc)],["Exactitud de decir siempre 'negativo'",pc(1-s.pi)]])}}};
+LAB.pca={a:[6,1],t:"PCA: la dirección que más varianza conserva",s:{r:0.85,th:20},
+ q:"Una nube de puntos con dos variables. La línea gruesa es un eje sobre el que proyectas los datos; las líneas finas muestran a dónde cae cada punto. Reducir de dos dimensiones a una es quedarte solo con la posición sobre ese eje.",
+ c:[["th","Dirección del eje (grados)",0,180,1],["r","Correlación entre las variables",0,0.98,0.02]],
+ b:[["Ir a la primera componente principal",(s,c)=>{s.th=Math.round(c.pc1)}]],
+ p:["Gira el eje y busca a ojo el ángulo que conserva más varianza. Luego pulsa el botón y compara.","Pon el eje perpendicular a la primera componente: es la segunda componente y conserva lo que queda.","Baja la correlación a 0. Ninguna dirección destaca: no hay nada que comprimir."],
+ k:"La primera componente principal es la dirección de máxima varianza y a la vez la que minimiza las distancias perpendiculares a los puntos. PCA solo sirve si las variables están correlacionadas, y es sensible a la escala.",
+ draw(s,c){const {X,Y,g:g0}=axes(-6,6,-4.25,4.25,{nx:6,ny:4});let g=g0;const P=[];for(let i=0;i<80;i++){const a=PZ[500+i],b=PZ[600+i];P.push([2*a,1.6*(s.r*a+Math.sqrt(1-s.r*s.r)*b)])}
+  const mx=mean(P.map(p=>p[0])),my=mean(P.map(p=>p[1]));let sxx=0,syy=0,sxy=0;P.forEach(p=>{sxx+=(p[0]-mx)**2;syy+=(p[1]-my)**2;sxy+=(p[0]-mx)*(p[1]-my)});
+  c.pc1=((0.5*Math.atan2(2*sxy,sxx-syy)*180/Math.PI)+180)%180;const t=s.th*Math.PI/180,ux=Math.cos(t),uy=Math.sin(t);let vp=0;
+  P.forEach(p=>{const k=(p[0]-mx)*ux+(p[1]-my)*uy;vp+=k*k;g+=seg(X(p[0]),Y(p[1]),X(mx+k*ux),Y(my+k*uy),"res")+dot(X(mx+k*ux),Y(my+k*uy),"cB",3)});
+  P.forEach(p=>g+=dot(X(p[0]),Y(p[1])));g+=pth([[X(mx-9*ux),Y(my-9*uy)],[X(mx+9*ux),Y(my+9*uy)]],"kk");const fr=vp/(sxx+syy);
+  return {g,m:big(pc(fr),"Varianza que conserva este eje",fr>0.85?"ok":"")+tbl([["Ángulo de la primera componente",f2(c.pc1)+"°"],["Varianza que se pierde",pc(1-fr)],["Correlación de la nube",f2(sxy/Math.sqrt(sxx*syy))]])}}};
+/* 07 Aprendizaje automático */
+const logData=s=>PU.slice(0,60).map((u,i)=>[u*10,PU[100+i]<1/(1+Math.exp(-s.sep*(u*10-5)))?1:0]);
+LAB.log={a:[7],t:"Regresión logística",s:{g0:-2,g1:0.6,sep:1.2,thr:0.5},
+ q:"Arriba están los casos con respuesta 1 y abajo los de respuesta 0. La curva en S es la probabilidad que predice tu modelo para cada x. Borde rojo: caso mal clasificado con el umbral actual.",
+ c:[["g0","Intercepto β₀",-15,15,0.1],["g1","Pendiente β₁",-1,4,0.05],["thr","Umbral de decisión",0.05,0.95,0.01],["sep","Separación entre clases en los datos",0.2,3,0.1]],
+ b:[["Ajustar por máxima verosimilitud",s=>{const d=logData(s);let b0=0,b1=0;for(let it=0;it<40;it++){let g0=0,g1=0,h00=0,h01=0,h11=0;d.forEach(q=>{const p=1/(1+Math.exp(-(b0+b1*q[0]))),w=p*(1-p);g0+=q[1]-p;g1+=(q[1]-p)*q[0];h00+=w;h01+=w*q[0];h11+=w*q[0]*q[0]});const det=h00*h11-h01*h01;if(det<1e-9)break;b0+=(h11*g0-h01*g1)/det;b1+=(h00*g1-h01*g0)/det}
+   s.g0=Math.max(-15,Math.min(15,Math.round(b0*100)/100));s.g1=Math.max(-1,Math.min(4,Math.round(b1*100)/100))}]],
+ p:["Mueve β₁: controla lo empinada que es la S. Mueve β₀: la desplaza. El cruce con 0,5 está en x = −β₀/β₁.","Pulsa el ajuste y luego mueve solo el umbral. La curva no cambia, pero la matriz de confusión sí: sensibilidad y precisión se intercambian.","Sube la separación entre clases a 3 y vuelve a ajustar. β₁ crece; con separación perfecta crecería sin límite."],
+ k:"No hay R² clásico porque la respuesta es 0 o 1. Se ajusta maximizando la verosimilitud y se evalúa con log-loss, pseudo-R² de McFadden, AUC y calibración. Supone linealidad en el logit, no normalidad.",
+ draw(s){const {X,Y,g:g0}=axes(0,10,0,1,{ny:4,xl:"x",yl:"Probabilidad predicha"});let g=g0;const d=logData(s),n=d.length,P=x=>1/(1+Math.exp(-(s.g0+s.g1*x)));
+  g+=seg(50,Y(s.thr),530,Y(s.thr),"mean")+txt(452,Y(s.thr)-6,"umbral");
+  if(Math.abs(s.g1)>1e-6){const xb=(Math.log(s.thr/(1-s.thr))-s.g0)/s.g1;if(xb>0&&xb<10)g+=seg(X(xb),30,X(xb),370,"bnd")+txt(X(xb)+6,24,"frontera")}
+  const cu=[];for(let i=0;i<=100;i++)cu.push([X(i/10),Y(P(i/10))]);g+=pth(cu,"kk");let ll=0,tp=0,fp=0,fn=0,tn=0,s1=0;
+  d.forEach((q,i)=>{const p=Math.min(1-1e-9,Math.max(1e-9,P(q[0]))),y=q[1],pr=p>=s.thr?1:0;ll+=y?Math.log(p):Math.log(1-p);s1+=y;if(y&&pr)tp++;else if(!y&&pr)fp++;else if(y&&!pr)fn++;else tn++;g+=dot(X(q[0]),Y(y)+PZ[i]*5,"c"+y+(pr!==y?" wrong":""))});
+  const pb=s1/n,ll0=s1*Math.log(pb)+(n-s1)*Math.log(1-pb),mc=1-ll/ll0;
+  return {g,m:big(f2(mc),"Pseudo-R² de McFadden",mc>0.3?"ok":mc<0?"bad":"")+tbl([["Log-loss (menor es mejor)",f2(-ll/n)],["Exactitud",pc((tp+tn)/n)],["Sensibilidad",tp+fn?pc(tp/(tp+fn)):"sin casos"],["Precisión",tp+fp?pc(tp/(tp+fp)):"sin casos"]])+'<table class="cm"><thead><tr><th></th><th>Predice 1</th><th>Predice 0</th></tr></thead><tbody><tr><th>Real 1</th><td class="num ok">'+tp+'</td><td class="num bad">'+fn+'</td></tr><tr><th>Real 0</th><td class="num bad">'+fp+'</td><td class="num ok">'+tn+'</td></tr></tbody></table>'}}};
+LAB.bv={a:[7],t:"Sesgo, varianza y regularización",s:{deg:3,lam:-8,nz:0.25},
+ q:"Puntos azules: 12 datos de entrenamiento. Línea punteada: la función real que los generó. Línea negra: el polinomio que ajustaste. Los puntos naranjas pequeños son datos de prueba que el modelo no vio.",
+ c:[["deg","Grado del polinomio",1,11,1],["lam","Regularización ridge (log₁₀ de λ)",-8,1,0.25],["nz","Ruido en los datos",0.05,0.6,0.05]],
+ p:["Con grado 1 la recta no puede seguir la curva: error alto en entrenamiento y en prueba. Eso es sesgo (subajuste).","Sube el grado a 11 sin regularización. La curva pasa por los 12 puntos, el error de entrenamiento cae casi a cero y el de prueba se duplica: el modelo memorizó el ruido. Eso es varianza (sobreajuste).","Sin bajar el grado, sube la regularización hasta cerca de −3. La curva se calma y el error de prueba vuelve a bajar."],
+ k:"El error de entrenamiento siempre baja al dar más flexibilidad; el de prueba baja y luego sube. El mejor modelo está en el mínimo del error de prueba. Regularizar es otra forma de quitar flexibilidad sin cambiar de modelo.",
+ draw(s){const {X,Y,g:g0}=axes(-1,1,-2,2,{nx:4,ny:4,xl:"x",yl:"y"});let g=g0;const f=x=>Math.sin(Math.PI*x),tr=[],te=[];
+  for(let i=0;i<12;i++){const x=-0.95+1.9*i/11;tr.push([x,f(x)+s.nz*PZ[700+i]])}for(let i=0;i<60;i++){const x=-0.98+1.96*PU[700+i];te.push([x,f(x)+s.nz*PZ[720+i]])}
+  const p=s.deg+1,lam=Math.pow(10,s.lam),A=Array.from({length:p},()=>Array(p).fill(0)),b=Array(p).fill(0);
+  tr.forEach(q=>{const v=[];for(let j=0;j<p;j++)v.push(Math.pow(q[0],j));for(let i=0;i<p;i++){b[i]+=v[i]*q[1];for(let j=0;j<p;j++)A[i][j]+=v[i]*v[j]}});for(let i=1;i<p;i++)A[i][i]+=lam;
+  const w=solve(A,b),h=x=>{let t=0;for(let j=p-1;j>=0;j--)t=t*x+w[j];return t},rm=d=>Math.sqrt(mean(d.map(q=>(q[1]-h(q[0]))**2)));
+  const tc=[],fc=[];for(let i=0;i<=200;i++){const x=-1+i/100;tc.push([X(x),Y(f(x))]);fc.push([X(x),Y(Math.max(-4,Math.min(4,h(x))))])}
+  g+=pth(tc,"k3 dsh")+te.map(q=>dot(X(q[0]),Y(q[1]),"cB",2.5)).join("")+pth(fc,"kk")+tr.map(q=>dot(X(q[0]),Y(q[1]))).join("");const a=rm(tr),c=rm(te);
+  return {g,m:big(isFinite(c)&&c<50?f2(c):"muy alto","Error en datos de prueba (RMSE)",c<s.nz*1.4?"ok":c>s.nz*2.5?"bad":"")+tbl([["Error en entrenamiento (RMSE)",f2(a)],["Ruido de los datos (lo mínimo alcanzable)",f2(s.nz)],["Coeficientes del modelo",p],["Diagnóstico",a>s.nz*1.8?"Subajuste: falta flexibilidad":c>a*2.2?"Sobreajuste: memoriza ruido":"Equilibrado"]])}}};
+const blobs=(s,off,n)=>{const d=[];for(let i=0;i<n;i++){const c=i%2;d.push([(c?1.1:-1.1)+s*PZ[off+i],(c?0.6:-0.6)+s*PZ[off+200+i],c])}return d};
+LAB.knn={a:[7],t:"k vecinos más cercanos",s:{k:1,sp:1},
+ q:"Dos clases de puntos. El color de fondo es lo que el modelo predeciría en cada lugar del plano: cada zona toma la clase mayoritaria entre sus k vecinos más cercanos.",
+ c:[["k","Número de vecinos k",1,41,2],["sp","Solapamiento entre clases",0.4,1.8,0.1]],
+ p:["Con k = 1 la frontera rodea cada punto suelto y la exactitud en entrenamiento es 100 %. En validación es bastante menor.","Sube k hasta 15. La frontera se suaviza, la exactitud de entrenamiento baja y la de validación sube.","Lleva k a 41. La frontera es casi una recta y la validación deja de mejorar: suavizar más ya no ayuda y, con k todavía mayor, el modelo se vuelve demasiado simple."],
+ k:"k es un hiperparámetro que regula la flexibilidad: k pequeño es varianza alta, k grande es sesgo alto. Se elige con datos de validación, nunca con los de entrenamiento. Como usa distancias, exige escalar las variables.",
+ draw(s){const {X,Y,g:g0}=axes(-4,4,-3.5,3.5,{nx:4,ny:4});let g=g0;const tr=blobs(s.sp,0,80),va=blobs(s.sp,90,100);
+  const pred=(x,y,skip)=>{const d=tr.map((p,i)=>[i===skip?1e9:(p[0]-x)**2+(p[1]-y)**2,p[2]]).sort((a,b)=>a[0]-b[0]);let v=0;for(let i=0;i<s.k;i++)v+=d[i][1];return v*2>s.k?1:0};
+  g+=cells(X,Y,-4,4,-3.5,3.5,(x,y)=>PAL[pred(x,y,-1)])+tr.map(p=>dot(X(p[0]),Y(p[1]),"c"+PAL[p[2]])).join("");
+  const at=mean(tr.map(p=>pred(p[0],p[1],-1)===p[2]?1:0)),av=mean(va.map(p=>pred(p[0],p[1],-1)===p[2]?1:0));
+  return {g,m:big(pc(av),"Exactitud en validación",av>0.85?"ok":"")+tbl([["Exactitud en entrenamiento",pc(at)],["Brecha entre ambas",pc(at-av),at-av>0.08?"bad":"ok"]])+hint("Una brecha grande entre entrenamiento y validación indica sobreajuste.")}}};
+LAB.km={a:[7],t:"k-means paso a paso",s:{k:3,it:0,sd:1},
+ q:"Puntos sin etiqueta. Las cruces son los centroides; cada punto toma el color del centroide más cercano. Cada iteración reasigna los puntos y mueve cada centroide al promedio de los suyos.",
+ c:[["k","Número de grupos k",1,6,1],["it","Iteraciones",0,12,1],["sd","Inicio de los centroides",1,6,1]],
+ p:["Con k = 3, sube las iteraciones de 0 a 6 una por una y mira cómo los centroides viajan hasta el centro de cada nube. La inercia baja en cada paso.","Pon k = 4 con 12 iteraciones y cambia el inicio de los centroides. La inercia final no es siempre la misma: algunos inicios terminan en un agrupamiento peor. Son mínimos locales.","Sube k a 6. La inercia sigue bajando aunque solo hay tres nubes reales: la inercia sola no dice cuál k es el correcto."],
+ k:"k-means minimiza la suma de distancias al cuadrado a los centroides (inercia). Converge siempre, pero a un mínimo local que depende del inicio; por eso se repite varias veces. Supone grupos redondos y de tamaño parecido.",
+ draw(s){const {X,Y,g:g0}=axes(-5,5,-4,4,{nx:5,ny:4});let g=g0;const C0=[[-2.4,1.6],[2.4,1.4],[0,-2]],P=[];for(let i=0;i<120;i++){const c=C0[i%3];P.push([c[0]+0.85*PZ[i],c[1]+0.85*PZ[300+i]])}
+  let cen=[];for(let j=0;j<s.k;j++){const p=P[(j*17+s.sd*23)%120];cen.push([p[0],p[1]])}let as=[];
+  const assign=()=>{as=P.map(p=>{let b=0,bd=1e9;cen.forEach((c,j)=>{const d=(p[0]-c[0])**2+(p[1]-c[1])**2;if(d<bd){bd=d;b=j}});return b})};assign();
+  for(let t=0;t<s.it;t++){cen=cen.map((c,j)=>{const m=P.filter((_,i)=>as[i]===j);return m.length?[mean(m.map(p=>p[0])),mean(m.map(p=>p[1]))]:c});assign()}
+  let ine=0;P.forEach((p,i)=>{const c=cen[as[i]];ine+=(p[0]-c[0])**2+(p[1]-c[1])**2;g+=dot(X(p[0]),Y(p[1]),"c"+PAL[as[i]],4)});
+  cen.forEach((c,j)=>{g+='<path class="cen c'+PAL[j]+'" d="M'+(X(c[0])-9)+" "+(Y(c[1])-9)+"l18 18m0 -18l-18 18"+'"/>'});
+  return {g,m:big(f2(ine),"Inercia (suma de distancias al cuadrado)")+tbl([["Grupos",s.k],["Tamaño de cada grupo",cen.map((_,j)=>as.filter(a=>a===j).length).join(" · ")]])}}};
+LAB.tree={a:[7],t:"Árbol de decisión y profundidad",s:{dp:2,nz:1},
+ q:"Dos clases separadas por una frontera curva. El fondo muestra las regiones del árbol: cada división es un corte horizontal o vertical sobre una sola variable.",
+ c:[["dp","Profundidad máxima",0,10,1],["nz","Ruido en las etiquetas",0,1.2,0.1]],
+ p:["Sube la profundidad de 0 a 3. Cada nivel agrega cortes rectos; la frontera curva se aproxima con escalones.","Lleva la profundidad a 10. Aparecen cajitas alrededor de puntos sueltos: la exactitud de entrenamiento llega a 100 % y la de validación baja respecto de un árbol poco profundo.","Baja el ruido a 0 y repite: con datos limpios el árbol profundo ya no pierde en validación. El sobreajuste es memorizar ruido; por eso Random Forest promedia muchos árboles."],
+ k:"Un árbol divide el espacio en rectángulos eligiendo en cada paso el corte que más reduce la impureza de Gini. La profundidad controla el sobreajuste. No necesita escalar variables y capta relaciones no lineales, pero es inestable: pequeños cambios en los datos cambian los cortes.",
+ draw(s){const {X,Y,g:g0}=axes(-3,3,-3,3,{nx:6,ny:6});let g=g0;const mk=(o,n)=>{const d=[];for(let i=0;i<n;i++){const x=PU[o+i]*6-3,y=PU[o+300+i]*6-3;d.push([x,y,y+s.nz*PZ[o+i]>1.4*Math.sin(1.4*x)?1:0])}return d},tr=mk(0,140),va=mk(150,140);let leaves=0;
+  const gini=(a,n)=>n?1-(a/n)**2-((n-a)/n)**2:0;
+  const build=(d,dep)=>{const n=d.length,ones=d.reduce((t,p)=>t+p[2],0);if(dep>=s.dp||n<2||ones===0||ones===n){leaves++;return {v:ones*2>=n?1:0}}let best=null;
+   for(let f=0;f<2;f++){const so=[...d].sort((a,b)=>a[f]-b[f]);let l1=0;for(let i=1;i<n;i++){l1+=so[i-1][2];if(so[i][f]===so[i-1][f])continue;const sc=(i*gini(l1,i)+(n-i)*gini(ones-l1,n-i))/n;if(!best||sc<best.sc)best={sc,f,t:(so[i][f]+so[i-1][f])/2}}}
+   if(!best||best.sc>=gini(ones,n)-1e-9){leaves++;return {v:ones*2>=n?1:0}}return {f:best.f,t:best.t,l:build(d.filter(p=>p[best.f]<best.t),dep+1),r:build(d.filter(p=>p[best.f]>=best.t),dep+1)}};
+  const T=build(tr,0),pr=(x,y)=>{let nd=T;while(nd.l)nd=(nd.f?y:x)<nd.t?nd.l:nd.r;return nd.v};
+  g+=cells(X,Y,-3,3,-3,3,(x,y)=>PAL[pr(x,y)])+tr.map(p=>dot(X(p[0]),Y(p[1]),"c"+PAL[p[2]],4)).join("");
+  const at=mean(tr.map(p=>pr(p[0],p[1])===p[2]?1:0)),av=mean(va.map(p=>pr(p[0],p[1])===p[2]?1:0));
+  return {g,m:big(pc(av),"Exactitud en validación",av>0.85?"ok":"")+tbl([["Exactitud en entrenamiento",pc(at)],["Hojas del árbol",leaves],["Brecha entre ambas",pc(at-av),at-av>0.08?"bad":"ok"]])}}};
+LAB.roc={a:[7,13],t:"Curva ROC, AUC, KS y Gini",s:{sep:1.5,t:0.75},
+ q:"La curva ROC recorre todos los umbrales posibles: en horizontal la tasa de falsos positivos, en vertical la de verdaderos positivos. El punto es tu umbral actual. La diagonal es un modelo que adivina.",
+ c:[["sep","Qué tan bien separa el modelo",0,4,0.1],["t","Umbral sobre el puntaje",-3,6,0.05]],
+ p:["Mueve el umbral: el punto recorre la curva, pero la curva no cambia. El AUC no depende del umbral.","Lleva la separación a 0. La curva cae sobre la diagonal: AUC 0,50, Gini 0, KS 0.","Sube la separación y busca el umbral donde la distancia vertical a la diagonal es máxima. Ese valor es el KS."],
+ k:"AUC es la probabilidad de que un positivo al azar reciba más puntaje que un negativo al azar. Gini = 2·AUC − 1 y KS es la máxima separación entre las dos distribuciones acumuladas. Las tres miden capacidad de ordenar, no calibración.",
+ draw(s){const {X,Y,g:g0}=axes(0,1,0,1,{nx:4,ny:4,xl:"Tasa de falsos positivos",yl:"Tasa de verdaderos positivos"});let g=g0;const c=[];let ks=0;
+  for(let i=0;i<=240;i++){const t=7-i/20,f=1-Phi(t),v=1-Phi(t-s.sep);c.push([X(f),Y(v)]);ks=Math.max(ks,v-f)}
+  const f=1-Phi(s.t),v=1-Phi(s.t-s.sep),auc=Phi(s.sep/Math.SQRT2);
+  g+=pth([[X(0),Y(0)],[X(1),Y(1)]],"mean")+pth(c,"k1")+seg(X(f),Y(f),X(f),Y(v),"bnd")+dot(X(f),Y(v),"c1",7);
+  return {g,m:big(f2(auc),"AUC",auc>0.8?"ok":auc<0.6?"bad":"")+tbl([["Gini",f2(2*auc-1)],["KS (máxima separación)",f2(ks)],["Separación en tu umbral",f2(v-f)],["Verdaderos positivos en tu umbral",pc(v)],["Falsos positivos en tu umbral",pc(f)]])}}};
+/* 08 Aprendizaje profundo */
+const ACT={sig:[x=>1/(1+Math.exp(-x)),x=>{const v=1/(1+Math.exp(-x));return v*(1-v)}],tanh:[Math.tanh,x=>1-Math.tanh(x)**2],relu:[x=>Math.max(0,x),x=>x>0?1:0],leaky:[x=>x>0?x:0.1*x,x=>x>0?1:0.1],gelu:[x=>x*Phi(x),x=>Phi(x)+x*npdf(x)]};
+LAB.act={a:[8],t:"Funciones de activación y gradiente que se desvanece",s:{f:"sig",x:1.5,n:10},
+ q:"Línea negra: la función de activación. Línea naranja punteada: su derivada, que es el factor por el que se multiplica el gradiente al pasar por una capa. El punto marca la entrada x que elegiste.",
+ c:[["f","Función","sel",[["sig","Sigmoide"],["tanh","Tangente hiperbólica"],["relu","ReLU"],["leaky","Leaky ReLU"],["gelu","GELU"]]],["x","Entrada x",-5,5,0.1],["n","Número de capas",1,40,1]],
+ p:["Con sigmoide, la derivada nunca pasa de 0,25. Sube las capas a 10: el gradiente que llega a la primera capa es prácticamente cero.","Cambia a ReLU con x positivo. La derivada vale 1 y el gradiente llega intacto por muchas capas.","Con ReLU pon x negativo. La derivada es 0: la neurona está muerta y no aprende. Compara con Leaky ReLU y GELU."],
+ k:"En retropropagación el gradiente es un producto de derivadas, una por capa. Si cada factor es menor que 1, el producto se desvanece con la profundidad. Por eso las redes profundas usan ReLU y sus variantes en lugar de sigmoide.",
+ draw(s){const {X,Y,g:g0}=axes(-5,5,-1.5,3,{nx:10,ny:6,xl:"x"});let g=g0;const [f,d]=ACT[s.f],a=[],b=[];for(let i=0;i<=200;i++){const x=-5+i/20;a.push([X(x),Y(f(x))]);b.push([X(x),Y(d(x))])}
+  g+=seg(50,Y(0),530,Y(0),"ax")+pth(b,"k2 dsh")+pth(a,"kk")+seg(X(s.x),Y(0),X(s.x),Y(f(s.x)),"bnd")+dot(X(s.x),Y(f(s.x)),"c1",7)+dot(X(s.x),Y(d(s.x)),"cB",6);
+  const gr=Math.pow(d(s.x),s.n),sh=gr===0?"0":gr<0.001?gr.toExponential(1).replace(".",","):f2(gr);
+  return {g,m:big(sh,"Gradiente que sobrevive tras "+s.n+" capas",gr<0.01?"bad":"ok")+tbl([["Salida f(x)",f2(f(s.x))],["Derivada f′(x)",f2(d(s.x))]])+hint(gr<0.01?"El gradiente se desvanece: las primeras capas casi no aprenden.":"El gradiente llega con fuerza suficiente a las primeras capas.")}}};
+LAB.mlp={a:[8],t:"Red neuronal: aprender una frontera no lineal",s:{ds:"xor",h:4,ep:0,lr:0.5},
+ q:"Dos clases que ninguna recta puede separar. El fondo es lo que predice una red con una capa oculta; cada paso de entrenamiento ajusta los pesos con retropropagación. La curva pequeña es la pérdida a lo largo del entrenamiento.",
+ c:[["ds","Datos","sel",[["xor","XOR (cuatro esquinas)"],["cir","Círculo dentro de anillo"]]],["h","Neuronas en la capa oculta",1,10,1],["ep","Pasos de entrenamiento",0,800,20],["lr","Tasa de aprendizaje",0.05,1.5,0.05]],
+ p:["Con 4 neuronas, sube los pasos de 0 a 800 y mira cómo la frontera se dobla hasta separar las clases mientras la pérdida baja.","Pon 1 neurona oculta y entrena. Solo puede trazar una recta: no resuelve XOR por más que entrenes. Con 2 ya puede.","Cambia a círculo. Prueba con 2, 3 y 6 neuronas: hacen falta al menos 3 para cerrar una región."],
+ k:"Cada neurona oculta aporta un corte recto; la capa de salida los combina. Con pocas neuronas la red no puede representar la frontera (falta capacidad); con suficientes sí, y el entrenamiento la encuentra bajando el gradiente de la pérdida.",
+ draw(s){const {X,Y,g:g0}=axes(-2,2,-2,2,{nx:4,ny:4});let g=g0;const D=[];for(let i=0;i<120;i++){if(s.ds==="xor"){const a=i%2?1:-1,b=(i>>1)%2?1:-1;D.push([a+0.32*PZ[i],b+0.32*PZ[200+i],a*b>0?1:0])}else{const in_=i%2,r=in_?0.45*PU[i]:1.2+0.4*PU[i],t=6.2832*PU[300+i];D.push([r*Math.cos(t),r*Math.sin(t),in_])}}
+  const H=s.h,W=[],B=[],V=[];let c=0;for(let j=0;j<H;j++){W.push([1.2*PZ[800+j],1.2*PZ[820+j]]);B.push(0.3*PZ[840+j]);V.push(0.8*PZ[860+j])}
+  const fw=(x,y)=>{const h=[];let o=c;for(let j=0;j<H;j++){h[j]=Math.tanh(W[j][0]*x+W[j][1]*y+B[j]);o+=V[j]*h[j]}return [1/(1+Math.exp(-o)),h]},loss=()=>mean(D.map(p=>{const q=Math.min(1-1e-9,Math.max(1e-9,fw(p[0],p[1])[0]));return -(p[2]?Math.log(q):Math.log(1-q))})),hist=[loss()];
+  for(let e=1;e<=s.ep;e++){const gW=W.map(()=>[0,0]),gB=Array(H).fill(0),gV=Array(H).fill(0);let gc=0;D.forEach(p=>{const [q,h]=fw(p[0],p[1]),d=q-p[2];gc+=d;for(let j=0;j<H;j++){gV[j]+=d*h[j];const b=d*V[j]*(1-h[j]*h[j]);gW[j][0]+=b*p[0];gW[j][1]+=b*p[1];gB[j]+=b}});
+   const k=s.lr/D.length;c-=k*gc;for(let j=0;j<H;j++){V[j]-=k*gV[j];W[j][0]-=k*gW[j][0];W[j][1]-=k*gW[j][1];B[j]-=k*gB[j]}if(e%20===0)hist.push(loss())}
+  g+=cells(X,Y,-2,2,-2,2,(x,y)=>PAL[fw(x,y)[0]>0.5?1:0])+D.map(p=>dot(X(p[0]),Y(p[1]),"c"+PAL[p[2]],4)).join("");
+  const top=Math.max(...hist,0.75);g+='<rect class="inset" x="388" y="38" width="134" height="66" rx="8"/>'+txt(396,54,"pérdida")+'<path class="ln kk" fill="none" d="'+hist.map((v,i)=>(i?"L":"M")+(396+118*i/Math.max(1,hist.length-1)).toFixed(1)+" "+(98-36*v/top).toFixed(1)).join("")+'"/>';
+  const ac=mean(D.map(p=>(fw(p[0],p[1])[0]>0.5?1:0)===p[2]?1:0)),ls=hist[hist.length-1];
+  return {g,m:big(pc(ac),"Exactitud",ac>0.95?"ok":ac<0.7?"bad":"")+tbl([["Pérdida (entropía cruzada)",f2(s.ep?loss():ls)],["Pérdida antes de entrenar",f2(hist[0])],["Parámetros de la red",3*H+H+1]])}}};
+/* 09 Series de tiempo */
+LAB.ar={a:[9],t:"Autocorrelación, tendencia y estacionalidad",s:{phi:0.6,b:0,A:0},
+ q:"Arriba, una serie simulada de 144 periodos. Abajo, su función de autocorrelación: cuánto se parece la serie a sí misma desplazada 1, 2, … 18 periodos.",
+ c:[["phi","Memoria del proceso (φ)",0,1.02,0.02],["b","Tendencia por periodo",0,0.3,0.01],["A","Amplitud estacional (ciclo de 12)",0,6,0.25]],
+ p:["Con φ = 0 la serie es ruido blanco y las barras de autocorrelación son casi nulas. Sube φ a 0,9: las barras decaen despacio.","Lleva φ a 1 o más. La serie deambula sin volver a un nivel: es una caminata aleatoria, no estacionaria. La autocorrelación casi no decae.","Vuelve a φ = 0,3 y sube la amplitud estacional. Aparece un pico en el rezago 12. Agrega tendencia y mira cómo todas las barras suben."],
+ k:"Una serie es estacionaria si su media y su varianza no cambian en el tiempo. La autocorrelación que decae lento delata tendencia o raíz unitaria; los picos periódicos delatan estacionalidad. Por eso se diferencia antes de ajustar un ARIMA.",
+ draw(s){const n=144,x=[];let v=0;for(let t=0;t<n;t++){v=s.phi*v+PZ[t];x.push(v+s.b*t+s.A*Math.sin(6.2832*t/12))}
+  const lo=Math.min(...x),hi=Math.max(...x),X=t=>50+t/(n-1)*480,Y=u=>215-(u-lo)/(hi-lo||1)*180;let g=txt(52,24,"Serie")+seg(50,215,530,215,"ax");
+  g+=pth(x.map((u,t)=>[X(t),Y(u)]),"k1");const m=mean(x),den=x.reduce((t,u)=>t+(u-m)**2,0),ac=[];
+  for(let k=1;k<=18;k++){let t=0;for(let i=k;i<n;i++)t+=(x[i]-m)*(x[i-k]-m);ac.push(t/den)}
+  g+=txt(52,252,"Autocorrelación por rezago")+seg(50,320,530,320,"ax");const ci=1.96/Math.sqrt(n);g+=seg(50,320-ci*60,530,320-ci*60,"mean")+seg(50,320+ci*60,530,320+ci*60,"mean");
+  ac.forEach((a,i)=>{const h=a*60;g+='<rect class="bar k1" x="'+(58+i*26)+'" y="'+(h>=0?320-h:320)+'" width="16" height="'+Math.abs(h).toFixed(1)+'"/>'+txt(66+i*26,400,i+1,"middle")});
+  return {g,m:big(f2(ac[0]),"Autocorrelación en el rezago 1",ac[0]>0.95?"bad":"")+tbl([["Autocorrelación en el rezago 12",f2(ac[11])],["Rezagos fuera de la banda del 95 %",ac.filter(a=>Math.abs(a)>ci).length+" de 18"],["¿Estacionaria?",s.phi>=1||s.b>0.02?"No":s.A>0?"Sí, con estacionalidad":"Sí"]])}}};
+/* 10 Cálculo estocástico */
+LAB.bm={a:[10],t:"Movimiento browniano geométrico",s:{mu:0.1,sg:0.3,n:25},
+ q:"Trayectorias simuladas de un precio que parte de 100 y evoluciona durante un año. La línea negra es el valor esperado; la punteada, la mediana teórica.",
+ c:[["mu","Deriva anual μ",-0.3,0.5,0.01],["sg","Volatilidad anual σ",0.05,0.9,0.01],["n","Número de trayectorias",5,80,5]],
+ p:["Con μ = 0,10, sube la volatilidad de 0,10 a 0,80. El valor esperado no cambia, pero la mediana cae por debajo de 100: la mayoría de trayectorias pierde.","Pon μ = 0 y volatilidad alta. La probabilidad de terminar bajo el precio inicial supera el 50 %.","Mira el percentil 5: es el valor en riesgo a un año. Crece con la volatilidad mucho más rápido que con la deriva."],
+ k:"El precio es lognormal: su media crece con μ, pero su mediana crece con μ − σ²/2. Esa diferencia, que sale del lema de Itô, explica por qué alta volatilidad destruye el crecimiento típico aunque el promedio se mantenga.",
+ draw(s){const T=100,r=rng(3),paths=[];let hi=100,lo=100;for(let p=0;p<s.n;p++){let v=100;const a=[v];for(let t=1;t<=T;t++){v*=Math.exp((s.mu-s.sg*s.sg/2)/T+s.sg*Math.sqrt(1/T)*gauss(r));a.push(v)}paths.push(a);hi=Math.max(hi,...a);lo=Math.min(lo,...a)}
+  hi=Math.min(hi*1.05,400);const {X,Y,g:g0}=axes(0,1,Math.max(0,lo*0.9),hi,{nx:4,ny:5,xl:"Años"});let g=g0;
+  paths.forEach(a=>g+=pth(a.map((v,t)=>[X(t/T),Y(v)]),"thinp"));const e=[],md=[];for(let t=0;t<=T;t++){e.push([X(t/T),Y(100*Math.exp(s.mu*t/T))]);md.push([X(t/T),Y(100*Math.exp((s.mu-s.sg*s.sg/2)*t/T))])}
+  g+=pth(e,"kk")+pth(md,"k2 dsh");const d=s.mu-s.sg*s.sg/2,pl=Phi(-d/s.sg);
+  return {g,m:big(pc(pl),"Probabilidad de terminar bajo 100",pl>0.5?"bad":"ok")+tbl([["Valor esperado a un año",f2(100*Math.exp(s.mu))],["Mediana a un año",f2(100*Math.exp(d))],["Percentil 5 (valor en riesgo)",f2(100*Math.exp(d-1.645*s.sg))],["Crecimiento típico μ − σ²/2",f2(d)]])}}};
+/* 11 Visualización */
+LAB.viz={a:[11],t:"El eje truncado: cómo un gráfico exagera",s:{a:94,s0:0},
+ q:"Dos barras con valores reales fijos. Tú decides en qué valor empieza el eje vertical. Las barras cambian de altura; los datos no.",
+ c:[["a","Valor de la barra A (la B vale 100)",70,99,1],["s0","El eje empieza en",0,65,1]],
+ p:["Con A = 94 y el eje en 0, la diferencia se ve como es: pequeña.","Sube el inicio del eje hasta 65. Los datos son los mismos, pero la diferencia que se ve entre las barras es más del triple de la real.","Mira el factor de exageración. Edward Tufte lo llamó factor de mentira: efecto mostrado dividido entre efecto real."],
+ k:"En un gráfico de barras el ojo compara longitudes, así que el eje debe empezar en cero. Si lo que importa es la variación y no la magnitud, usa líneas o puntos, donde truncar el eje sí es legítimo.",
+ draw(s){const {X,Y,g:g0}=axes(0,3,s.s0,105,{nx:3,ny:5});let g=g0;[["A",s.a,"k1",0.6],["B",100,"k2",1.8]].forEach(b=>{g+='<rect class="bar '+b[2]+'" x="'+X(b[3])+'" y="'+Y(b[1])+'" width="96" height="'+(370-Y(b[1]))+'"/>'+txt(X(b[3])+48,Y(b[1])-8,b[0]+" = "+b[1],"middle")});
+  const real=(100-s.a)/s.a,vis=(100-s.s0)/(s.a-s.s0)-1,lf=vis/real;
+  return {g,m:big(f2(lf)+" veces","Factor de exageración",lf>1.5?"bad":"ok")+tbl([["Diferencia real entre B y A",pc(real)],["Diferencia que se ve en las barras",pc(vis)]])}}};
+/* 12 Aplicaciones especializadas */
+LAB.spc={a:[12],t:"Carta de control de un proceso",s:{sh:0,dr:0,nz:1},
+ q:"Mediciones sucesivas de una variable de proceso. Los límites de control se calculan con las primeras 25 muestras, cuando el proceso estaba estable. En rojo, los puntos que disparan una alarma.",
+ c:[["sh","Desplazamiento de la media desde la muestra 40 (en σ)",0,4,0.1],["dr","Deriva gradual por muestra (en σ)",0,0.12,0.005],["nz","Variabilidad después de la muestra 40",1,3,0.1]],
+ p:["Sin cambios, casi ningún punto sale de los límites: con ±3σ se espera una falsa alarma cada 370 muestras.","Sube el desplazamiento a 1,5σ. Pocos puntos cruzan el límite, pero la regla de rachas (ocho seguidos al mismo lado) lo detecta.","Vuelve a 0 y aplica una deriva gradual. Compara cuántas muestras tarda cada regla en avisar."],
+ k:"La carta de control separa la variación normal del proceso de las causas asignables. Los límites salen de los datos, no de la especificación. Los cambios pequeños y sostenidos se detectan con reglas de rachas, no con el límite de 3σ.",
+ draw(s){const n=80,x=[];for(let t=0;t<n;t++){const af=t>=40;x.push(100+2*((af?s.nz:1)*PZ[t+50]+(af?s.sh+s.dr*(t-40):0)))}
+  const b=x.slice(0,25),m=mean(b),sg=sd(b),ucl=m+3*sg,lcl=m-3*sg,lo=Math.min(lcl-2,...x),hi=Math.max(ucl+2,...x),{X,Y,g:g0}=axes(0,n,lo,hi,{nx:8,ny:5,xl:"Número de muestra"});let g=g0;
+  g+=seg(50,Y(m),530,Y(m),"ax")+seg(50,Y(ucl),530,Y(ucl),"bnd")+seg(50,Y(lcl),530,Y(lcl),"bnd")+txt(526,Y(ucl)-5,"+3σ","end")+txt(526,Y(lcl)+14,"−3σ","end")+seg(X(40),30,X(40),370,"mean");
+  g+=pth(x.map((v,t)=>[X(t+0.5),Y(v)]),"thinp");let out=0,first=0,run=0,side=0,frun=0,mxr=0;
+  x.forEach((v,t)=>{const o=v>ucl||v<lcl,sd_=v>m?1:-1;run=sd_===side?run+1:1;side=sd_;mxr=Math.max(mxr,run);const r8=run>=8;if(o){out++;if(!first)first=t+1}if(r8&&!frun&&t>=25)frun=t+1;g+=dot(X(t+0.5),Y(v),o||r8?"outl":"",4)});
+  return {g,m:big(out,"Puntos fuera de los límites de 3σ",out?"bad":"ok")+tbl([["Primera alarma por límite","Muestra "+(first||"ninguna")],["Primera alarma por racha de 8","Muestra "+(frun||"ninguna")],["Racha más larga a un lado",mxr],["Límites de control",f2(lcl)+" a "+f2(ucl)]])}}};
+/* 13 MLOps */
+const DEC=[-1.2816,-0.8416,-0.5244,-0.2533,0,0.2533,0.5244,0.8416,1.2816];
+LAB.drift={a:[13],t:"Deriva de datos y PSI",s:{sh:0,sc:1},
+ q:"En azul, la distribución de una variable cuando se entrenó el modelo, repartida en diez tramos de igual tamaño. En naranja, cómo se reparte hoy en esos mismos tramos.",
+ c:[["sh","Desplazamiento de la media (en σ)",-2,2,0.05],["sc","Cambio de dispersión (veces)",0.4,2.5,0.05]],
+ p:["Sin cambios, las barras naranjas igualan a las azules y el PSI es 0.","Desplaza la media 0,35σ: el PSI pasa de 0,10, la zona de vigilancia. Con 0,6σ ya supera 0,25.","Vuelve la media a 0 y duplica la dispersión. La media no cambió y el PSI igual se dispara: por eso no basta vigilar promedios."],
+ k:"El índice de estabilidad poblacional suma, tramo por tramo, (actual − esperado) × ln(actual/esperado). Como regla práctica habitual, menos de 0,10 es estable, entre 0,10 y 0,25 pide revisión, y más de 0,25 indica un cambio importante. Mide que la población cambió, no que el modelo falle.",
+ draw(s){const ed=[-Infinity,...DEC,Infinity],cur=[];for(let i=0;i<10;i++)cur.push(Math.max(1e-6,Phi((ed[i+1]-s.sh)/s.sc)-Phi((ed[i]-s.sh)/s.sc)));
+  const top=Math.max(0.3,Math.max(...cur)*1.1),{X,Y,g:g0}=axes(0,10,0,top,{nx:10,ny:4,xl:"Tramo (decil de la distribución de entrenamiento)",yl:"Proporción de casos"});let g=g0,psi=0;
+  cur.forEach((c,i)=>{psi+=(c-0.1)*Math.log(c/0.1);g+='<rect class="bar k1" x="'+(X(i)+5)+'" y="'+Y(0.1)+'" width="18" height="'+(370-Y(0.1))+'"/><rect class="bar k2" x="'+(X(i)+25)+'" y="'+Y(c)+'" width="18" height="'+(370-Y(c))+'"/>'});
+  return {g,m:big(f2(psi),"PSI",psi<0.1?"ok":psi>0.25?"bad":"")+tbl([["Lectura",psi<0.1?"Estable":psi>0.25?"Cambio importante":"Requiere revisión"],["Tramo con más casos hoy","Tramo "+(cur.indexOf(Math.max(...cur))+1)+" ("+pc(Math.max(...cur))+")"],["Tramo con menos casos hoy","Tramo "+(cur.indexOf(Math.min(...cur))+1)+" ("+pc(Math.min(...cur))+")"]])}}};
+/* 14 Agentes de IA */
+const DOCS=[["Política de crédito",15],["Manual de cobranza",40],["Reporte de riesgo de modelos",70],["Guía de molienda",150],["Mantenimiento del horno",175],["Plan de mina",205],["Manual de vacaciones",275],["Recetas del comedor",320]];
+LAB.rag={a:[14],t:"Recuperación por similitud en un RAG",s:{q:55,k:3,th:0.5},
+ q:"Cada flecha gris es un documento convertido en vector; la azul es la pregunta del usuario. Los documentos en verde son los que el sistema recupera y entrega al modelo como contexto.",
+ c:[["q","Dirección de la pregunta (grados)",0,360,1],["k","Cuántos documentos recuperar (top-k)",1,6,1],["th","Similitud mínima exigida",0,1,0.01]],
+ p:["Gira la pregunta hacia los documentos de banca y luego hacia los de planta. Cambia qué se recupera: la cercanía en el espacio de vectores hace de cercanía de significado.","Pon la similitud mínima en 0 y apunta la pregunta a 110°, entre los temas de banca y los de planta. El sistema igual entrega tres documentos, de temas distintos y ninguno sobre la pregunta: así empiezan muchas alucinaciones.","Sin mover la pregunta, sube la similitud mínima a 0,85. Ahora no se recupera nada y el agente puede decir que no sabe."],
+ k:"Un RAG no entiende la pregunta: busca los vectores más cercanos por similitud de coseno. Top-k siempre devuelve algo; el umbral decide si ese algo es suficiente. Los vectores reales tienen cientos de dimensiones, pero la geometría es la misma.",
+ draw(s){const cx=280,cy=210,R=150,rad=a=>a*Math.PI/180;let g='<circle class="ctr" cx="280" cy="210" r="150"/>';
+  const sim=DOCS.map((d,i)=>[Math.cos(rad(d[1]-s.q)),i]).sort((a,b)=>b[0]-a[0]),got=sim.slice(0,s.k).filter(x=>x[0]>=s.th).map(x=>x[1]);
+  DOCS.forEach((d,i)=>{const a=rad(d[1]),x=cx+R*Math.cos(a),y=cy-R*Math.sin(a),on=got.includes(i);g+=seg(cx,cy,x,y,"vv "+(on?"k3":"kg"))+txt(cx+(R+12)*Math.cos(a),cy-(R+12)*Math.sin(a)+4,d[0],Math.cos(a)<-0.2?"end":Math.cos(a)>0.2?"start":"middle")});
+  const a=rad(s.q);g+=seg(cx,cy,cx+(R-20)*Math.cos(a),cy-(R-20)*Math.sin(a),"vv k1")+dot(cx+(R-20)*Math.cos(a),cy-(R-20)*Math.sin(a),"c1",6)+txt(cx+(R-44)*Math.cos(a)+10,cy-(R-44)*Math.sin(a)-10,"pregunta");
+  return {g,m:big(got.length,"Documentos entregados al modelo",got.length?"ok":"bad")+tbl(sim.slice(0,5).map(x=>[DOCS[x[1]][0],f2(x[0]),got.includes(x[1])?"ok":""]))+hint(got.length?"La columna muestra la similitud de coseno con la pregunta.":"Nada supera el umbral: lo correcto es que el agente diga que no tiene la información.")}}};
+
+/* refuerzo 06 y 08 */
+LAB.leak={a:[6],t:"Fuga de datos al seleccionar variables",s:{p:40},
+ q:"La respuesta y y todas las variables candidatas son ruido puro: no hay nada que aprender. Aun así, si eliges la 'mejor' variable mirando todos los datos y luego validas, parece que encontraste señal. El gráfico muestra esa variable elegida contra y en las filas de validación.",
+ c:[["p","Número de variables candidatas (todas son ruido)",1,200,1]],
+ p:["Con 1 variable candidata, las dos correlaciones son parecidas y bajas: no hay de dónde elegir.","Sube a 200 candidatas. La correlación 'contaminada' en validación crece mucho, aunque todo sigue siendo ruido.","Mira la correlación honesta: se queda cerca del nivel del azar sin importar cuántas candidatas haya."],
+ k:"Toda decisión que mira los datos (seleccionar variables, escalar, imputar, ajustar hiperparámetros) debe tomarse solo con el conjunto de entrenamiento. Si la validación participa en la decisión, deja de ser validación y el resultado sale inflado.",
+ draw(s){const n=60,R=30,r=rng(21);let cs=0,hs=0,keep=null;
+  for(let t=0;t<R;t++){const y=Array.from({length:n},()=>gauss(r)),F=Array.from({length:s.p},()=>Array.from({length:n},()=>gauss(r))),va=a=>a.slice(30),tr=a=>a.slice(0,30);
+   let bc=0,bh=0,mc=-1,mh=-1;F.forEach((f,j)=>{const a=Math.abs(corr(f,y)),b=Math.abs(corr(tr(f),tr(y)));if(a>mc){mc=a;bc=j}if(b>mh){mh=b;bh=j}});
+   cs+=Math.abs(corr(va(F[bc]),va(y)));hs+=Math.abs(corr(va(F[bh]),va(y)));if(!t)keep=[va(F[bc]),va(y)]}
+  const {X,Y,g:g0}=axes(-3,3,-3,3,{nx:6,ny:6,xl:"Variable elegida mirando todos los datos",yl:"y (ruido)"});let g=g0;const d=keep[0].map((v,i)=>[v,keep[1][i]]),[b0,b1]=ols(d);
+  g+=d.map(q=>dot(X(q[0]),Y(q[1]))).join("")+pth([[X(-3),Y(b0-3*b1)],[X(3),Y(b0+3*b1)]],"kk");const c=cs/R,h=hs/R;
+  return {g,m:big(f2(c),"Correlación en validación con fuga",c>0.3?"bad":"")+tbl([["Correlación en validación sin fuga",f2(h),"ok"],["Inflación por la fuga",f2(c-h)],["Señal real en los datos","0,00"]])+hint("Promedio de 30 repeticiones del experimento. La correlación sin fuga no es cero porque con 30 filas el azar ya produce cerca de 0,15.")}}};
+const KER={vert:[[-1,0,1],[-1,0,1],[-1,0,1]],horz:[[-1,-1,-1],[0,0,0],[1,1,1]],blur:[[1,1,1],[1,1,1],[1,1,1]].map(r=>r.map(v=>v/9)),sharp:[[0,-1,0],[-1,5,-1],[0,-1,0]]};
+LAB.conv={a:[8],t:"Convolución: cómo ve una red convolucional",s:{k:"vert",st:1,re:0},
+ q:"A la izquierda, una imagen pequeña de 14 × 14 píxeles con un cuadrado y una diagonal. A la derecha, el mapa de características que produce un filtro de 3 × 3 al deslizarse sobre ella: naranja es respuesta positiva, azul negativa.",
+ c:[["k","Filtro","sel",[["vert","Bordes verticales"],["horz","Bordes horizontales"],["blur","Desenfoque (promedio)"],["sharp","Realce"]]],["st","Paso (stride)",1,2,1],["re","Aplicar ReLU a la salida","chk"]],
+ p:["Con el filtro de bordes verticales se encienden los lados izquierdo y derecho del cuadrado, uno en naranja y otro en azul, y también la diagonal. Cambia a horizontales: ahora responden el lado de arriba y el de abajo.","Activa ReLU. Desaparecen las respuestas negativas: la red se queda solo con un sentido del borde.","Sube el paso a 2. La salida tiene la cuarta parte de los valores: así una red reduce resolución mientras conserva dónde están los rasgos."],
+ k:"Un filtro convolucional son 9 pesos que se reutilizan en toda la imagen: detecta el mismo patrón esté donde esté. Por eso una red convolucional necesita muchísimos menos parámetros que una densa, y las primeras capas aprenden solas detectores de bordes como estos.",
+ draw(s){const N=14,I=Array.from({length:N},(_,r)=>Array.from({length:N},(_,c)=>(r>=3&&r<=8&&c>=2&&c<=7)||(Math.abs(r-c-(-3))<1&&r<11&&c>7)||(r+c===19&&r>7)?1:0)),K=KER[s.k],O=[];
+  for(let r=0;r+3<=N;r+=s.st){const row=[];for(let c=0;c+3<=N;c+=s.st){let v=0;for(let i=0;i<3;i++)for(let j=0;j<3;j++)v+=K[i][j]*I[r+i][c+j];row.push(s.re?Math.max(0,v):v)}O.push(row)}
+  let g=txt(40,36,"Imagen de entrada")+txt(310,36,"Mapa de características");const cs=15;
+  I.forEach((row,r)=>row.forEach((v,c)=>{g+='<rect class="px" x="'+(40+c*cs)+'" y="'+(50+r*cs)+'" width="'+(cs-1)+'" height="'+(cs-1)+'" fill-opacity="'+(v?0.85:0.08)+'"/>'}));
+  const mx=Math.max(1e-9,...O.flat().map(Math.abs)),os=210/O.length;
+  O.forEach((row,r)=>row.forEach((v,c)=>{g+='<rect class="cell k'+(v>=0?"B":"A")+'" x="'+(310+c*os).toFixed(1)+'" y="'+(50+r*os).toFixed(1)+'" width="'+(os-1).toFixed(1)+'" height="'+(os-1).toFixed(1)+'" style="fill-opacity:'+(0.06+0.9*Math.abs(v)/mx).toFixed(2)+'"/>'}));
+  g+=txt(40,300,"Filtro 3 × 3");K.forEach((row,i)=>row.forEach((v,j)=>{g+='<rect class="inset" x="'+(40+j*46)+'" y="'+(310+i*30)+'" width="44" height="28" rx="6"/>'+txt(62+j*46,329+i*30,f2(v),"middle")}));
+  const fl=O.flat(),on=fl.filter(v=>v>1e-9).length;
+  return {g,m:big(O.length+" × "+O.length,"Tamaño del mapa de salida")+tbl([["Posiciones con respuesta positiva",on+" de "+fl.length],["Respuesta máxima",f2(Math.max(...fl))],["Respuesta mínima",f2(Math.min(...fl))],["Pesos de este filtro","9 más un sesgo"],["Pesos de una capa densa equivalente",(196*fl.length).toLocaleString("es-PE")]])}}};
+const TOK=["El","horno","se","detuvo","por","sobrecalentamiento"],QS={que:[0.2,1.1,0.3,2.4,0.2,1.0],porq:[0.1,0.6,0.1,0.9,1.3,2.6],equipo:[0.5,2.7,0.1,0.8,0.1,0.9]};
+LAB.att={a:[8,14],t:"Atención: repartir el foco entre palabras",s:{q:"porq",T:1},
+ q:"Una frase de seis palabras y una consulta. Cada barra es el peso de atención que recibe una palabra: los pesos suman 1. Los puntajes de partida son ilustrativos; en un Transformer real se calculan como producto punto entre vectores aprendidos.",
+ c:[["q","Consulta","sel",[["porq","¿Por qué ocurrió?"],["que","¿Qué pasó?"],["equipo","¿Qué equipo fue?"]]],["T","Temperatura del softmax",0.15,4,0.05]],
+ p:["Cambia la consulta. El foco salta de 'sobrecalentamiento' a 'detuvo' o a 'horno': la misma frase se lee distinto según lo que se busca.","Baja la temperatura a 0,15. Casi todo el peso va a una sola palabra: atención dura, como una búsqueda exacta.","Sube la temperatura a 4. Los pesos se igualan y la atención deja de distinguir: es un promedio de toda la frase."],
+ k:"La atención convierte puntajes en pesos con un softmax y devuelve un promedio ponderado de las palabras. Así cada palabra puede mirar a cualquier otra sin importar la distancia, que es lo que las redes recurrentes hacían mal. La temperatura también es lo que regula cuán predecible es el texto que genera un modelo de lenguaje.",
+ draw(s){const sc=QS[s.q],e=sc.map(v=>Math.exp(v/s.T)),z=e.reduce((a,b)=>a+b,0),w=e.map(v=>v/z),{X,Y,g:g0}=axes(0,6,0,1,{nx:6,ny:4,yl:"Peso de atención"});let g=g0;
+  w.forEach((v,i)=>{g+='<rect class="bar k'+(v===Math.max(...w)?"2":"1")+'" x="'+(X(i)+12)+'" y="'+Y(v)+'" width="56" height="'+(370-Y(v))+'"/>'+txt(X(i)+40,Y(v)-8,f2(v),"middle")+txt(X(i)+40,410,TOK[i].length>9?TOK[i].slice(0,8)+"…":TOK[i],"middle")});
+  const H=-w.reduce((a,v)=>a+(v>0?v*Math.log2(v):0),0),bi=w.indexOf(Math.max(...w));
+  return {g,m:big(TOK[bi],"Palabra con más atención ("+pc(w[bi])+")")+tbl([["Entropía de los pesos",f2(H)+" bits"],["Palabras efectivas atendidas",f2(Math.pow(2,H))+" de 6"]])}}};
+const LABMAP={"m06-t07":"leak","m06-t09":"leak","m08-t05":"conv","m08-t07":"att","m01-t01":"vec","m01-t03":"vec","m01-t04":"vec","m01-t05":"vec","m01-t07":"pca","m01-t11":"opt","m02-t06":"clt","m03-t04":"lin","m04-t01":"conf","m04-t02":"conf","m05-t01":"beta","m05-t02":"beta","m06-t02":"imp","m06-t03":"esc","m06-t05":"esc","m06-t08":"desb","m07-t01":"bv","m07-t02":"bv","m07-t03":"log","m07-t04":"tree","m07-t05":"tree","m07-t06":"tree","m07-t08":"km","m07-t09":"roc","m07-t10":"log","m07-t11":"knn","m08-t01":"mlp","m08-t02":"act","m08-t03":"opt","m09-t01":"ar","m09-t02":"ar","m09-t03":"ar","m10-t02":"bm","m10-t05":"bm","m10-t08":"bm","m11-t01":"viz","m11-t02":"viz","m12-t03":"spc","m13-t08":"drift","m14-t02":"rag"};
+const labsOf=n=>Object.keys(LAB).filter(k=>LAB[k].a.includes(n));
+function ctl(c,s){const k=c[0];
+  if(c[2]==="chk")return '<label class="row" for="lab-'+k+'"><input type="checkbox" id="lab-'+k+'" data-lab="'+k+'"'+(s[k]?" checked":"")+'> '+c[1]+'</label>';
+  if(c[2]==="sel")return '<label class="l" for="lab-'+k+'">'+c[1]+'<select class="in" id="lab-'+k+'" data-lab="'+k+'">'+c[3].map(o=>'<option value="'+o[0]+'"'+(s[k]===o[0]?" selected":"")+'>'+o[1]+'</option>').join("")+'</select></label>';
+  return '<label class="l" for="lab-'+k+'"><span class="row" style="justify-content:space-between"><span>'+c[1]+'</span><output id="o-'+k+'">'+f2(s[k])+'</output></span><input type="range" id="lab-'+k+'" data-lab="'+k+'" min="'+c[2]+'" max="'+c[3]+'" step="'+c[4]+'" value="'+s[k]+'"></label>'}
+function viewLab(){const id=LAB[L.lab]?L.lab:"log",lb=LAB[id],s=LSt(id);
+  const list=AMB.map(a=>{const ks=labsOf(a.n);return ks.length?'<div class="lgroup" style="--amb:'+a.col+'"><div class="lgh"><span class="abadge">'+pad(a.n)+'</span>'+esc(a.name)+'</div>'+ks.map(k=>'<button class="lbtn" data-act="lab" data-v="'+k+'" aria-current="'+(k===id)+'">'+LAB[k].t+'</button>').join("")+'</div>':""}).join("");
+  return '<div class="shell lablay"><aside class="card side"><label class="l">Laboratorio</label><p class="hint" style="padding:4px 6px 10px">'+Object.keys(LAB).length+' experimentos en los 14 ámbitos. Funcionan al instante, sin Claude.</p>'+list+'</aside>'+
+  '<section class="card pane" style="--amb:'+AMB[lb.a[0]-1].col+'"><div><span class="eyebrow">Ámbito '+pad(lb.a[0])+" · "+esc(AMB[lb.a[0]-1].name)+'</span><h2 class="labt">'+lb.t+'</h2></div>'+
+  '<div class="box see"><h3>Qué estás viendo</h3><p>'+lb.q+'</p></div>'+
+  '<div class="labgrid"><div class="labfig"><svg id="lab-svg" viewBox="0 0 560 420" role="img" aria-label="Figura interactiva: '+lb.t+'"></svg></div><div class="box">'+lb.c.map(c=>ctl(c,s)).join("")+(lb.b?'<div class="row">'+lb.b.map((b,i)=>'<button class="btn p" data-act="labbtn" data-i="'+i+'">'+b[0]+'</button>').join("")+'</div>':"")+'<div id="lab-out"></div></div></div>'+
+  '<div class="grid2"><div class="box"><h3>Prueba esto, en orden</h3><ol class="tips">'+lb.p.map(x=>'<li>'+x+'</li>').join("")+'</ol></div><div class="box key"><h3>La idea que te llevas</h3><p>'+lb.k+'</p></div></div></section></div>'}
+const LC={};
+function drawLab(){const svg=$("#lab-svg"),out=$("#lab-out");if(!svg)return;const id=LAB[L.lab]?L.lab:"log",s=LSt(id),r=LAB[id].draw(s,LC);
+  svg.innerHTML='<defs><clipPath id="cl"><rect x="50" y="30" width="480" height="340"/></clipPath></defs>'+r.g;out.innerHTML=r.m;
+  document.querySelectorAll("[data-lab]").forEach(e=>{const k=e.dataset.lab,o=$("#o-"+k);if(o)o.textContent=f2(s[k]);if(e.type==="range"&&document.activeElement!==e)e.value=s[k]})}
 document.addEventListener("pointerdown",e=>{const h=e.target.closest&&e.target.closest("[data-h]");if(h){drag=h.dataset.h;e.preventDefault()}});
-document.addEventListener("pointermove",e=>{if(!drag)return;const s=$("#lab-svg");if(!s)return;const r=s.getBoundingClientRect(),x=((e.clientX-r.left)/r.width*560-280)/34,y=(210-(e.clientY-r.top)/r.height*420)/34;
-  L[drag]=[Math.max(-7.5,Math.min(7.5,Math.round(x*10)/10)),Math.max(-5.5,Math.min(5.5,Math.round(y*10)/10))];drawLab()});
+document.addEventListener("pointermove",e=>{if(!drag)return;const sv=$("#lab-svg");if(!sv)return;const r=sv.getBoundingClientRect(),x=((e.clientX-r.left)/r.width*560-280)/34,y=(210-(e.clientY-r.top)/r.height*420)/34;
+  LSt("vec")[drag]=[Math.max(-7.5,Math.min(7.5,Math.round(x*10)/10)),Math.max(-5.5,Math.min(5.5,Math.round(y*10)/10))];drawLab()});
 document.addEventListener("pointerup",()=>{drag=null});
 function setTheme(v){document.documentElement.setAttribute("data-theme",v);try{localStorage.setItem("dse-theme",v)}catch(e){}const b=$("#theme");if(b)b.textContent=v==="dark"?"Modo claro":"Modo oscuro"}
 const themeNow=()=>document.documentElement.getAttribute("data-theme")||(matchMedia("(prefers-color-scheme:dark)").matches?"dark":"light");
@@ -822,8 +1172,8 @@ document.addEventListener("click",async e=>{
   else if(act==="theme"){setTheme(themeNow()==="dark"?"light":"dark");render()}
   else if(act==="lab"){L.lab=b.dataset.v;render()}
   else if(act==="labgo"){L.lab=b.dataset.v;location.hash="laboratorio";window.scrollTo(0,0)}
-  else if(act==="fitlin")fitLin();
-  else if(act==="fitlog")fitLog();
+  else if(act==="labbtn"){const id=LAB[L.lab]?L.lab:"log";LAB[id].b[+b.dataset.i][1](LSt(id),LC);drawLab()}
+  else if(act==="labamb"){const ks=labsOf(+b.dataset.n);if(ks.length){L.lab=ks[0];location.hash="laboratorio";window.scrollTo(0,0)}}
   else if(act==="gencur")stream("curios",REGLAS+"\n\n"+ctx(t)+"\nTAREA: escribe 6 curiosidades del tema que ayuden a recordarlo: origen del nombre o historia, un caso límite sorprendente, una conexión con otro método, un error famoso, un uso en minería o cemento y uno en banca. Cada una en una viñeta de 2 o 3 frases, en Markdown. Solo hechos de los que estés seguro; si dudas de un dato, no lo incluyas. Devuelve solo la lista.","default");
   else if(act==="genlec")genLeccion();
   else if(act==="batch")runBatch();
@@ -865,7 +1215,7 @@ document.addEventListener("submit",e=>{
 });
 document.addEventListener("input",e=>{
   const el=e.target;
-  if(el.dataset.lab){const k=el.dataset.lab;L[k]=el.type==="checkbox"?+el.checked:+el.value;drawLab();return}
+  if(el.dataset.lab){const k=el.dataset.lab,s=LSt(LAB[L.lab]?L.lab:"log");s[k]=el.type==="checkbox"?+el.checked:el.tagName==="SELECT"?el.value:+el.value;drawLab();return}
   if(el.id==="q"){S.q=el.value;const pos=el.selectionStart;render();const n=$("#q");n.focus();n.setSelectionRange(pos,pos);return}
   if(el.dataset.f){const t=current(),p=T(t.id),f=el.dataset.f;p[f]=el.value;
     if(f==="post"&&el.value.trim()&&!p.readyAt)p.readyAt=Date.now();
