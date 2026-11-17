@@ -130,7 +130,7 @@ pre{font:12.5px/1.55 var(--f-mono);letter-spacing:0;margin:0;white-space:pre-wra
 .tile{padding:22px}
 .tile b{display:block;font:700 40px/1.05 var(--f);letter-spacing:-.03em;font-variant-numeric:tabular-nums}
 .tile span{color:var(--muted);font-size:14px}
-.bar{height:6px;background:var(--btn);border-radius:99px;overflow:hidden;display:flex}
+div.bar{height:6px;background:var(--btn);border-radius:99px;overflow:hidden;display:flex}
 .bar i{display:block;height:100%}
 .bar .b2{background:var(--ok)}.bar .b3{background:var(--fill)}.bar .b1{background:var(--warn)}
 table{width:100%;border-collapse:collapse;font-size:14px}
@@ -297,6 +297,9 @@ ol.tips{padding-left:20px}
 .pill.po,.pill.pn{background:var(--btn);color:var(--muted)}
 .pill.pl{background:color-mix(in srgb,var(--ok) 18%,transparent);color:var(--ok)}
 .seg{flex-wrap:wrap;max-width:100%}.hpc{min-width:0}.hpc code,.hpc .hn{overflow-wrap:anywhere;min-width:0}.hpl{min-width:0}
+.tuyo{font-size:11px;font-weight:600;padding:1px 7px;border-radius:99px;background:color-mix(in srgb,var(--ok) 18%,transparent);color:var(--ok);margin-left:4px}
+.lbtn[aria-current="true"] .tuyo{background:rgba(255,255,255,.25);color:#fff}
+.ubox{background:color-mix(in srgb,var(--ok) 8%,var(--sunken))}
 </style>
 </head>
 <body>
@@ -367,7 +370,8 @@ function md(src){
 
 /* ---------- estado ---------- */
 const DEF=Object.freeze({st:0,fuente:"",notas:"",nb:"",chat:[],charts:[],resumen:"",post:"",guion:"",pub:"",pubUrl:"",files:{},readyAt:0,cards:[],quiz:[],known:[],best:null,leccion:"",curios:""});
-let S={cfg:{repo:"https://github.com/CarlosFabrishioVenegas/data-science-experto",branch:"main",nb:"",sel:"m01-t01",tab:"leer",custom:{},hideBase:{},open:{m01:true}},t:{}};
+let S={cfg:{repo:"https://github.com/CarlosFabrishioVenegas/data-science-experto",branch:"main",nb:"",sel:"m01-t01",tab:"leer",custom:{},hideBase:{},open:{m01:true}},t:{},ul:{}};
+const vget=k=>k==="cfg"?S.cfg:k.startsWith("ul-")?S.ul[k]:S.t[k];
 const peek=id=>S.t[id]||DEF;
 const T=id=>S.t[id]||(S.t[id]=clone(DEF));
 function topicsOf(a){
@@ -384,15 +388,15 @@ const folder=t=>pad(t.an)+"-"+slug(t.aName)+"/"+pad(t.an)+"-"+pad(t.k)+"-"+slug(
 let db=null,root=null,cloud=false,flushing=false,timer=null,retries=0;const dirty=new Set();
 const use=n=>(window.claude&&window.claude.use)?window.claude.use(n).catch(()=>null):Promise.resolve(null);
 function setSync(){const el=$("#sync");if(!el)return;el.textContent=dirty.size&&cloud?"Guardando…":cloud?"Avance guardado en tu cuenta":"Avance guardado solo en este navegador"}
-function local(k){try{localStorage.setItem("dse:"+k,JSON.stringify(k==="cfg"?S.cfg:S.t[k]))}catch(e){}}
-function touch(k){if(k!=="cfg")mark(k);dirty.add(k);local(k);clearTimeout(timer);timer=setTimeout(flush,1200);setSync()}
-const ref=k=>k==="cfg"?root:root.collection("temas").doc(k);
+function local(k){try{const v=vget(k);if(v===undefined)localStorage.removeItem("dse:"+k);else localStorage.setItem("dse:"+k,JSON.stringify(v))}catch(e){}}
+function touch(k){if(k!=="cfg"&&!k.startsWith("ul-"))mark(k);dirty.add(k);local(k);clearTimeout(timer);timer=setTimeout(flush,1200);setSync()}
+const ref=k=>k==="cfg"?root:root.collection(k.startsWith("ul-")?"labs":"temas").doc(k);
 async function flush(){
   if(!cloud){dirty.clear();setSync();return}
   if(flushing)return;flushing=true;
   while(dirty.size){
     const k=dirty.values().next().value;dirty.delete(k);
-    try{await ref(k).set(clone(k==="cfg"?S.cfg:S.t[k]));retries=0}
+    try{const v=vget(k);if(v===undefined)await ref(k).delete();else await ref(k).set(clone(v));retries=0}
     catch(e){
       if(e&&e.code==="unavailable"&&retries<2){retries++;dirty.add(k);timer=setTimeout(flush,4000);break}
       if(e&&e.code==="quota_exceeded"){note("El almacenamiento de la plataforma está lleno. Borra gráficos o conversaciones antiguas.",true)}
@@ -404,7 +408,7 @@ async function flush(){
 function loadLocal(){
   try{for(let i=0;i<localStorage.length;i++){const key=localStorage.key(i);if(!key||!key.startsWith("dse:"))continue;
     const v=JSON.parse(localStorage.getItem(key));const k=key.slice(4);
-    if(k==="cfg")S.cfg={...S.cfg,...v};else S.t[k]={...clone(DEF),...v}}}catch(e){}
+    if(k==="cfg")S.cfg={...S.cfg,...v};else if(k.startsWith("ul-")){if(v)S.ul[k]=v}else S.t[k]={...clone(DEF),...v}}}catch(e){}
 }
 async function loadCloud(){
   const [d,user]=await Promise.all([use("db"),use("user")]);
@@ -413,11 +417,12 @@ async function loadCloud(){
   db=d;root=db.doc("data/users/"+uid+"/espacio");
   try{
     const wait=new Promise((_,r)=>setTimeout(()=>r({code:"timeout"}),10000));
-    const [c,q]=await Promise.race([Promise.all([root.get(),root.collection("temas").limit(1000).get()]),wait]);
+    const [c,q,ql]=await Promise.race([Promise.all([root.get(),root.collection("temas").limit(1000).get(),root.collection("labs").limit(300).get()]),wait]);
+    ql.docs.forEach(x=>{if(!dirty.has(x.id))S.ul[x.id]=clone(x.data())});regAllUL();
     if(c.exists&&!dirty.has("cfg"))S.cfg={...S.cfg,...clone(c.data())};
     q.docs.forEach(x=>{if(!dirty.has(x.id))S.t[x.id]={...clone(DEF),...clone(x.data())}});
     cloud=true;
-    if(!c.exists){Object.keys(S.t).forEach(k=>dirty.add(k));dirty.add("cfg");flush()}
+    if(!c.exists){Object.keys(S.t).concat(Object.keys(S.ul)).forEach(k=>dirty.add(k));dirty.add("cfg");flush()}
     if(!document.activeElement||!/TEXTAREA|INPUT/.test(document.activeElement.tagName))render();
   }catch(e){cloud=false}
   setSync();
@@ -1599,17 +1604,146 @@ function ctl(c,s){const k=c[0];
   if(c[2]==="chk")return '<label class="row" for="lab-'+k+'"><input type="checkbox" id="lab-'+k+'" data-lab="'+k+'"'+(s[k]?" checked":"")+'> '+c[1]+'</label>';
   if(c[2]==="sel")return '<label class="l" for="lab-'+k+'">'+c[1]+'<select class="in" id="lab-'+k+'" data-lab="'+k+'">'+c[3].map(o=>'<option value="'+o[0]+'"'+(s[k]===o[0]?" selected":"")+'>'+o[1]+'</option>').join("")+'</select></label>';
   return '<label class="l" for="lab-'+k+'"><span class="row" style="justify-content:space-between"><span>'+c[1]+'</span><output id="o-'+k+'">'+f2(s[k])+'</output></span><input type="range" id="lab-'+k+'" data-lab="'+k+'" min="'+c[2]+'" max="'+c[3]+'" step="'+c[4]+'" value="'+s[k]+'"></label>'}
-function viewLab(){if(S.fa&&!(LAB[L.lab]&&LAB[L.lab].a.includes(S.fa))){const ks=labsOf(S.fa);if(ks.length)L.lab=ks[0];else S.fa=0}
+function viewLab(){const isNew=L.lab==="__new";if(!isNew&&S.fa&&!(LAB[L.lab]&&LAB[L.lab].a.includes(S.fa))){const ks=labsOf(S.fa);if(ks.length)L.lab=ks[0];else S.fa=0}
   const id=LAB[L.lab]?L.lab:"log",lb=LAB[id],s=LSt(id);
-  const list=(S.fa?AMB.filter(a=>a.n===S.fa):AMB).map(a=>{const ks=labsOf(a.n);return ks.length?'<div class="lgroup" style="--amb:'+a.col+'"><div class="lgh"><span class="abadge">'+pad(a.n)+'</span>'+esc(a.name)+'</div>'+ks.map(k=>'<button class="lbtn" data-act="lab" data-v="'+k+'" aria-current="'+(k===id)+'">'+LAB[k].t+'</button>').join("")+'</div>':""}).join("");
-  return '<div class="shell lablay"><aside class="card side"><label class="l">Laboratorio</label><p class="hint" style="padding:4px 6px 10px">'+(S.fa?labsOf(S.fa).length+" experimentos del ámbito "+pad(S.fa)+".":Object.keys(LAB).length+" experimentos en los 14 ámbitos.")+' Funcionan al instante, sin Claude.</p>'+(S.fa?'<div class="row" style="padding:0 6px 10px"><button class="btn s" data-act="fall">Ver los 14 ámbitos</button></div>':"")+list+'</aside>'+
+  const list=(S.fa?AMB.filter(a=>a.n===S.fa):AMB).map(a=>{const ks=labsOf(a.n);return ks.length?'<div class="lgroup" style="--amb:'+a.col+'"><div class="lgh"><span class="abadge">'+pad(a.n)+'</span>'+esc(a.name)+'</div>'+ks.map(k=>'<button class="lbtn" data-act="lab" data-v="'+k+'" aria-current="'+(!isNew&&k===id)+'">'+LAB[k].t+(LAB[k].user?' <span class="tuyo">tuyo</span>':"")+'</button>').join("")+'</div>':""}).join("");
+  return '<div class="shell lablay"><aside class="card side"><label class="l">Laboratorio</label><p class="hint" style="padding:4px 6px 10px">'+(S.fa?labsOf(S.fa).length+" experimentos del ámbito "+pad(S.fa)+".":Object.keys(LAB).length+" experimentos en los 14 ámbitos.")+' Funcionan al instante, sin Claude.</p>'+'<div class="row" style="padding:0 6px 10px"><button class="btn s p" data-act="labnew" aria-pressed="'+isNew+'">Crear laboratorio con Claude</button>'+(S.fa?'<button class="btn s" data-act="fall">Ver los 14 ámbitos</button>':"")+'</div>'+list+'</aside>'+(isNew?viewNewLab()+'</div>':
   '<section class="card pane" style="--amb:'+AMB[lb.a[0]-1].col+'"><div><span class="eyebrow">Ámbito '+pad(lb.a[0])+" · "+esc(AMB[lb.a[0]-1].name)+'</span><h2 class="labt">'+lb.t+'</h2></div>'+
-  '<div class="box see"><h3>Qué estás viendo</h3><p>'+lb.q+'</p></div>'+
+  (lb.user?userBox(id):"")+'<div class="box see"><h3>Qué estás viendo</h3><p>'+lb.q+'</p></div>'+
   '<div class="labgrid"><div class="labfig"><svg id="lab-svg" viewBox="0 0 560 420" role="img" aria-label="Figura interactiva: '+lb.t+'"></svg></div><div class="box">'+lb.c.map(c=>ctl(c,s)).join("")+(lb.b?'<div class="row">'+lb.b.map((b,i)=>'<button class="btn p" data-act="labbtn" data-i="'+i+'">'+b[0]+'</button>').join("")+'</div>':"")+'<div id="lab-out"></div></div></div>'+
   '<div class="grid2"><div class="box"><h3>Prueba esto, en orden</h3><ol class="tips">'+lb.p.map(x=>'<li>'+x+'</li>').join("")+'</ol></div><div class="box key"><h3>La idea que te llevas</h3><p>'+lb.k+'</p></div></div>'+
-  (FICHA[id]?'<div><h2 class="sect" style="margin:6px 0 0">Ficha del modelo: '+FICHA[id].m+'</h2></div><div class="grid2"><div class="box"><h3>Supuestos</h3><ul class="tips">'+FICHA[id].sup.map(x=>'<li>'+x+'</li>').join("")+'</ul></div><div class="box"><h3>'+(GL[id]?"Antes de ajustar hiperparámetros":"Hiperparámetros y qué controla cada uno")+'</h3>'+(GL[id]?'<p class="hint">Los supuestos mandan sobre el ajuste: ningún hiperparámetro arregla un modelo aplicado a datos que incumplen lo que supone. Más abajo están las fichas completas de tu guía.</p>':'<dl class="hp">'+FICHA[id].hp.map(x=>'<dt>'+x[0]+'</dt><dd>'+x[1]+'</dd>').join("")+'</dl>')+'</div></div>':"")+guiaLab(id)+'</section></div>'}
+  (FICHA[id]?'<div><h2 class="sect" style="margin:6px 0 0">Ficha del modelo: '+FICHA[id].m+'</h2></div><div class="grid2"><div class="box"><h3>Supuestos</h3><ul class="tips">'+FICHA[id].sup.map(x=>'<li>'+x+'</li>').join("")+'</ul></div><div class="box"><h3>'+(GL[id]?"Antes de ajustar hiperparámetros":"Hiperparámetros y qué controla cada uno")+'</h3>'+(GL[id]?'<p class="hint">Los supuestos mandan sobre el ajuste: ningún hiperparámetro arregla un modelo aplicado a datos que incumplen lo que supone. Más abajo están las fichas completas de tu guía.</p>':'<dl class="hp">'+FICHA[id].hp.map(x=>'<dt>'+x[0]+'</dt><dd>'+x[1]+'</dd>').join("")+'</dl>')+'</div></div>':"")+guiaLab(id)+'</section></div>')}
+/* ---------- laboratorios a pedido: Claude escribe la simulación, un worker la ejecuta aislada ---------- */
+const UW={},UQ={};
+function workerSrc(code){
+  const F=[rng,solve,axes,cells].map(f=>f.toString()).join("\n");
+  const C={gauss,f2,pc,erf,Phi,npdf,mean,sd,corr,ols,fm,pth,dot,seg,txt,row,tbl,big,hint,ex,invPhi,accOf,moons,blobs,wavy,esc};
+  return '"use strict";\n'+F+"\n"+Object.keys(C).map(k=>"const "+k+"="+C[k].toString()+";").join("\n")+
+    "\nconst PAL="+JSON.stringify(PAL)+";\nconst PR=rng(11),PU=Array.from({length:900},()=>PR()),PZ=Array.from({length:900},()=>gauss(PR));\n"+
+    "const draw=function(s){\n"+code+"\n};\nonmessage=e=>{try{const r=draw(e.data.s)||{};postMessage({n:e.data.n,ok:1,g:String(r.g||\"\"),m:String(r.m||\"\")})}catch(err){postMessage({n:e.data.n,ok:0,err:String(err&&err.message||err)})}};";
+}
+function uworker(id,code){if(UW[id])return UW[id];const o={n:0,cb:{}};
+  try{o.w=new Worker(URL.createObjectURL(new Blob([workerSrc(code)],{type:"text/javascript"})))}catch(e){o.dead="No se pudo iniciar la simulación en este navegador."}
+  if(o.w){o.w.onmessage=e=>{const f=o.cb[e.data.n];if(f){delete o.cb[e.data.n];f(e.data)}};
+    o.w.onerror=e=>{if(e.preventDefault)e.preventDefault();o.dead="El código tiene un error y no se pudo cargar"+(e.message?": "+e.message:".");Object.values(o.cb).forEach(f=>f({ok:0,err:o.dead}));o.cb={}}}
+  UW[id]=o;return o}
+function killW(id){if(UW[id]){if(UW[id].w)UW[id].w.terminate();delete UW[id]}}
+function runCode(id,code,s,ms){return new Promise(res=>{const o=uworker(id,code);if(o.dead){res({ok:0,err:o.dead});return}const n=++o.n;
+  const t=setTimeout(()=>{if(o.cb[n]){delete o.cb[n];killW(id);res({ok:0,err:"La simulación tardó más de "+Math.round((ms||5000)/1000)+" segundos."})}},ms||5000);
+  o.cb[n]=d=>{clearTimeout(t);res(d)};o.w.postMessage({s:clone(s),n})})}
+function clean(html,svg){if(html.length>600000)return null;const d=new DOMParser().parseFromString(svg?'<svg xmlns="http://www.w3.org/2000/svg">'+html+"</svg>":"<div>"+html+"</div>",svg?"image/svg+xml":"text/html");
+  if(svg&&d.getElementsByTagName("parsererror").length)return null;const r=svg?d.documentElement:d.body.firstElementChild;if(!r)return "";
+  r.querySelectorAll("script,foreignObject,iframe,object,embed,link,style,image,use,a,form,input,button,textarea,select,video,audio").forEach(e=>e.remove());
+  r.querySelectorAll("*").forEach(e=>{for(const a of [...e.attributes])if(/^on/i.test(a.name)||/href$/i.test(a.name)||/^\s*javascript:/i.test(a.value)||/url\(\s*['"]?\s*(?!#)/i.test(a.value))e.removeAttribute(a.name)});
+  return r.innerHTML}
+const LSPEC=`FORMATO DE RESPUESTA. Devuelve exactamente dos bloques y nada más:
+<meta>{JSON}</meta>
+<code>
+cuerpo de la función
+</code>
+
+EL JSON de <meta> tiene estas claves:
+- "t": título corto en español, máximo 60 caracteres.
+- "q": "Qué estás viendo": 2 o 3 frases que explican cada elemento de la figura (colores, líneas, puntos).
+- "c": lista de 2 a 6 controles. Tres formas posibles:
+    ["clave","Etiqueta",mínimo,máximo,paso]   deslizador numérico
+    ["clave","Etiqueta","sel",[["valor","Texto"],["valor2","Texto 2"]]]   lista de opciones
+    ["clave","Etiqueta","chk"]   casilla (vale 0 o 1)
+  Si el control es un hiperparámetro real, pon su nombre en la etiqueta, por ejemplo "n_estimators: número de árboles".
+- "s": valores iniciales, una clave por control, dentro de su rango.
+- "p": 3 o 4 pasos guiados, en orden, que dicen qué mover y qué observar. Cada paso debe describir algo que tu simulación muestra de verdad con esos valores. Si no estás seguro de un número, describe la tendencia sin dar cifras.
+- "k": "La idea que te llevas": 2 o 3 frases con la conclusión.
+
+EL CÓDIGO de <code> es el cuerpo de una función JavaScript que recibe s (los valores actuales de los controles) y devuelve {g, m}:
+- g: texto SVG que se dibuja dentro de un lienzo de 560 × 420 (viewBox "0 0 560 420").
+- m: texto HTML con las métricas, en el panel de la derecha.
+Reglas estrictas: sin DOM, sin window, sin document, sin fetch, sin async, sin timers. Determinista: los mismos s producen la misma salida, así que usa rng(semilla) o los arreglos fijos PU y PZ, nunca Math.random. Se ejecuta en cada movimiento de un control: menos de 2 millones de operaciones simples. No incluyas fences de Markdown.
+
+FUNCIONES DISPONIBLES (ya definidas, no las redefinas):
+Aleatoriedad: rng(semilla) devuelve una función r() uniforme en [0,1). gauss(r) devuelve una normal estándar usando r. PU[i] uniforme fija y PZ[i] normal fija, i de 0 a 899.
+Estadística: mean(a), sd(a) (poblacional), corr(a,b), ols(puntos [[x,y]]) devuelve [b0,b1], solve(A,b) resuelve un sistema lineal, Phi(z) normal acumulada, npdf(z) densidad normal, invPhi(p), erf(x).
+Datos de ejemplo: moons(offset,n,ruido) y wavy(offset,n,ruido) devuelven [[x,y,clase]] con clase 0 o 1 (moons en x de −3 a 3 e y de −2,5 a 2,5; wavy en −3 a 3 por ambos ejes). blobs(dispersión,offset,n) devuelve [[x,y,clase]] en −4 a 4. accOf(datos,f) da la exactitud de f(x,y) frente a la clase.
+Formato de números (estilo es-PE): f2(x) dos decimales, pc(x) porcentaje de una proporción, ex(x) notación corta o científica, fm(x) número compacto para ejes. esc(texto) escapa HTML.
+Dibujo:
+- axes(x0,x1,y0,y1,{nx,ny,xl,yl}) devuelve {X,Y,g}: X(valor) e Y(valor) pasan de unidades de datos a píxeles; el área de datos va de x = 50 a 530 y de y = 370 (abajo) a 30 (arriba). g trae la rejilla y las marcas; empieza tu g con ella. nx, ny = número de divisiones; xl, yl = títulos de los ejes.
+- pth([[px,py],...],clases) línea en píxeles, recortada al área de datos. Clases: "kk" tinta, "k1" azul, "k2" naranja, "k3" verde, "kr" rojo; añade "dsh" para punteada y "thin" para delgada.
+- dot(px,py,clases,radio) punto. Clases: "" azul, "cA" azul, "cB" naranja, "cC" verde, "cD" morado, "cE" rosa, "cF" celeste, "c1" verde, "c0" gris, "ghost" tenue; añade "wrong" para borde rojo y "outl" para relleno rojo.
+- seg(x1,y1,x2,y2,clase) segmento. Clases: "ax" eje, "gx" rejilla, "mean" punteada gris, "bnd" punteada naranja, "fit" línea gruesa, "res" residuo rojo fino.
+- txt(x,y,texto,ancla) texto; ancla "middle" o "end" opcional.
+- Barras: '<rect class="bar k1" x=".." y=".." width=".." height=".."/>' con k1 azul, k2 naranja, kpos verde, kneg rojo, kg gris.
+- Área sombreada: '<path class="shade" d="..."/>'. Contorno: '<circle class="ctr" .../>'.
+- cells(X,Y,x0,x1,y0,y1,f) colorea el fondo del área según f(x,y), que devuelve "A" (azul) o "B" (naranja): sirve para regiones de clasificación.
+Métricas: big(valorTexto,etiqueta,clase) número destacado con clase "ok" (verde), "bad" (rojo) o "". tbl([[etiqueta,valorTexto,clase],...]) tabla. hint(texto) nota pequeña. Escribe m como big(...)+tbl(...)+hint(...).
+
+EJEMPLO COMPLETO (ley de los grandes números):
+<meta>{"t":"Ley de los grandes números","q":"La línea azul es el promedio acumulado de lanzamientos de un dado cargado. La línea punteada es su valor esperado.","c":[["n","Número de lanzamientos",10,2000,10],["p6","Probabilidad de sacar 6",0.05,0.6,0.01]],"s":{"n":200,"p6":0.3},"p":["Con pocos lanzamientos el promedio salta mucho. Sube a 2000 y mira cómo se pega a la línea punteada.","Sube la probabilidad de sacar 6: el valor esperado sube y el promedio lo sigue."],"k":"El promedio de muchas observaciones independientes converge a su valor esperado. El error típico baja como uno sobre la raíz de n."}</meta>
+<code>
+const r=rng(7),q=(1-s.p6)/5,E=q*15+6*s.p6;let t=0;const pts=[];
+const {X,Y,g:g0}=axes(0,s.n,1,6,{nx:5,ny:5,xl:"Lanzamientos",yl:"Promedio acumulado"});let g=g0;
+for(let i=1;i<=s.n;i++){const u=r();t+=u<s.p6?6:1+Math.floor((u-s.p6)/(1-s.p6)*5);pts.push([X(i),Y(Math.max(1,Math.min(6,t/i)))])}
+g+=pth(pts,"k1")+seg(50,Y(E),530,Y(E),"mean");const err=Math.abs(t/s.n-E);
+return {g,m:big(f2(t/s.n),"Promedio tras "+s.n+" lanzamientos",err<0.1?"ok":"")+tbl([["Valor esperado",f2(E)],["Diferencia",f2(err)]])};
+</code>`;
+const LEX={6:["Hazme un laboratorio sobre cómo funciona el bootstrapping","Muéstrame cómo la winsorización cambia la media y la desviación","Quiero ver el efecto de SMOTE frente al sobremuestreo simple"],7:["Hazme un laboratorio sobre cómo funciona la validación cruzada anidada","Muéstrame la curva de aprendizaje de un modelo al subir los datos","Quiero entender la regresión cuantílica"],8:["Hazme un laboratorio sobre batch normalization","Muéstrame cómo afecta el tamaño de lote al descenso de gradiente","Quiero ver el schedule de tasa de aprendizaje con warmup y coseno"]};
+const LEX0=["Hazme un laboratorio sobre cómo funciona el bootstrapping","Muéstrame cómo funciona la ley de los grandes números","Quiero entender la regresión a la media"];
+let nlA=0,nlDel="";
+function userLabs(){return Object.keys(S.ul||{}).filter(k=>S.ul[k]&&S.ul[k].code).sort((a,b)=>(S.ul[b].at||"").localeCompare(S.ul[a].at||""))}
+function regUL(id){const u=S.ul[id];killW(id);delete LS[id];if(!u||!u.code){delete LAB[id];return}
+  LAB[id]={user:1,code:u.code,req:u.req,a:[u.a],t:esc(u.t),q:esc(u.q),k:esc(u.k),p:u.p.map(esc),s:u.s,c:u.c.map(c=>c[2]==="sel"?[c[0],esc(c[1]),"sel",c[3].map(o=>[esc(o[0]),esc(o[1])])]:[c[0],esc(c[1])].concat(c.slice(2)))}}
+function regAllUL(){Object.keys(S.ul||{}).forEach(regUL)}
+function parseLab(text){const mm=text.match(/<meta>([\s\S]*?)<\/meta>/),cc=text.match(/<code>([\s\S]*?)<\/code>/);
+  if(!mm||!cc)throw {message:"la respuesta no trae los bloques <meta> y <code>"};let m;try{m=JSON.parse(mm[1].trim())}catch(e){throw {message:"el bloque <meta> no es JSON válido"}}
+  const code=cc[1].replace(/^\s*```[a-z]*\s*/i,"").replace(/```\s*$/,"").trim(),str=(v,n)=>typeof v==="string"&&v.trim()?v.trim().slice(0,n):null;
+  const t=str(m.t,80),q=str(m.q,900),k=str(m.k,900);if(!t||!q||!k||!code)throw {message:"faltan el título, la descripción, la conclusión o el código"};
+  if(!Array.isArray(m.c)||!m.c.length||m.c.length>8)throw {message:"la lista de controles no es válida"};const s={},c=[],seen=new Set();
+  for(const x of m.c){if(!Array.isArray(x)||typeof x[0]!=="string"||!/^[A-Za-z_][A-Za-z0-9_]{0,24}$/.test(x[0])||seen.has(x[0])||!str(x[1],120))throw {message:"un control tiene un formato inválido"};seen.add(x[0]);const v=m.s?m.s[x[0]]:undefined;
+    if(x[2]==="chk"){c.push([x[0],x[1].trim().slice(0,120),"chk"]);s[x[0]]=v?1:0}
+    else if(x[2]==="sel"){const o=Array.isArray(x[3])?x[3].filter(y=>Array.isArray(y)&&y.length>=2).slice(0,10).map(y=>[String(y[0]).slice(0,40),String(y[1]).slice(0,80)]):[];if(o.length<2)throw {message:"una lista de opciones tiene menos de dos opciones"};c.push([x[0],x[1].trim().slice(0,120),"sel",o]);s[x[0]]=o.some(y=>y[0]===String(v))?String(v):o[0][0]}
+    else{const a=+x[2],b=+x[3],st=+x[4];if(!(isFinite(a)&&isFinite(b)&&isFinite(st)&&a<b&&st>0&&(b-a)/st<=100000))throw {message:"un deslizador tiene un rango inválido"};c.push([x[0],x[1].trim().slice(0,120),a,b,st]);s[x[0]]=isFinite(+v)?Math.min(b,Math.max(a,+v)):a}}
+  const p=Array.isArray(m.p)?m.p.map(x=>str(x,600)).filter(Boolean).slice(0,6):[];if(!p.length)throw {message:"faltan los pasos guiados"};
+  return {t,q,k,p,c,s,code:code.slice(0,40000)}}
+async function testLab(spec){const id="tmp-"+Date.now().toString(36),cases=[["los valores iniciales",spec.s]],errs=[];
+  spec.c.forEach(c=>{if(c[2]==="chk")cases.push([c[0]+" = 1",{...spec.s,[c[0]]:1}]);else if(c[2]==="sel")c[3].forEach(o=>cases.push([c[0]+" = "+o[0],{...spec.s,[c[0]]:o[0]}]));else{cases.push([c[0]+" = "+c[2],{...spec.s,[c[0]]:c[2]}]);cases.push([c[0]+" = "+c[3],{...spec.s,[c[0]]:c[3]}])}});
+  for(const [lab,st] of cases.slice(0,40)){const d=await runCode(id,spec.code,st,6000);
+    if(!d.ok)errs.push("Con "+lab+": "+d.err);else if(d.g.length<20)errs.push("Con "+lab+": la figura sale vacía");else if(/NaN|undefined|\[object/.test(d.g+d.m))errs.push("Con "+lab+": aparece NaN, undefined u [object …] en la salida");else if(clean(d.g,1)===null)errs.push("Con "+lab+": el SVG está mal formado");
+    if(errs.length>=4||(d.err||"").startsWith("El código tiene un error"))break}
+  killW(id);return errs}
+function labPrompt(req,an,prev){const a=AMB[an-1];
+  return "Eres un diseñador de laboratorios interactivos de ciencia de datos para Fabrishio, ingeniero industrial y científico de datos en banca, con experiencia en cemento y minería en Perú. Escribe en español, claro y directo. No inventes cifras ni casos reales.\n\n"+
+    (prev?"Este es el laboratorio actual:\n<meta>"+JSON.stringify({t:prev.t,q:prev.q,c:prev.c,s:prev.s,p:prev.p,k:prev.k})+"</meta>\n<code>\n"+prev.code+"\n</code>\n\nCAMBIO PEDIDO: «"+req+"». Devuelve el laboratorio completo con el cambio aplicado.":"PEDIDO: «"+req+"».\nÁMBITO: "+a.n+". "+a.name+".\nDiseña un laboratorio que permita entender el concepto moviendo controles y viendo el efecto en una figura y en métricas. Si el concepto tiene hiperparámetros reales, conviértelos en controles con su nombre.")+
+    "\n\n"+LSPEC}
+async function makeLab(req,an,prevId){
+  const prev=prevId?S.ul[prevId]:null,prompt=labPrompt(req,an,prev);let msgs=[{role:"user",content:prompt}],spec=null,errs=[];
+  for(let k=0;k<3;k++){
+    note(k?"Corrigiendo lo que encontró la prueba (intento "+(k+1)+" de 3)…":"Claude está diseñando el laboratorio…");
+    const r=await ask(msgs,{tier:"complex",onText:({text})=>note((k?"Corrigiendo… ":"Claude está escribiendo el laboratorio… ")+text.length.toLocaleString("es-PE")+" caracteres")});
+    let fix="";try{spec=parseLab(r.text)}catch(e){fix="La respuesta no se pudo leer: "+e.message+"."}
+    if(!fix){note("Probando la simulación con cada control en sus extremos…");errs=await testLab(spec);if(!errs.length)break;fix="Al ejecutar tu código encontré estos errores:\n- "+errs.join("\n- ")}
+    if(r.truncated)fix+=" La respuesta se cortó: hazla más corta.";
+    msgs=msgs.concat([{role:"assistant",content:r.text},{role:"user",content:fix+"\n\nCorrígelo y devuelve el laboratorio completo, en el mismo formato de dos bloques."}]);spec=null}
+  if(!spec)throw {message:"Claude no logró un laboratorio que pase la prueba en tres intentos"+(errs.length?" ("+errs[0]+")":"")+". Prueba con un pedido más acotado"};
+  const id=prevId||"ul-"+Date.now().toString(36);S.ul[id]={...spec,a:prev?prev.a:an,req:prev?prev.req+" · ajuste: "+req:req,at:new Date().toISOString(),model:lastModel};
+  regUL(id);touch(id);L.lab=id;S.fa=S.ul[id].a;render();window.scrollTo(0,0);const ms="Laboratorio "+(prev?"actualizado":"creado")+" y probado con "+lastModel+".";setTimeout(()=>note(ms),0)}
+function viewNewLab(){const an=nlA||S.fa||current().an,ex=LEX[an]||LEX0,mine=userLabs();
+  return '<section class="card pane" style="--amb:'+AMB[an-1].col+'"><div><span class="eyebrow">Laboratorio a pedido</span><h2 class="labt">Crea un laboratorio con Claude</h2></div>'+
+  '<p class="hint">Describe lo que quieres entender. Claude escribe la simulación, sus controles y la guía; la plataforma la ejecuta con cada control en sus extremos y, si algo falla, se lo devuelve para que lo corrija antes de guardarla. Se guarda en tu cuenta, dentro del ámbito que elijas.</p>'+
+  '<div class="box"><label class="l" for="nl-a">Ámbito<select class="in" id="nl-a">'+AMB.map(a=>'<option value="'+a.n+'"'+(a.n===an?" selected":"")+'>'+pad(a.n)+" "+esc(a.name)+'</option>').join("")+'</select></label>'+
+  '<label class="l" for="nl-q">Qué laboratorio quieres<textarea id="nl-q" rows="3" placeholder="Por ejemplo: hazme un laboratorio sobre cómo funciona el bootstrapping"></textarea></label>'+
+  '<div class="chips">'+ex.map(q=>'<button class="chip" data-act="nlex" data-q="'+esc(q)+'">'+esc(q)+'</button>').join("")+'</div>'+
+  '<div class="row"><button class="btn p" data-act="labmake">Crear laboratorio</button><span class="hint">Usa el modelo de «Lecciones y resúmenes» de Ajustes y consume de tu límite de uso.</span></div><div class="msg" id="msg" role="status"></div></div>'+
+  (mine.length?'<h3>Tus laboratorios ('+mine.length+')</h3><div class="files">'+mine.map(k=>'<div class="file" style="grid-template-columns:1fr auto"><div><strong>'+esc(S.ul[k].t)+'</strong><div class="path">Ámbito '+pad(S.ul[k].a)+" · «"+esc(S.ul[k].req)+'»</div></div><button class="btn s" data-act="lab" data-v="'+k+'">Abrir</button></div>').join("")+'</div>':"")+'</section>'}
+function userBox(id){const u=S.ul[id];return '<div class="box ubox"><div class="row" style="justify-content:space-between"><span class="pill pl">Creado con Claude'+(u.model?" ("+esc(u.model)+")":"")+'</span><span class="hint">'+esc(new Date(u.at).toLocaleDateString("es-PE"))+'</span></div>'+
+  '<p class="hint">Pedido: «'+esc(u.req)+'». La plataforma comprobó que todos los controles funcionan sin errores; los pasos guiados y la conclusión los escribió Claude y no se verificaron contra la simulación.</p>'+
+  '<label class="l" for="nl-fix">Pedir un ajuste<textarea id="nl-fix" rows="2" placeholder="Por ejemplo: agrega un control para el tamaño de muestra"></textarea></label>'+
+  '<div class="row"><button class="btn p" data-act="labfix">Aplicar ajuste</button><button class="btn" data-act="labdel">'+(nlDel===id?"Toca otra vez para eliminar":"Eliminar laboratorio")+'</button></div><div class="msg" id="msg" role="status"></div></div>'}
 const LC={};
-function drawLab(){const svg=$("#lab-svg"),out=$("#lab-out");if(!svg)return;const id=LAB[L.lab]?L.lab:"log",s=LSt(id),r=LAB[id].draw(s,LC);
+function syncOut(s){document.querySelectorAll("[data-lab]").forEach(e=>{const k=e.dataset.lab,o=$("#o-"+k);if(o)o.textContent=f2(s[k]);if(e.type==="range"&&document.activeElement!==e)e.value=s[k]})}
+function drawUser(id){const q=UQ[id]||(UQ[id]={});if(q.busy){q.again=1;return}q.busy=1;const s=LSt(id);
+  runCode(id,LAB[id].code,s).then(d=>{q.busy=0;if(L.lab===id&&$("#lab-svg")){const out=$("#lab-out");
+    if(!d.ok)out.innerHTML=big("Error","La simulación falló","bad")+hint(esc(d.err)+" Pide un ajuste para que Claude lo corrija.");
+    else{const g=clean(d.g,1),m=clean(d.m,0);$("#lab-svg").innerHTML='<defs><clipPath id="cl"><rect x="50" y="30" width="480" height="340"/></clipPath></defs>'+(g===null?txt(60,200,"La figura generada tiene un error de formato."):g);out.innerHTML=m===null?"":m}}
+    if(q.again){q.again=0;drawUser(id)}})}
+function drawLab(){const svg=$("#lab-svg"),out=$("#lab-out");if(!svg)return;const id=LAB[L.lab]?L.lab:"log",s=LSt(id);if(LAB[id].user){syncOut(s);drawUser(id);return}const r=LAB[id].draw(s,LC);
   svg.innerHTML='<defs><clipPath id="cl"><rect x="50" y="30" width="480" height="340"/></clipPath></defs>'+r.g;out.innerHTML=r.m;
   document.querySelectorAll("[data-lab]").forEach(e=>{const k=e.dataset.lab,o=$("#o-"+k);if(o)o.textContent=f2(s[k]);if(e.type==="range"&&document.activeElement!==e)e.value=s[k]})}
 document.addEventListener("pointerdown",e=>{const h=e.target.closest&&e.target.closest("[data-h]");if(h){drag=h.dataset.h;e.preventDefault()}});
@@ -1819,6 +1953,11 @@ document.addEventListener("click",async e=>{
   else if(act==="fall"){S.fa=0;render()}
   else if(act==="gch"){S.gc=+b.dataset.i;render();window.scrollTo(0,0)}
   else if(act==="gpr"){S.gp=b.dataset.v;render()}
+  else if(act==="labnew"){L.lab="__new";render();window.scrollTo(0,0)}
+  else if(act==="nlex"){const q=$("#nl-q");if(q){q.value=b.dataset.q;q.focus()}}
+  else if(act==="labmake"){const q=$("#nl-q"),a=$("#nl-a"),req=q?q.value.trim():"";if(req.length<8){note("Describe el laboratorio con un poco más de detalle.",true);return}if(userLabs().length>=80){note("Llegaste al máximo de 80 laboratorios propios. Elimina alguno para crear otro.",true);return}nlA=+a.value;guarded(()=>makeLab(req.slice(0,600),nlA,null))}
+  else if(act==="labfix"){const q=$("#nl-fix"),req=q?q.value.trim():"";if(req.length<4){note("Escribe qué quieres cambiar.",true);return}guarded(()=>makeLab(req.slice(0,600),0,L.lab))}
+  else if(act==="labdel"){const id=L.lab;if(nlDel!==id){nlDel=id;render();return}nlDel="";delete S.ul[id];regUL(id);touch(id);L.lab="__new";render()}
   else if(act==="labbtn"){const id=LAB[L.lab]?L.lab:"log";LAB[id].b[+b.dataset.i][1](LSt(id),LC);drawLab()}
   else if(act==="labamb"){const ks=labsOf(+b.dataset.n);if(ks.length){S.fa=+b.dataset.n;L.lab=ks[0];location.hash="laboratorio";window.scrollTo(0,0)}}
   else if(act==="gencur")stream("curios",REGLAS+"\n\n"+ctx(t)+"\nTAREA: escribe 6 curiosidades del tema que ayuden a recordarlo: origen del nombre o historia, un caso límite sorprendente, una conexión con otro método, un error famoso, un uso en minería o cemento y uno en banca. Cada una en una viñeta de 2 o 3 frases, en Markdown. Solo hechos de los que estés seguro; si dudas de un dato, no lo incluyas. Devuelve solo la lista.","default");
@@ -1862,6 +2001,7 @@ document.addEventListener("submit",e=>{
 });
 document.addEventListener("input",e=>{
   const el=e.target;
+  if(el.id==="nl-a"){nlA=+el.value;const q=$("#nl-q").value;render();$("#nl-q").value=q;return}
   if(el.dataset.lab){const k=el.dataset.lab,s=LSt(LAB[L.lab]?L.lab:"log");s[k]=el.type==="checkbox"?+el.checked:el.tagName==="SELECT"?el.value:+el.value;drawLab();return}
   if(el.id==="q"){S.q=el.value;const pos=el.selectionStart;render();const n=$("#q");n.focus();n.setSelectionRange(pos,pos);return}
   if(el.dataset.f){const t=current(),p=T(t.id),f=el.dataset.f;p[f]=el.value;
@@ -1882,7 +2022,7 @@ document.addEventListener("keydown",e=>{if(e.key==="Enter"&&(e.ctrlKey||e.metaKe
 window.addEventListener("hashchange",render);
 
 /* ---------- inicio ---------- */
-loadLocal();try{const th=localStorage.getItem("dse-theme");if(th)document.documentElement.setAttribute("data-theme",th)}catch(e){}
+loadLocal();regAllUL();try{const th=localStorage.getItem("dse-theme");if(th)document.documentElement.setAttribute("data-theme",th)}catch(e){}
 render();setSync();{const b=$("#theme");if(b)b.textContent=themeNow()==="dark"?"Modo claro":"Modo oscuro"}
 use("sample").then(s=>{ai=s});
 use("downloads").then(d=>{dl=d});

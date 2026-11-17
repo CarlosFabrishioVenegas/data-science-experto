@@ -4,6 +4,7 @@
 
 ## Cambios
 
+- v11 · Laboratorios a pedido: Claude escribe un experimento a partir de una frase, la plataforma lo prueba aislado en un worker con cada control en sus extremos, pide correcciones si falla y lo guarda en el ámbito elegido. Corrige las barras de 15 experimentos que se veían recortadas.
 - v10 · Guía de hiperparámetros (Venegas, 2026) integrada: 96 fichas navegables y enlazadas a los experimentos; hiperparámetros interactivos en árbol, Random Forest, k vecinos, k-means, red neuronal, modelos lineales, SVM y convolución; experimentos nuevos de XGBoost, LightGBM, AdaBoost, regresión logística, PCA, redes recurrentes y Transformer.
 - v9 · Laboratorio con 61 experimentos: una ficha de supuestos e hiperparámetros por modelo, experimentos para Ridge, Lasso, Naive Bayes, Random Forest, Gradient Boosting, SVM con kernel, DBSCAN, clustering jerárquico, mezcla de gaussianas y calibración; preprocesamiento a fondo; Probabilidad y Estadística completas.
 - v8 · Laboratorio con 27 experimentos en los 14 ámbitos, con explicación guiada en cada uno; refuerzo en Ciencia de Datos, Aprendizaje Automático y Aprendizaje Profundo.
